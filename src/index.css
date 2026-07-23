@@ -1,0 +1,153 @@
+@import "@fontsource-variable/inter/index.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light theme tokens (HSL channels for <alpha-value> support) */
+    --background: 60 11% 96%; /* #F8F8F6 */
+    --foreground: 0 0% 7%; /* #111111 */
+    --surface: 0 0% 100%; /* #FFFFFF */
+    --surface-2: 0 0% 97%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 40%; /* #666666 */
+    --border: 0 0% 88%;
+    --ring: 349 86% 54%; /* brand red */
+
+    --glass-border: rgba(17, 17, 17, 0.08);
+    --glass-bg: rgba(255, 255, 255, 0.6);
+  }
+
+  .dark {
+    --background: 0 0% 5%; /* #0D0D0D */
+    --foreground: 0 0% 98%;
+    --surface: 0 0% 10%; /* #1A1A1A */
+    --surface-2: 0 0% 13%;
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 64%;
+    --border: 0 0% 20%;
+    --ring: 349 86% 60%;
+
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-bg: rgba(26, 26, 26, 0.5);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Global guard: no horizontal scroll on any device. `clip` (not `hidden`)
+     avoids creating a scroll container so it never interferes with the
+     Lenis smooth-scroll root or GSAP pinned sections. */
+  #root {
+    overflow-x: clip;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-synthesis-weight: none;
+  }
+
+  /* Keep anchored sections clear of the fixed navbar. */
+  section[id] {
+    scroll-margin-top: 5.5rem;
+  }
+
+  ::selection {
+    background: hsl(var(--ring) / 0.9);
+    color: white;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background rounded-md;
+  }
+
+  /* Lenis smooth scroll */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--glass-border);
+  }
+
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(120deg, #fdc500 0%, #ffe382 45%, #fdc500 100%);
+  }
+
+  .text-gradient-orange {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(120deg, #ff7a1a 0%, #ffa24d 45%, #f97316 100%);
+  }
+
+  .text-gradient-red {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(120deg, #ef233c 0%, #ff6b7d 100%);
+  }
+
+  /* Fluid vertical rhythm — scales smoothly from phones to ultrawide and
+     caps at the original desktop value (10rem) so the desktop identity is
+     preserved exactly while small screens breathe correctly. */
+  .section-py {
+    padding-block: clamp(4rem, 15.5vw, 10rem);
+  }
+
+  .section-py-sm {
+    padding-block: clamp(3rem, 10vw, 6rem);
+  }
+}
+
+@layer utilities {
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  /* Minimum accessible touch target (WCAG 2.5.5 / Apple HIG ~48px). */
+  .tap-target {
+    min-height: 3rem;
+    min-width: 3rem;
+  }
+  /* Momentum scrolling for horizontally-scrollable rails on touch. */
+  .touch-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+  }
+}

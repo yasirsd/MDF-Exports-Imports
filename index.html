@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0D0D0D" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F8F8F6" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="light dark" />
+    <!-- Disable browser auto-translation: it wraps text nodes in <font> tags,
+         which desyncs React's DOM references and throws insertBefore errors. -->
+    <meta name="google" content="notranslate" />
+
+    <title>Universal Traders — Exporting India's Freshness to the World</title>
+    <meta
+      name="description"
+      content="Universal Traders exports premium fruits, vegetables, spices and agricultural products from Andhra Pradesh, India to Dubai, the UAE, the Middle East and beyond. 40+ years of agricultural excellence."
+    />
+
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="dns-prefetch" href="https://images.unsplash.com" />
+
+    <script>
+      // Prevent theme flash: apply saved/system theme before paint.
+      (function () {
+        try {
+          var stored = localStorage.getItem("ut-theme");
+          var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var isDark = stored ? stored === "dark" : prefersDark;
+          document.documentElement.classList.toggle("dark", isDark);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
