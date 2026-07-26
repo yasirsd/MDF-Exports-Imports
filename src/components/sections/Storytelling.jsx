@@ -1,239 +1,326 @@
-import { useLayoutEffect, useRef } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { Observer } from "gsap/Observer";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { LazyImage } from "@/components/shared/LazyImage";
-import { RoughSketch } from "@/components/shared/RoughSketch";
+import {
+  ChapterCounter,
+  ChapterRail,
+  ScrollHint,
+} from "@/components/sections/story/StoryChrome";
+import { CHAPTER_ATMOSPHERES } from "@/components/sections/story/chapterAtmospheres";
+import { ChapterOrigin } from "@/components/sections/story/chapters/ChapterOrigin";
+import { ChapterPeople } from "@/components/sections/story/chapters/ChapterPeople";
+import { ChapterHarvest } from "@/components/sections/story/chapters/ChapterHarvest";
+import { ChapterCare } from "@/components/sections/story/chapters/ChapterCare";
+import { ChapterJourney } from "@/components/sections/story/chapters/ChapterJourney";
+import { ChapterArrival } from "@/components/sections/story/chapters/ChapterArrival";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { scenes, unsplash, unsplashLQ, unsplashSrcSet } from "@/lib/images";
+import { useLenis } from "@/providers/SmoothScrollProvider";
+import { storyChapters } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, Observer);
 
-const chapters = [
-  { id: scenes.farmField, eyebrow: "The Origin", title: "Freshness begins at the farm.", copy: "Rooted in Andhra Pradesh, across a thousand-strong network of trusted farms." },
-  { id: scenes.farmer, eyebrow: "The People", title: "Grown by hands we trust.", copy: "Four decades of relationships with the farmers who know the land best." },
-  { id: scenes.harvest, eyebrow: "The Harvest", title: "Picked at peak ripeness.", copy: "Selected by size, colour and sweetness — never before its time." },
-  { id: scenes.packaging, eyebrow: "The Care", title: "Packed to export standards.", copy: "Ventilated, branded, protective packaging built for the journey." },
-  { id: scenes.containerShip, eyebrow: "The Journey", title: "Shipped across the seas.", copy: "An unbroken cold chain from our packhouse to your port." },
-  { id: scenes.dubai, eyebrow: "The Arrival", title: "Delivered to the world.", copy: "Fresh in Dubai, the Gulf, and soon — Europe." },
-];
+const LAYOUTS = {
+  scrapbook: ChapterOrigin,
+  quote: ChapterPeople,
+  circleGrid: ChapterHarvest,
+  dual: ChapterCare,
+  routeMap: ChapterJourney,
+  world: ChapterArrival,
+};
 
-const ORANGE = "#ff7a1a";
+function ReducedStory() {
+  return (
+    <section id="story" className="bg-[#140e0a]">
+      <div className="mx-auto flex max-w-[90rem] flex-col gap-16 px-5 py-20 sm:px-8">
+        {storyChapters.map((c, i) => {
+          const Comp = LAYOUTS[c.layout];
+          const atm = CHAPTER_ATMOSPHERES[i];
+          return (
+            <div
+              key={c.id}
+              className="relative min-h-[85svh] overflow-hidden rounded-[1.75rem] border border-white/5"
+              style={{ backgroundColor: atm.base }}
+            >
+              <div
+                className="pointer-events-none absolute inset-0"
+                style={{ background: atm.glow }}
+                aria-hidden="true"
+              />
+              <div className="relative z-10 h-full">
+                <Comp chapter={c} active />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
 
-// Hand-drawn route baseline + plane marker for the progress track.
-const ROUTE_OPS = [
-  { t: "p", d: "M12 14 q 150 -8 300 0 t 300 0 t 300 0 t 276 0", dash: true },
-];
-// Points RIGHT (forward, matching the left-to-right track), filled for a
-// crisp read at small size.
-const PLANE_OPS = [{ t: "p", d: "M84 40 L16 12 L38 40 L16 68 Z", fill: true }];
-
+/**
+ * Cinematic storytelling stage.
+ *
+ * One intentional wheel/swipe = one full-viewport chapter.
+ * GSAP Observer pages chapters while pinned; Lenis is paused so inertia
+ * cannot skip. Same behavior on desktop and mobile.
+ */
 export function Storytelling() {
-  const rootRef = useRef(null);
   const prefersReduced = usePrefersReducedMotion();
+  const lenis = useLenis();
+  const lenisRef = useRef(lenis);
+  lenisRef.current = lenis;
+
+  const rootRef = useRef(null);
+  const apiRef = useRef(null);
+  const [active, setActive] = useState(0);
+  const total = storyChapters.length;
+  const atmosphere = CHAPTER_ATMOSPHERES[active] || CHAPTER_ATMOSPHERES[0];
 
   useLayoutEffect(() => {
     if (prefersReduced) return undefined;
     const root = rootRef.current;
     if (!root) return undefined;
 
-    const ctx = gsap.context(() => {
-      const slides = gsap.utils.toArray(".story-slide");
-      const captions = gsap.utils.toArray(".story-caption");
-      const dots = gsap.utils.toArray(".story-rail-dot");
-      const total = slides.length;
+    const panels = gsap.utils.toArray(".story-panel", root);
+    gsap.set(panels, { autoAlpha: 0, pointerEvents: "none" });
+    gsap.set(panels[0], { autoAlpha: 1, pointerEvents: "auto" });
 
-      const counter = root.querySelector(".story-counter-num");
-      const marker = root.querySelector(".story-marker");
+    let current = 0;
+    let animating = false;
+    let exiting = false;
+    let pinST = null;
+    let intentObserver = null;
+    let exitTimer = null;
 
-      gsap.set(slides, { autoAlpha: 0, scale: 1.12 });
-      gsap.set(slides[0], { autoAlpha: 1, scale: 1 });
-      captions.forEach((cap, ci) => {
-        gsap.set(cap, { autoAlpha: 1 });
-        gsap.set(cap.children, { autoAlpha: ci === 0 ? 1 : 0, y: ci === 0 ? 0 : 40 });
+    const getLenis = () => lenisRef.current;
+
+    const setChapter = (index, { instant = false } = {}) => {
+      const next = Math.max(0, Math.min(total - 1, index));
+      if (next === current && !instant) return;
+
+      const prev = current;
+      current = next;
+      setActive(next);
+
+      if (instant || prev === next) {
+        gsap.set(panels, { autoAlpha: 0, pointerEvents: "none" });
+        gsap.set(panels[next], { autoAlpha: 1, pointerEvents: "auto" });
+        animating = false;
+        return;
+      }
+
+      animating = true;
+      gsap
+        .timeline({
+          defaults: { overwrite: "auto" },
+          onComplete: () => {
+            animating = false;
+          },
+        })
+        .to(
+          panels[prev],
+          {
+            autoAlpha: 0,
+            pointerEvents: "none",
+            duration: 0.4,
+            ease: "power2.inOut",
+          },
+          0
+        )
+        .to(
+          panels[next],
+          {
+            autoAlpha: 1,
+            pointerEvents: "auto",
+            duration: 0.5,
+            ease: "power2.out",
+          },
+          0.05
+        );
+    };
+
+    const lockPageScroll = () => {
+      const y = pinST ? pinST.start + 1 : window.scrollY;
+      const lenisInst = getLenis();
+      if (lenisInst) {
+        lenisInst.stop();
+        lenisInst.scrollTo(y, { immediate: true });
+      } else {
+        window.scrollTo(0, y);
+      }
+      root.style.touchAction = "none";
+    };
+
+    const unlockPageScroll = () => {
+      root.style.touchAction = "";
+      getLenis()?.start();
+    };
+
+    const exitStory = (direction) => {
+      if (!pinST || !intentObserver || exiting) return;
+      exiting = true;
+      intentObserver.disable();
+      unlockPageScroll();
+
+      const target =
+        direction === "down" ? pinST.end + 8 : Math.max(0, pinST.start - 8);
+
+      requestAnimationFrame(() => {
+        const lenisInst = getLenis();
+        if (lenisInst) lenisInst.scrollTo(target, { immediate: true });
+        else window.scrollTo(0, target);
       });
 
-      const setActiveDot = (idx) => {
-        dots.forEach((d, di) => {
-          const active = di === idx;
-          d.style.backgroundColor = active ? ORANGE : "rgba(255,255,255,0.25)";
-          d.style.height = active ? "2rem" : "0.75rem";
-        });
-      };
+      clearTimeout(exitTimer);
+      exitTimer = setTimeout(() => {
+        exiting = false;
+      }, 450);
+    };
 
-      const update = (idx, progress) => {
-        setActiveDot(idx);
-        if (counter) counter.textContent = String(idx + 1).padStart(2, "0");
-        if (marker) marker.style.left = `${2 + progress * 96}%`;
-      };
-      update(0, 0);
+    const goNext = () => {
+      if (animating || exiting) return;
+      if (current >= total - 1) {
+        exitStory("down");
+        return;
+      }
+      setChapter(current + 1);
+    };
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: root,
-          start: "top top",
-          end: () => `+=${(total - 1) * 60}%`,
-          scrub: 0.6,
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          snap: {
-            snapTo: 1 / (total - 1),
-            duration: { min: 0.25, max: 0.55 },
-            delay: 0.03,
-            ease: "power2.inOut",
-            directional: true,
-          },
-          onUpdate: (self) => {
-            const idx = Math.min(total - 1, Math.floor(self.progress * total + 0.0001));
-            update(idx, self.progress);
-          },
+    const goPrev = () => {
+      if (animating || exiting) return;
+      if (current <= 0) {
+        exitStory("up");
+        return;
+      }
+      setChapter(current - 1);
+    };
+
+    const enterStory = (fromBottom) => {
+      if (exiting || intentObserver?.isEnabled) return;
+      setChapter(fromBottom ? total - 1 : 0, { instant: true });
+      lockPageScroll();
+      intentObserver.enable();
+    };
+
+    const ctx = gsap.context(() => {
+      // Short pin — chapters advance via Observer, not scrub distance.
+      pinST = ScrollTrigger.create({
+        trigger: root,
+        start: "top top",
+        end: "+=160",
+        pin: true,
+        pinSpacing: true,
+        anticipatePin: 1,
+        invalidateOnRefresh: true,
+        onEnter: (self) => {
+          if (exiting || intentObserver?.isEnabled) return;
+          self.scroll(self.start + 1);
+          enterStory(false);
+        },
+        onEnterBack: (self) => {
+          if (exiting || intentObserver?.isEnabled) return;
+          self.scroll(self.end - 1);
+          enterStory(true);
         },
       });
 
-      for (let i = 1; i < total; i += 1) {
-        tl.to(captions[i - 1].children, { autoAlpha: 0, y: -30, duration: 0.3, stagger: 0.05 }, ">");
-        tl.to(slides[i - 1], { autoAlpha: 0, scale: 1.12, duration: 0.6 }, "<");
-        tl.fromTo(
-          slides[i],
-          { autoAlpha: 0, scale: 1.12, xPercent: i % 2 ? 3 : -3 },
-          { autoAlpha: 1, scale: 1, xPercent: 0, duration: 0.6 },
-          "<"
-        );
-        tl.fromTo(
-          captions[i].children,
-          { autoAlpha: 0, y: 40 },
-          { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.08 },
-          ">-0.1"
-        );
-      }
+      intentObserver = Observer.create({
+        target: window,
+        type: "wheel,touch",
+        wheelSpeed: -1,
+        tolerance: 18,
+        preventDefault: true,
+        onUp: () => goNext(),
+        onDown: () => goPrev(),
+      });
+      intentObserver.disable();
     }, root);
 
-    return () => ctx.revert();
-  }, [prefersReduced]);
+    apiRef.current = {
+      goTo: (i) => {
+        if (!intentObserver?.isEnabled && pinST) {
+          const lenisInst = getLenis();
+          if (lenisInst) lenisInst.scrollTo(pinST.start + 1, { immediate: true });
+          else window.scrollTo(0, pinST.start + 1);
+          enterStory(false);
+        }
+        setChapter(i);
+      },
+    };
 
-  // Reduced-motion: simple stacked editorial layout.
-  if (prefersReduced) {
-    return (
-      <section id="story" className="bg-background">
-        <div className="mx-auto flex max-w-7xl flex-col gap-16 px-6 py-24">
-          {chapters.map((c, i) => (
-            <div key={c.id} className="grid items-center gap-8 md:grid-cols-2">
-              <LazyImage
-                src={unsplash(c.id, 1200)}
-                srcSet={unsplashSrcSet(c.id)}
-                sizes="(min-width:768px) 50vw, 100vw"
-                lqip={unsplashLQ(c.id)}
-                alt={c.title}
-                fallbackLabel={c.eyebrow}
-                className="aspect-[4/3] w-full rounded-3xl"
-              />
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-orange-bright">
-                  {String(i + 1).padStart(2, "0")} · {c.eyebrow}
-                </p>
-                <h3 className="mt-3 text-h2 font-extrabold">{c.title}</h3>
-                <p className="mt-4 text-lead text-muted-foreground">{c.copy}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
-  }
+    const refresh = () => ScrollTrigger.refresh();
+    window.addEventListener("ut:media-loaded", refresh);
+
+    return () => {
+      clearTimeout(exitTimer);
+      window.removeEventListener("ut:media-loaded", refresh);
+      apiRef.current = null;
+      intentObserver?.kill();
+      unlockPageScroll();
+      ctx.revert();
+    };
+  }, [prefersReduced, total]);
+
+  const scrollToChapter = useCallback((i) => {
+    apiRef.current?.goTo(i);
+  }, []);
+
+  if (prefersReduced) return <ReducedStory />;
+
+  const stepLabel = String(active + 1).padStart(2, "0");
 
   return (
-    <section ref={rootRef} id="story" className="relative h-[100svh] overflow-hidden bg-black">
-      {chapters.map((c, i) => (
-        <div key={c.id} className="story-slide absolute inset-0" style={{ zIndex: i }}>
-          <LazyImage
-            src={unsplash(c.id, 2000)}
-            srcSet={unsplashSrcSet(c.id, [640, 828, 1080, 1440, 1920, 2400])}
-            sizes="100vw"
-            lqip={unsplashLQ(c.id)}
-            alt={c.title}
-            fallbackLabel={c.eyebrow}
-            className="h-full w-full"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/50" aria-hidden="true" />
-        </div>
-      ))}
+    <section
+      ref={rootRef}
+      id="story"
+      aria-label="The export journey"
+      className="relative h-[100svh] overflow-hidden transition-[background-color] duration-700 ease-premium"
+      style={{ backgroundColor: atmosphere.base }}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 transition-opacity duration-700"
+        style={{ background: atmosphere.glow }}
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.035]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.05) 3px)",
+        }}
+        aria-hidden="true"
+      />
 
-      <div className="pointer-events-none absolute inset-0 z-20 flex items-end">
-        <div className="mx-auto w-full max-w-7xl px-6 pb-14 sm:px-8 sm:pb-16 lg:px-10">
-          {/* Chapter counter */}
-          <div className="mb-5 flex items-baseline gap-2">
-            <span className="story-counter-num text-5xl font-extrabold leading-none text-brand-orange-bright sm:text-6xl">
-              01
-            </span>
-            <span className="text-lg font-semibold text-white/45">/ 0{chapters.length}</span>
-          </div>
-
-          {/* Captions */}
-          <div className="relative min-h-[180px] max-w-2xl">
-            {chapters.map((c) => (
-              <div key={c.id} className="story-caption absolute inset-0">
-                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-orange-bright">
-                  {c.eyebrow}
-                </p>
-                <h3 className="mt-3 text-h1 font-extrabold text-white">{c.title}</h3>
-                <p className="mt-4 max-w-xl text-lead text-white/80">{c.copy}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Hand-drawn route progress track */}
-          <div className="relative mt-6 h-10 w-full text-brand-orange-bright">
-            <div className="absolute inset-x-0 top-1/2 h-6 -translate-y-1/2 opacity-45">
-              <RoughSketch
-                ops={ROUTE_OPS}
-                viewBox="0 0 1200 28"
-                preserve="none"
-                strokeWidth={1.6}
-                roughness={1.3}
-                bowing={1.4}
-                seed={7}
-                trigger="mount"
-                draw
-                drawDuration={1500}
-                boil={false}
-                className="h-full w-full overflow-visible"
-              />
-            </div>
-            <div
-              className="story-marker absolute top-1/2 h-8 w-9 -translate-x-1/2 -translate-y-1/2"
-              style={{ left: "2%" }}
-            >
-              <RoughSketch
-                ops={PLANE_OPS}
-                viewBox="0 0 90 80"
-                strokeWidth={1.4}
-                roughness={0.8}
-                bowing={0.6}
-                seed={3}
-                trigger="mount"
-                draw
-                drawDuration={500}
-                boil={false}
-                className="h-full w-full overflow-visible"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="absolute right-6 top-1/2 z-20 hidden -translate-y-1/2 flex-col items-center gap-2 lg:flex">
-        {chapters.map((c, i) => (
-          <span
+      {storyChapters.map((c, i) => {
+        const Comp = LAYOUTS[c.layout];
+        return (
+          <div
             key={c.id}
-            className="story-rail-dot w-1 rounded-full transition-all duration-300 ease-premium"
-            style={{
-              height: i === 0 ? "2rem" : "0.75rem",
-              backgroundColor: i === 0 ? ORANGE : "rgba(255,255,255,0.25)",
-            }}
-            aria-hidden="true"
-          />
-        ))}
-      </div>
+            className={cn(
+              "story-panel absolute inset-0 overflow-hidden",
+              i === 0 ? "z-[1]" : "z-0"
+            )}
+            style={{ zIndex: i === active ? 2 : 1 }}
+            aria-hidden={i !== active}
+          >
+            <Comp chapter={c} active={i === active} />
+          </div>
+        );
+      })}
+
+      <ChapterRail
+        chapters={storyChapters}
+        active={active}
+        onSelect={scrollToChapter}
+      />
+      <ScrollHint
+        step={stepLabel}
+        total={total}
+        progress={(active + 1) / total}
+      />
+      <ChapterCounter step={stepLabel} total={total} />
     </section>
   );
 }

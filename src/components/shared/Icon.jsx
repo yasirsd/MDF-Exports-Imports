@@ -16,6 +16,10 @@ import {
   BadgeCheck,
   Leaf,
   HelpCircle,
+  Ruler,
+  Palette,
+  Droplets,
+  Clock,
 } from "lucide-react";
 
 const registry = {
@@ -35,6 +39,10 @@ const registry = {
   ShieldCheck,
   BadgeCheck,
   Leaf,
+  Ruler,
+  Palette,
+  Droplets,
+  Clock,
 };
 
 /** Resolve a lucide icon by name, with a safe fallback. */

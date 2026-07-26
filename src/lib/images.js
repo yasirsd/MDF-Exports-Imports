@@ -34,7 +34,8 @@ export function unsplashLQ(id) {
 export const scenes = {
   farmSunrise: "1500382017468-9049fed747ef", // green fields at sunrise
   farmField: "1523348837708-15d4a09cfac2", // agriculture rows
-  farmer: "1592982537447-7440770cbfc9", // farmer in field
+  farmer: "1605673349798-5580680c4dea", // grower with harvest tray (sharp close portrait)
+  growerPortrait: "1626906722163-bd4c03cb3b9b", // harvest workers close-up
   harvest: "1471193945509-9ad0617afabf", // harvest baskets
   packaging: "1607349913338-fca6f7fc42d0", // packing produce
   containerShip: "1494412574643-ff11b0a5c1c3", // container ship

@@ -1,9 +1,9 @@
-import { productImages } from "@/lib/images";
+import { productImages, scenes } from "@/lib/images";
 
 /** Primary navigation links (anchor targets). */
 export const navLinks = [
   { label: "Products", href: "#products" },
-  { label: "Story", href: "#about" },
+  { label: "Story", href: "#story" },
   { label: "Process", href: "#process" },
   { label: "Markets", href: "#markets" },
   { label: "Contact", href: "#contact" },
@@ -111,6 +111,128 @@ export const testimonials = [
   { quote: "Their cold chain discipline is exceptional — produce arrives as fresh as the day it was picked.", name: "Khalid Rahman", role: "Distribution Head", location: "Riyadh, Saudi Arabia", flag: "🇸🇦" },
   { quote: "Four decades of experience shows. Documentation, grading and communication are all flawless.", name: "Yusuf Hassan", role: "Wholesale Buyer", location: "Doha, Qatar", flag: "🇶🇦" },
   { quote: "A rare supplier that treats every consignment like their own reputation depends on it.", name: "Salim Al-Balushi", role: "Retail Chain Buyer", location: "Muscat, Oman", flag: "🇴🇲" },
+];
+
+/**
+ * Cinematic Storytelling chapters (Ismail-style scrollytelling).
+ * Each chapter has a unique layout key rendered by a dedicated component.
+ */
+export const storyChapters = [
+  {
+    id: "origin",
+    layout: "scrapbook",
+    step: "01",
+    rail: "The Origin",
+    pill: "CHAPTER 01 · ANDHRA PRADESH",
+    eyebrow: "The Origin",
+    title: "Freshness begins at the farm.",
+    copy: "Rooted in Andhra Pradesh, across a thousand-strong network of trusted partner farms where every harvest starts with the land.",
+    year: "1984",
+    yearCaption: "THE YEAR THE JOURNEY BEGAN",
+    image: scenes.farmField,
+    scrapLabel: "FARM LOG",
+    scrapMeta: "EST. ORIGIN",
+    location: "Andhra Pradesh, India",
+    doodle: "sprout",
+  },
+  {
+    id: "people",
+    layout: "quote",
+    step: "02",
+    rail: "The People",
+    pill: "CHAPTER 02 · THE GROWERS",
+    eyebrow: "The People",
+    title: "Grown by hands we trust.",
+    copy: "Four decades of relationships with the farmers who know the soil, the season, and the standard — long before a crate is packed.",
+    quote: "The land remembers every season. So do we.",
+    quoteAttr: "Partner grower network",
+    image: scenes.farmer,
+    portrait: scenes.growerPortrait,
+    scrapLabel: "GROWER CARD",
+    scrapMeta: "Trusted since day one",
+    location: "Partner farms · Andhra Pradesh",
+    doodle: "sprout",
+    counters: [
+      { end: 40, suffix: "+", label: "Years of trust", icon: "Award" },
+      { end: 1000, suffix: "+", label: "Partner farms", icon: "Sprout" },
+    ],
+  },
+  {
+    id: "harvest",
+    layout: "circleGrid",
+    step: "03",
+    rail: "The Harvest",
+    pill: "CHAPTER 03 · PEAK RIPENESS",
+    eyebrow: "How export-grade produce is chosen",
+    title: "Picked at peak ripeness.",
+    copy: "Selected by size, colour and sweetness — never before its time. Every lot earns its place in the consignment.",
+    giantWord: "FRESH",
+    image: scenes.harvest,
+    features: [
+      { n: "01", title: "Size", desc: "Uniform grading for pack-out and stable stacking at sea.", icon: "Ruler" },
+      { n: "02", title: "Colour", desc: "Peak visual maturity checked under natural light.", icon: "Palette" },
+      { n: "03", title: "Sweetness", desc: "Brix sampled at intake — never before its time.", icon: "Droplets" },
+      { n: "04", title: "Grade", desc: "Export-only selection. Domestic grades stay home.", icon: "BadgeCheck" },
+    ],
+    doodle: "basket",
+  },
+  {
+    id: "care",
+    layout: "dual",
+    step: "04",
+    rail: "The Care",
+    pill: "CHAPTER 04 · PACKHOUSE",
+    eyebrow: "The Care",
+    title: "Packed to export standards.",
+    copy: "Ventilated, branded, protective packaging built for the journey — so freshness survives the miles.",
+    imagePrimary: scenes.packaging,
+    imageSecondary: scenes.crates,
+    chips: ["Ventilated crates", "Private label ready", "APEDA aligned"],
+    overlayQuote: "Protect the produce. Protect the reputation.",
+    processSteps: [
+      { n: "01", title: "Sort", desc: "Grade & reject" },
+      { n: "02", title: "Pack", desc: "Ventilated crate" },
+      { n: "03", title: "Seal", desc: "Label & lot ID" },
+    ],
+    doodle: "crate",
+  },
+  {
+    id: "journey",
+    layout: "routeMap",
+    step: "05",
+    rail: "The Journey",
+    pill: "CHAPTER 05 · COLD CHAIN",
+    eyebrow: "The Journey",
+    title: "Shipped across the seas.",
+    copy: "An unbroken cold chain from our packhouse to your port — reefer discipline, documentation, and trusted lanes.",
+    image: scenes.containerShip,
+    tempBadge: "0°–5°C",
+    stats: [
+      { value: "0°–5°C", label: "Reefer range", icon: "Snowflake" },
+      { value: "GCC", label: "Active lanes", icon: "Ship" },
+      { value: "24/7", label: "Chain watch", icon: "Clock" },
+    ],
+    timeline: [
+      { n: "01", title: "Farm", desc: "Harvest cool" },
+      { n: "02", title: "Packhouse", desc: "Pre-cool & pack" },
+      { n: "03", title: "Port", desc: "Reefer load" },
+      { n: "04", title: "Sea", desc: "Temp locked" },
+      { n: "05", title: "Gulf", desc: "Cleared fresh" },
+    ],
+    doodle: "ship",
+  },
+  {
+    id: "arrival",
+    layout: "world",
+    step: "06",
+    rail: "The Arrival",
+    pill: "CHAPTER 06 · BEYOND BORDERS",
+    eyebrow: "Beyond Borders",
+    title: "Delivered to the world.",
+    copy: "Fresh in Dubai, the Gulf, and soon — Europe. The same care that starts on the farm arrives at your door.",
+    image: scenes.dubai,
+    doodle: "stamp",
+  },
 ];
 
 /** Frequently asked questions. */
