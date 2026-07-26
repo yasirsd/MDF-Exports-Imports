@@ -21,14 +21,15 @@
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
 
     <script>
-      // Prevent theme flash: apply saved/system theme before paint.
+      // Prevent theme flash: dark is the brand default unless the user saved a preference.
       (function () {
         try {
           var stored = localStorage.getItem("mdf-theme") || localStorage.getItem("ut-theme");
-          var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-          var isDark = stored ? stored === "dark" : prefersDark;
+          var isDark = stored ? stored === "dark" : true;
           document.documentElement.classList.toggle("dark", isDark);
-        } catch (e) {}
+        } catch (e) {
+          document.documentElement.classList.add("dark");
+        }
       })();
     </script>
   </head>

@@ -2,10 +2,11 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 const STORAGE_KEY = "mdf-theme";
 const LEGACY_STORAGE_KEY = "ut-theme";
-const ThemeContext = createContext({ theme: "light", setTheme: () => {}, toggleTheme: () => {} });
+const ThemeContext = createContext({ theme: "dark", setTheme: () => {}, toggleTheme: () => {} });
 
 function getInitialTheme() {
-  if (typeof window === "undefined") return "light";
+  // Brand default: black / dark appearance.
+  if (typeof window === "undefined") return "dark";
   try {
     const stored =
       localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
@@ -13,7 +14,7 @@ function getInitialTheme() {
   } catch (e) {
     /* ignore */
   }
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return "dark";
 }
 
 export function ThemeProvider({ children }) {

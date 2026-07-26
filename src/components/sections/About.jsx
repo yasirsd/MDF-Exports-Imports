@@ -16,6 +16,7 @@ export function About() {
   const sectionRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [unlocked, setUnlocked] = useState(() => new Set([0]));
+  const [sectionInView, setSectionInView] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -34,6 +35,19 @@ export function About() {
     }
     return progress.on("change", (v) => setProgressValue(v));
   }, [progress, reduced]);
+
+  // Mobile year strip is position:fixed — only show while Our Story is on screen.
+  useEffect(() => {
+    const root = sectionRef.current;
+    if (!root) return undefined;
+
+    const io = new IntersectionObserver(
+      ([entry]) => setSectionInView(entry.isIntersecting && entry.intersectionRatio > 0.05),
+      { threshold: [0, 0.05, 0.12, 0.25], rootMargin: "-8% 0px -12% 0px" }
+    );
+    io.observe(root);
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     const root = sectionRef.current;
@@ -143,13 +157,22 @@ export function About() {
           />
         </aside>
 
-        {/* Mobile compact year strip */}
-        <div className="fixed bottom-20 left-1/2 z-30 flex -translate-x-1/2 gap-1.5 rounded-full border border-white/15 bg-black/70 px-2 py-1.5 backdrop-blur-xl sm:hidden">
+        {/* Mobile year strip — fixed, but only while #about is in view */}
+        <div
+          className={[
+            "fixed bottom-20 left-1/2 z-30 flex -translate-x-1/2 gap-1.5 rounded-full border border-white/15 bg-black/70 px-2 py-1.5 backdrop-blur-xl transition-[opacity,visibility,transform] duration-300 sm:hidden",
+            sectionInView
+              ? "pointer-events-auto visible translate-y-0 opacity-100"
+              : "pointer-events-none invisible translate-y-3 opacity-0",
+          ].join(" ")}
+          aria-hidden={!sectionInView}
+        >
           {milestones.map((m, i) => (
             <button
               key={m.id}
               type="button"
               onClick={() => scrollToMilestone(i)}
+              tabIndex={sectionInView ? 0 : -1}
               className={cnYear(activeIndex === i)}
               aria-label={m.year}
             >
