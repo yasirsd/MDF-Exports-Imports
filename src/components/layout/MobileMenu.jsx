@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { navLinks } from "@/lib/constants";
-import { site } from "@/lib/config";
+import { brandHello, site } from "@/lib/config";
 import { whatsappUrl } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
@@ -102,7 +102,7 @@ export function MobileMenu({ open, onOpenChange, onNavigate }) {
           </div>
           <Button asChild variant="primary" size="lg" className="w-full">
             <a
-              href={whatsappUrl(site.whatsapp, "Hello Universal Traders, I'd like to start importing.")}
+              href={whatsappUrl(site.whatsapp, brandHello("I'd like to start importing."))}
               target="_blank"
               rel="noopener noreferrer"
             >

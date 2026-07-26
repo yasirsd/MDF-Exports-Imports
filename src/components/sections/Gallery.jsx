@@ -72,7 +72,7 @@ export function Gallery() {
                 srcSet={unsplashSrcSet(img)}
                 sizes="(min-width:768px) 25vw, 50vw"
                 lqip={unsplashLQ(img)}
-                alt={captions[i] || "Universal Traders export gallery"}
+                alt={captions[i] || "MDF Exports & Imports export gallery"}
                 fallbackLabel={captions[i]}
                 className="h-full w-full"
                 imgClassName="transition-transform duration-1200 ease-premium group-hover:scale-110"

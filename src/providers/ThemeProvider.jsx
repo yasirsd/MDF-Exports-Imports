@@ -1,12 +1,14 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-const STORAGE_KEY = "ut-theme";
+const STORAGE_KEY = "mdf-theme";
+const LEGACY_STORAGE_KEY = "ut-theme";
 const ThemeContext = createContext({ theme: "light", setTheme: () => {}, toggleTheme: () => {} });
 
 function getInitialTheme() {
   if (typeof window === "undefined") return "light";
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored =
+      localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
     if (stored === "light" || stored === "dark") return stored;
   } catch (e) {
     /* ignore */

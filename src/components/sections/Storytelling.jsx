@@ -141,12 +141,20 @@ export function Storytelling() {
         );
     };
 
+    const armExitingGuard = (ms = 600) => {
+      exiting = true;
+      clearTimeout(exitTimer);
+      exitTimer = setTimeout(() => {
+        exiting = false;
+      }, ms);
+    };
+
     const lockPageScroll = () => {
       const y = pinST ? pinST.start + 1 : window.scrollY;
       const lenisInst = getLenis();
       if (lenisInst) {
         lenisInst.stop();
-        lenisInst.scrollTo(y, { immediate: true });
+        lenisInst.scrollTo(y, { immediate: true, force: true });
       } else {
         window.scrollTo(0, y);
       }
@@ -158,25 +166,44 @@ export function Storytelling() {
       getLenis()?.start();
     };
 
+    /** Navbar / programmatic scroll — release Observer + Lenis without paging chapters. */
+    const releaseStoryScroll = (event) => {
+      const navTarget = event?.detail?.target;
+      const goingToStory =
+        navTarget === "#story" || navTarget === "story";
+
+      if (intentObserver?.isEnabled) intentObserver.disable();
+      unlockPageScroll();
+
+      if (goingToStory) {
+        // Do not arm the exiting guard — allow chapter mode to (re)lock.
+        clearTimeout(exitTimer);
+        exiting = false;
+        requestAnimationFrame(() => {
+          if (!pinST || intentObserver?.isEnabled) return;
+          enterStory(false);
+        });
+        return;
+      }
+
+      // Passing through / leaving Story — block onEnter from re-trapping mid-scroll.
+      armExitingGuard(600);
+    };
+
     const exitStory = (direction) => {
       if (!pinST || !intentObserver || exiting) return;
-      exiting = true;
       intentObserver.disable();
       unlockPageScroll();
+      armExitingGuard(450);
 
       const target =
         direction === "down" ? pinST.end + 8 : Math.max(0, pinST.start - 8);
 
       requestAnimationFrame(() => {
         const lenisInst = getLenis();
-        if (lenisInst) lenisInst.scrollTo(target, { immediate: true });
+        if (lenisInst) lenisInst.scrollTo(target, { immediate: true, force: true });
         else window.scrollTo(0, target);
       });
-
-      clearTimeout(exitTimer);
-      exitTimer = setTimeout(() => {
-        exiting = false;
-      }, 450);
     };
 
     const goNext = () => {
@@ -242,8 +269,11 @@ export function Storytelling() {
       goTo: (i) => {
         if (!intentObserver?.isEnabled && pinST) {
           const lenisInst = getLenis();
-          if (lenisInst) lenisInst.scrollTo(pinST.start + 1, { immediate: true });
-          else window.scrollTo(0, pinST.start + 1);
+          if (lenisInst) {
+            lenisInst.scrollTo(pinST.start + 1, { immediate: true, force: true });
+          } else {
+            window.scrollTo(0, pinST.start + 1);
+          }
           enterStory(false);
         }
         setChapter(i);
@@ -251,11 +281,14 @@ export function Storytelling() {
     };
 
     const refresh = () => ScrollTrigger.refresh();
+    const onReleaseStory = (event) => releaseStoryScroll(event);
     window.addEventListener("ut:media-loaded", refresh);
+    window.addEventListener("ut:release-story-scroll", onReleaseStory);
 
     return () => {
       clearTimeout(exitTimer);
       window.removeEventListener("ut:media-loaded", refresh);
+      window.removeEventListener("ut:release-story-scroll", onReleaseStory);
       apiRef.current = null;
       intentObserver?.kill();
       unlockPageScroll();

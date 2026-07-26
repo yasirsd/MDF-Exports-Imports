@@ -11,7 +11,7 @@ import { WorldRoutes } from "@/components/sections/hero/WorldRoutes";
 import { HeroSketch } from "@/components/sections/hero/HeroSketch";
 import { scenes, unsplash, unsplashLQ, unsplashSrcSet } from "@/lib/images";
 import { certifications, exportDestinations } from "@/lib/constants";
-import { site } from "@/lib/config";
+import { brandHello, site } from "@/lib/config";
 import { whatsappUrl } from "@/lib/utils";
 
 const easePremium = [0.16, 1, 0.3, 1];
@@ -148,7 +148,7 @@ export function Hero() {
                   wrapperClassName="w-full xs:w-auto"
                 >
                   <a
-                    href={whatsappUrl(site.whatsapp, "Hello Universal Traders, I'd like to start importing.")}
+                    href={whatsappUrl(site.whatsapp, brandHello("I'd like to start importing."))}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -237,7 +237,7 @@ export function Hero() {
                 </div>
               </motion.div>
 
-              {/* Produce inset — keeps the freshness identity */}
+              {/* Produce inset â keeps the freshness identity */}
               <div className="absolute -bottom-6 -left-6 z-20 w-36 overflow-hidden rounded-2xl border-2 border-white/20 shadow-soft-lg">
                 <div className="relative aspect-[4/3] w-full">
                   <LazyImage

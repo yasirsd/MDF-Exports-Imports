@@ -1,122 +1,110 @@
-import { memo, useMemo, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { ArrowUpRight } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Container } from "@/components/shared/Container";
 import { SectionHeading } from "@/components/shared/SectionHeading";
-import { TiltCard } from "@/components/shared/TiltCard";
-import { Marquee } from "@/components/shared/Marquee";
-import { LazyImage } from "@/components/shared/LazyImage";
-import { Badge } from "@/components/ui/badge";
-import { products, productCategories } from "@/lib/constants";
-import { unsplash, unsplashLQ, unsplashSrcSet } from "@/lib/images";
-import { fadeUp, viewportOnce } from "@/lib/motion";
-import { cn } from "@/lib/utils";
+import { ProductCard } from "@/components/sections/products/ProductCard";
+import { ProductDrawer } from "@/components/sections/products/ProductDrawer";
+import { ProductFeatured } from "@/components/sections/products/ProductFeatured";
+import { ProductFilters } from "@/components/sections/products/ProductFilters";
+import { ProductProof } from "@/components/sections/products/ProductProof";
+import {
+  defaultProductCategory,
+  getFeaturedProduct,
+  getProductCategoryCounts,
+  getProductsByCategory,
+  productCategories,
+} from "@/lib/constants";
 
-const ProductCard = memo(function ProductCard({ product }) {
-  return (
-    <motion.div layout variants={fadeUp} className="h-full">
-      <TiltCard className="group h-full rounded-3xl" max={6}>
-        <article className="flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-soft transition-shadow duration-500 ease-premium hover:shadow-soft-lg">
-          <div className="relative aspect-[4/5] overflow-hidden">
-            <LazyImage
-              src={unsplash(product.image, 800)}
-              srcSet={unsplashSrcSet(product.image)}
-              sizes="(min-width:1280px) 25vw, (min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
-              lqip={unsplashLQ(product.image)}
-              alt={`${product.name} — export quality`}
-              fallbackLabel={product.name}
-              className="h-full w-full"
-              imgClassName="transition-transform duration-900 ease-premium group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" aria-hidden="true" />
-            <div className="absolute left-4 top-4">
-              <Badge variant="glass" className="text-white">{product.category}</Badge>
-            </div>
-            <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-4">
-              <h3 className="text-xl font-extrabold text-white drop-shadow">{product.name}</h3>
-              <span className="grid h-9 w-9 translate-y-2 place-items-center rounded-full bg-white/90 text-[#111] opacity-0 transition-all duration-500 ease-premium group-hover:translate-y-0 group-hover:opacity-100">
-                <ArrowUpRight className="h-4 w-4" />
-              </span>
-            </div>
-          </div>
-          <p className="p-5 text-sm text-muted-foreground">{product.blurb}</p>
-        </article>
-      </TiltCard>
-    </motion.div>
-  );
-});
-
+/**
+ * Export catalogue — featured stage, category rail, index + spec drawer.
+ * Commercial heart of the site after Storytelling.
+ */
 export function Products() {
-  const [active, setActive] = useState("All");
+  const [active, setActive] = useState(defaultProductCategory);
+  const [selected, setSelected] = useState(null);
 
-  const filtered = useMemo(
-    () => (active === "All" ? products : products.filter((p) => p.category === active)),
-    [active]
-  );
+  const counts = useMemo(() => getProductCategoryCounts(), []);
+  const filtered = useMemo(() => getProductsByCategory(active), [active]);
+  const featured = useMemo(() => getFeaturedProduct(active), [active]);
+
+  const resultLabel = useMemo(() => {
+    const n = filtered.length;
+    return `Showing ${n} ${active.toLowerCase()}`;
+  }, [active, filtered.length]);
+
+  const openProduct = (product) => setSelected(product);
+  const drawerOpen = Boolean(selected);
 
   return (
     <section id="products" className="section-py relative bg-background">
-      <Container>
+      {/* Soft atmospheric bridge from Story */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-[28rem] bg-[radial-gradient(ellipse_at_20%_0%,rgba(255,122,26,0.08),transparent_55%)]"
+        aria-hidden="true"
+      />
+
+      <Container className="relative">
         <SectionHeading
           contained={false}
           eyebrow="The Catalogue"
-          title="Export-grade produce, hand-selected."
-          description="Premium fruits, vegetables and spices — sourced at peak freshness and graded to international standards."
+          title="Export-ready produce, graded for the journey."
+          description="Premium fruits, vegetables and spices — sourced at peak freshness, packed to international standards, and ready for Gulf programmes."
         />
 
-        <div className="mt-10 flex flex-wrap gap-2" role="tablist" aria-label="Filter products by category">
-          {productCategories.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              role="tab"
-              aria-selected={active === cat}
-              onClick={() => setActive(cat)}
-              className={cn(
-                "rounded-full border px-5 py-2.5 text-sm font-semibold transition-all duration-300 ease-premium",
-                active === cat
-                  ? "border-brand-red bg-brand-red text-white shadow-soft"
-                  : "border-border bg-surface text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {cat}
-            </button>
-          ))}
+        <div className="mt-10 lg:mt-12">
+          <ProductFeatured product={featured} onViewSpecs={openProduct} />
         </div>
 
-        <motion.div
-          layout
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOnce}
-          className="mt-10 grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4"
+        <div className="mt-12 md:mt-14">
+          <ProductFilters
+            categories={productCategories}
+            counts={counts}
+            active={active}
+            onChange={setActive}
+            resultLabel={resultLabel}
+          />
+        </div>
+
+        <div
+          id="product-catalogue-panel"
+          role="tabpanel"
+          aria-labelledby={`product-tab-${active.toLowerCase()}`}
+          className="mt-8"
         >
-          <AnimatePresence mode="popLayout">
-            {filtered.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </AnimatePresence>
-        </motion.div>
+          {filtered.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-border bg-surface px-6 py-16 text-center">
+              <p className="text-base font-semibold text-foreground">No products in this category yet.</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Try another filter or enquire for a custom assortment.
+              </p>
+            </div>
+          ) : (
+            <div
+              key={active}
+              className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4"
+            >
+              {filtered.map((product, i) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onOpen={openProduct}
+                  eager={i < 4}
+                  index={i}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </Container>
 
-      <div className="mt-16 border-y border-border/60 bg-surface/40 py-5 md:mt-20">
-        <Marquee itemClassName="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          {[
-            "Farm Fresh",
-            "Export Grade",
-            "Cold Chain Verified",
-            "Global Logistics",
-            "Peak-Season Sourcing",
-            "International Standards",
-            "40+ Years of Trust",
-          ].map((word) => (
-            <span key={word} className="flex items-center gap-8">
-              <span>{word}</span>
-              <span className="text-brand-gold">◆</span>
-            </span>
-          ))}
-        </Marquee>
-      </div>
+      <ProductProof />
+
+      <ProductDrawer
+        product={selected}
+        open={drawerOpen}
+        onOpenChange={(open) => {
+          if (!open) setSelected(null);
+        }}
+      />
     </section>
   );
 }

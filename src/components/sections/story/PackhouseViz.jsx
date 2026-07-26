@@ -153,7 +153,7 @@ export function PackhouseViz({ active = false, className }) {
               fill="rgba(255,122,26,0.15)"
             />
             <text x="20" y="43" fill="#ff9a40" fontSize="11" fontWeight="800">
-              UT CRATE
+              MDF CRATE
             </text>
             {/* Produce dots inside */}
             {[

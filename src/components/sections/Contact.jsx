@@ -4,7 +4,7 @@ import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from "lucide-react";
 import { Container } from "@/components/shared/Container";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Button } from "@/components/ui/button";
-import { site } from "@/lib/config";
+import { brandHello, site } from "@/lib/config";
 import { whatsappUrl } from "@/lib/utils";
 import { products } from "@/lib/constants";
 import { fadeUp, viewportOnce } from "@/lib/motion";
@@ -41,7 +41,7 @@ export function Contact() {
 
   const buildMessage = () => {
     const lines = [
-      "Hello Universal Traders, I'd like to enquire about exporting.",
+      brandHello("I'd like to enquire about exporting."),
       "",
       form.name && `Name: ${form.name}`,
       form.company && `Company: ${form.company}`,
@@ -87,7 +87,7 @@ export function Contact() {
             </div>
 
             <a
-              href={whatsappUrl(site.whatsapp, "Hello Universal Traders, I'd like to start importing.")}
+              href={whatsappUrl(site.whatsapp, brandHello("I'd like to start importing."))}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center justify-between rounded-3xl bg-success p-6 text-white shadow-soft transition-transform hover:scale-[1.01]"
@@ -150,7 +150,7 @@ export function Contact() {
             </div>
             <div>
               <label htmlFor="message" className="mb-1.5 block text-sm font-medium">Requirement details</label>
-              <textarea id="message" name="message" rows={4} value={form.message} onChange={update("message")} className={cn(inputCls, "resize-none")} placeholder="Volumes, destination port, timelines…" />
+              <textarea id="message" name="message" rows={4} value={form.message} onChange={update("message")} className={cn(inputCls, "resize-none")} placeholder="Volumes, destination port, timelinesâ¦" />
             </div>
 
             <Button type="submit" variant="primary" size="lg" className="mt-2 w-full">

@@ -12,36 +12,31 @@ const Globe = lazy(() => import("@/components/sections/globe/Globe"));
 function GlobeFallback() {
   return (
     <div className="grid h-full w-full place-items-center">
-      <div className="relative h-56 w-56">
-        <div className="absolute inset-0 animate-[spin_12s_linear_infinite] rounded-full border border-brand-red/30" />
-        <div className="absolute inset-4 animate-[spin_9s_linear_infinite_reverse] rounded-full border border-brand-gold/30" />
-        <div className="absolute inset-0 grid place-items-center">
-          <span className="text-sm font-medium text-muted-foreground">Loading globe…</span>
-        </div>
-      </div>
+      <span className="text-sm font-medium text-muted-foreground">Loading globe…</span>
     </div>
   );
 }
 
-/** Static Earth used when reduced motion is preferred. */
+/** Static Earth used when reduced motion is preferred — no circular frame. */
 function StaticGlobe() {
   return (
     <div className="grid h-full w-full place-items-center">
-      <div className="relative aspect-square w-full max-w-sm overflow-hidden rounded-full border border-border shadow-soft-lg">
+      <div className="relative aspect-square w-full max-w-md overflow-visible">
         <img
           src="/textures/earth-blue-marble.jpg"
-          alt="World map highlighting Universal Traders export markets"
+          alt="World map highlighting MDF Exports & Imports export markets"
           loading="lazy"
           decoding="async"
-          className="h-full w-full scale-[1.4] object-cover"
-          style={{ objectPosition: "62% 42%" }}
+          className="h-full w-full scale-[1.15] object-cover"
+          style={{
+            objectPosition: "62% 42%",
+            WebkitMaskImage:
+              "radial-gradient(circle at 50% 50%, #000 58%, transparent 72%)",
+            maskImage:
+              "radial-gradient(circle at 50% 50%, #000 58%, transparent 72%)",
+          }}
         />
-        <div
-          className="absolute inset-0"
-          style={{ background: "radial-gradient(circle at 50% 45%, transparent 55%, rgba(0,0,0,0.45) 100%)" }}
-          aria-hidden="true"
-        />
-        <span className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-gold shadow-glow ring-4 ring-brand-gold/25" />
+        <span className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-gold shadow-[0_0_12px_rgba(253,197,0,0.55)]" />
       </div>
     </div>
   );
@@ -51,20 +46,20 @@ export function WorldMap() {
   const prefersReduced = usePrefersReducedMotion();
 
   return (
-    <section id="markets" className="section-py relative overflow-hidden bg-background">
-      <Container>
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
+    <section id="markets" className="section-py relative overflow-x-clip bg-background">
+      <Container className="relative z-[1]">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-6 xl:gap-10">
+          <div className="relative z-[2]">
             <SectionHeading
               contained={false}
               eyebrow="Global Reach"
               title="From Andhra Pradesh to the world."
-              description="India highlighted at the origin, with live shipping lanes to the Gulf and Europe glowing on the horizon."
+              description="India highlighted at the origin, with live shipping lanes to the Gulf — and future lanes across Africa, the Americas, Asia-Pacific, and Europe."
             />
             <div className="mt-8 flex flex-wrap gap-2">
               <Badge variant="gold">Origin · {origin.name}</Badge>
               <Badge variant="success">Active · Gulf markets</Badge>
-              <Badge variant="gold">Future · Europe</Badge>
+              <Badge variant="gold">Future · Global expansion</Badge>
             </div>
 
             <motion.ul
@@ -85,8 +80,8 @@ export function WorldMap() {
                       m === origin
                         ? "h-2 w-2 shrink-0 rounded-full bg-brand-gold"
                         : m.status === "future"
-                        ? "h-2 w-2 shrink-0 rounded-full bg-brand-gold"
-                        : "h-2 w-2 shrink-0 rounded-full bg-success"
+                          ? "h-2 w-2 shrink-0 rounded-full bg-brand-gold"
+                          : "h-2 w-2 shrink-0 rounded-full bg-success"
                     }
                     aria-hidden="true"
                   />
@@ -96,12 +91,8 @@ export function WorldMap() {
             </motion.ul>
           </div>
 
-          <div className="relative aspect-square w-full">
-            <div
-              className="pointer-events-none absolute inset-0 -z-10 rounded-full opacity-60 blur-3xl"
-              style={{ background: "radial-gradient(circle at 50% 45%, rgba(239,35,60,0.25), transparent 60%)" }}
-              aria-hidden="true"
-            />
+          {/* Globe stage — open edges, no circular crop / red halo */}
+          <div className="relative z-[1] -mx-4 h-[min(88vw,34rem)] sm:-mx-6 sm:h-[min(80vw,38rem)] lg:mx-0 lg:-mr-10 lg:h-[min(52vw,42rem)] xl:-mr-16">
             {prefersReduced ? (
               <StaticGlobe />
             ) : (

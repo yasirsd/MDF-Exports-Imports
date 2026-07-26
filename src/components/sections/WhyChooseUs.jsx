@@ -24,7 +24,7 @@ export function WhyChooseUs() {
           contained={false}
           align="center"
           annotate
-          eyebrow="Why Universal Traders"
+          eyebrow="Why MDF"
           title="Built for importers who expect more."
           description="Every consignment is backed by four decades of discipline — from farm to destination port."
         />

@@ -74,8 +74,23 @@ export function useLenis() {
 export function useScrollTo() {
   const lenis = useLenis();
   return (target, options = {}) => {
+    // Storytelling locks Lenis + Observer; release before any nav scroll.
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("ut:release-story-scroll", {
+          detail: { target },
+        })
+      );
+    }
+
     if (lenis) {
-      lenis.scrollTo(target, { offset: -80, duration: 1.2, ...options });
+      lenis.start();
+      lenis.scrollTo(target, {
+        offset: -80,
+        duration: 1.2,
+        force: true,
+        ...options,
+      });
     } else if (typeof target === "string") {
       const el = document.querySelector(target);
       el?.scrollIntoView({ behavior: "smooth", block: "start" });

@@ -16,10 +16,10 @@ export function Footer() {
       <Container className="py-16 md:py-20">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
-            <Logo />
-            <p className="mt-5 max-w-sm text-lead text-muted-foreground">{site.tagline}</p>
+            <Logo size="footer" />
+            <p className="mt-6 max-w-md text-lead text-muted-foreground">{site.tagline}</p>
             <p className="mt-2 text-sm text-muted-foreground">
-              A {site.parent} company · {site.experience} · {site.location}
+              Rooted in {site.heritage} · {site.experience} · {site.location}
             </p>
             <div className="mt-6 flex gap-2">
               {site.socials.map((social) => {

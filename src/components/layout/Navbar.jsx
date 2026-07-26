@@ -7,7 +7,7 @@ import { Logo } from "@/components/layout/Logo";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { navLinks } from "@/lib/constants";
-import { site } from "@/lib/config";
+import { brandHello, site } from "@/lib/config";
 import { useScrollTo } from "@/providers/SmoothScrollProvider";
 import { whatsappUrl } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -43,13 +43,13 @@ export function Navbar() {
           <nav
             aria-label="Primary"
             className={cn(
-              "flex items-center justify-between rounded-full px-4 py-2.5 transition-all duration-500 ease-premium sm:px-5",
+              "flex items-center justify-between gap-3 rounded-full px-4 py-2 transition-all duration-500 ease-premium sm:gap-4 sm:px-5 sm:py-2.5",
               scrolled
                 ? "glass shadow-soft"
                 : "border border-transparent bg-transparent"
             )}
           >
-            <Logo onClick={(e) => handleNav(e, "#top")} inverted={!scrolled} />
+            <Logo size="nav" onClick={(e) => handleNav(e, "#top")} inverted={!scrolled} />
 
             <ul className="hidden items-center gap-1 lg:flex">
               {navLinks.map((link) => (
@@ -84,7 +84,7 @@ export function Navbar() {
                 className="hidden sm:inline-flex"
               >
                 <a
-                  href={whatsappUrl(site.whatsapp, "Hello Universal Traders, I'd like to start importing.")}
+                  href={whatsappUrl(site.whatsapp, brandHello("I'd like to start importing."))}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

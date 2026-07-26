@@ -124,7 +124,7 @@ export function WorldRoutes({ reduced = false }) {
         {failed ? (
           <img
             src={FALLBACK_SRC}
-            alt="World map of Universal Traders export routes"
+            alt="World map of MDF Exports & Imports export routes"
             className="absolute inset-0 h-full w-full object-cover opacity-40"
             loading="lazy"
             decoding="async"

@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { MessageCircle } from "lucide-react";
 import { faqs } from "@/lib/constants";
-import { site } from "@/lib/config";
+import { brandHello, site } from "@/lib/config";
 import { whatsappUrl } from "@/lib/utils";
 import { fadeUp, viewportOnce } from "@/lib/motion";
 
@@ -43,7 +43,7 @@ export function FAQ() {
           <p className="text-muted-foreground">Our export team is a message away.</p>
           <Button asChild variant="primary" size="lg">
             <a
-              href={whatsappUrl(site.whatsapp, "Hello Universal Traders, I have a question about exporting.")}
+              href={whatsappUrl(site.whatsapp, brandHello("I have a question about exporting."))}
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { MessageCircle, ArrowUp } from "lucide-react";
-import { site } from "@/lib/config";
+import { brandHello, site } from "@/lib/config";
 import { whatsappUrl } from "@/lib/utils";
 import { useScrollTo } from "@/providers/SmoothScrollProvider";
 
@@ -28,7 +28,7 @@ export function FloatingActions() {
       </motion.button>
 
       <motion.a
-        href={whatsappUrl(site.whatsapp, "Hello Universal Traders, I have an export enquiry.")}
+        href={whatsappUrl(site.whatsapp, brandHello("I have an export enquiry."))}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"

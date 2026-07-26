@@ -1,9 +1,9 @@
 {
-  "name": "universal-traders",
+  "name": "mdf-exports-imports",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Universal Traders — premium agricultural export company website.",
+  "description": "MDF Exports & Imports — premium agricultural export company website.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

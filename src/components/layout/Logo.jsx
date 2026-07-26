@@ -1,45 +1,59 @@
 import { site } from "@/lib/config";
+import { useTheme } from "@/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
+/** Dark-coloured mark — use on light backgrounds */
+import logoDarkMark from "@/images/DarkPNG.webp";
+/** Light-coloured mark — use on dark backgrounds */
+import logoLightMark from "@/images/LightPNG.webp";
 
-/** UT monogram logomark + wordmark. `inverted` renders for dark backgrounds. */
-export function Logo({ className, showWordmark = true, onClick, inverted = false }) {
+const SIZE = {
+  /** Fills nav row height without growing the bar (scale widens the mark). */
+  nav: {
+    width: 220,
+    height: 40,
+    img: "h-10 w-auto max-w-[min(42vw,15.5rem)] origin-left scale-[1.28] sm:max-w-[17rem] sm:scale-[1.32]",
+  },
+  /** Extra-large brand presence for the footer. */
+  footer: {
+    width: 420,
+    height: 120,
+    img: "h-[4.5rem] w-auto max-w-[min(88vw,22rem)] sm:h-24 sm:max-w-[26rem] md:h-28 md:max-w-[30rem] lg:h-32 lg:max-w-[34rem]",
+  },
+};
+
+/**
+ * MDF brand mark — theme-aware assets.
+ * LightPNG on dark surfaces; DarkPNG on light surfaces.
+ * `inverted` forces the light mark (transparent nav over a dark hero).
+ */
+export function Logo({ className, onClick, inverted = false, size = "nav" }) {
+  const { theme } = useTheme();
+  const onDarkSurface = inverted || theme === "dark";
+  const src = onDarkSurface ? logoLightMark : logoDarkMark;
+  const preset = SIZE[size] || SIZE.nav;
+
   return (
     <a
       href="#top"
       onClick={onClick}
-      className={cn("group flex items-center gap-3 focus-visible:outline-none", className)}
+      className={cn(
+        "group inline-flex shrink-0 items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        size === "nav" && "h-10",
+        className
+      )}
       aria-label={`${site.name} — home`}
     >
-      <span
+      <img
+        src={src}
+        alt={site.name}
+        width={preset.width}
+        height={preset.height}
+        decoding="async"
         className={cn(
-          "relative grid h-11 w-11 place-items-center overflow-hidden rounded-2xl shadow-soft transition-transform duration-500 ease-premium group-hover:scale-[1.04]",
-          inverted
-            ? "bg-white text-[#111]"
-            : "bg-[#111] text-white dark:bg-white dark:text-[#111]"
+          "object-contain object-left transition-transform duration-500 ease-premium group-hover:brightness-110",
+          preset.img
         )}
-      >
-        <span
-          aria-hidden="true"
-          className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
-          style={{ background: "linear-gradient(135deg,#ef233c,#fdc500)" }}
-        />
-        <span className="relative text-sm font-extrabold tracking-tight">{site.logo}</span>
-      </span>
-      {showWordmark ? (
-        <span className="flex flex-col leading-none">
-          <span className={cn("text-base font-extrabold tracking-tight", inverted && "text-white")}>
-            {site.name}
-          </span>
-          <span
-            className={cn(
-              "text-[10px] font-medium uppercase tracking-[0.18em]",
-              inverted ? "text-white/60" : "text-muted-foreground"
-            )}
-          >
-            Global Exports
-          </span>
-        </span>
-      ) : null}
+      />
     </a>
   );
 }

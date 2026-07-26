@@ -54,7 +54,7 @@ export default function App() {
         <Section minH="min-h-[100svh]"><Storytelling /></Section>
         <Section minH="min-h-[100vh]"><Products /></Section>
         <SketchDivider />
-        <Section><About /></Section>
+        <Section minH="min-h-[220vh]"><About /></Section>
         <Section><WhyChooseUs /></Section>
         <Section minH="min-h-[100svh]"><ExportProcess /></Section>
         <Section minH="min-h-[60vh]"><Statistics /></Section>

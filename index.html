@@ -11,10 +11,10 @@
          which desyncs React's DOM references and throws insertBefore errors. -->
     <meta name="google" content="notranslate" />
 
-    <title>Universal Traders — Exporting India's Freshness to the World</title>
+    <title>MDF Exports &amp; Imports — Exporting India's Freshness to the World</title>
     <meta
       name="description"
-      content="Universal Traders exports premium fruits, vegetables, spices and agricultural products from Andhra Pradesh, India to Dubai, the UAE, the Middle East and beyond. 40+ years of agricultural excellence."
+      content="MDF Exports &amp; Imports delivers premium fruits, vegetables, spices and agricultural products from Andhra Pradesh, India to the Gulf, Asia-Pacific and beyond — built on 40+ years of agricultural excellence."
     />
 
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
@@ -24,7 +24,7 @@
       // Prevent theme flash: apply saved/system theme before paint.
       (function () {
         try {
-          var stored = localStorage.getItem("ut-theme");
+          var stored = localStorage.getItem("mdf-theme") || localStorage.getItem("ut-theme");
           var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
           var isDark = stored ? stored === "dark" : prefersDark;
           document.documentElement.classList.toggle("dark", isDark);

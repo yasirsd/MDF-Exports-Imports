@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChapterPill } from "@/components/sections/story/StoryChrome";
 import { ArrivalViz } from "@/components/sections/story/ArrivalViz";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { site } from "@/lib/config";
+import { brandHello, site } from "@/lib/config";
 import { cn, whatsappUrl } from "@/lib/utils";
 
 const MARKETS = [
@@ -112,7 +112,7 @@ export function ChapterArrival({ chapter, active }) {
               <a
                 href={whatsappUrl(
                   site.whatsapp,
-                  "Hello Universal Traders — I'd like to start importing."
+                  brandHello("I'd like to start importing.")
                 )}
                 target="_blank"
                 rel="noopener noreferrer"

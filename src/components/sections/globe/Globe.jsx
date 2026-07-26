@@ -10,7 +10,7 @@ const RADIUS = 2;
 useTexture.preload("/textures/earth-blue-marble.jpg");
 useTexture.preload("/textures/earth-topology.png");
 
-/** Realistic Earth with a soft branded atmosphere. */
+/** Earth — soft blue atmosphere only (no red halo / circular frame). */
 function GlobeBody() {
   const [colorMap, bumpMap] = useTexture([
     "/textures/earth-blue-marble.jpg",
@@ -31,20 +31,15 @@ function GlobeBody() {
           emissiveIntensity={0.35}
         />
       </mesh>
-      {/* Inner rim light */}
-      <mesh scale={1.02}>
-        <sphereGeometry args={[RADIUS, 48, 48]} />
-        <meshBasicMaterial color="#3b82f6" transparent opacity={0.05} side={THREE.BackSide} />
-      </mesh>
-      {/* Outer atmosphere glow */}
-      <mesh scale={1.16}>
+      {/* Soft limb light — fades into space, not a hard ring */}
+      <mesh scale={1.035}>
         <sphereGeometry args={[RADIUS, 48, 48]} />
         <meshBasicMaterial
-          color="#ef233c"
+          color="#6aa8ff"
           transparent
-          opacity={0.06}
+          opacity={0.07}
           side={THREE.BackSide}
-          blending={THREE.AdditiveBlending}
+          depthWrite={false}
         />
       </mesh>
     </group>
@@ -166,15 +161,38 @@ function Scene() {
 export default function Globe() {
   return (
     <Canvas
-      camera={{ position: [0, 0.4, 6], fov: 42 }}
+      camera={{ position: [0, 0.25, 7.2], fov: 38 }}
       dpr={[1, 1.8]}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-      style={{ touchAction: "pan-y" }}
+      gl={{
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance",
+        premultipliedAlpha: false,
+      }}
+      onCreated={({ gl }) => {
+        gl.setClearColor(0x000000, 0);
+      }}
+      style={{
+        width: "100%",
+        height: "100%",
+        background: "transparent",
+        touchAction: "pan-y",
+      }}
+      className="!absolute inset-0 h-full w-full"
     >
-      <ambientLight intensity={0.9} />
-      <directionalLight position={[5, 3, 5]} intensity={1.4} />
-      <pointLight position={[-6, -2, -4]} intensity={0.5} color="#ef233c" />
-      <Stars radius={80} depth={40} count={1200} factor={3} saturation={0} fade speed={0.5} />
+      <ambientLight intensity={0.95} />
+      <directionalLight position={[5, 3, 5]} intensity={1.35} />
+      <pointLight position={[-6, -2, -4]} intensity={0.35} color="#8eb8ff" />
+      {/* Dense, drifting starfield inside the canvas (complements section Starfield) */}
+      <Stars
+        radius={120}
+        depth={60}
+        count={2800}
+        factor={4.5}
+        saturation={0}
+        fade
+        speed={1.1}
+      />
       <Scene />
       <OrbitControls
         enableZoom={false}

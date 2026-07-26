@@ -11,9 +11,7 @@ export function SEO({
   image = "/og-image.png",
 }) {
   const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
-  const desc =
-    description ||
-    "Universal Traders exports premium fruits, vegetables, spices and agricultural products from Andhra Pradesh, India to Dubai, the UAE, the Middle East and beyond.";
+  const desc = description || site.description;
   const url = `${site.url}${path}`;
   const imageUrl = image.startsWith("http") ? image : `${site.url}${image}`;
 
@@ -22,12 +20,12 @@ export function SEO({
     "@type": "Organization",
     name: site.name,
     legalName: site.name,
+    alternateName: site.shortName,
     url: site.url,
     logo: `${site.url}/favicon.svg`,
     slogan: site.tagline,
     description: desc,
-    foundingDate: "1984",
-    parentOrganization: { "@type": "Organization", name: site.parent },
+    foundingDate: site.foundingYear,
     address: {
       "@type": "PostalAddress",
       addressRegion: "Andhra Pradesh",
@@ -41,7 +39,14 @@ export function SEO({
       areaServed: ["AE", "SA", "QA", "OM", "KW", "BH"],
       availableLanguage: ["en", "hi", "ar"],
     },
-    areaServed: ["United Arab Emirates", "Saudi Arabia", "Qatar", "Oman", "Kuwait", "Bahrain"],
+    areaServed: [
+      "United Arab Emirates",
+      "Saudi Arabia",
+      "Qatar",
+      "Oman",
+      "Kuwait",
+      "Bahrain",
+    ],
     sameAs: site.socials.map((s) => s.href),
   };
 

@@ -1,6 +1,6 @@
-# Universal Traders — Premium Export Website
+# MDF Exports & Imports — Premium Export Website
 
-A world-class, cinematic marketing website for **Universal Traders** — a premium agricultural export brand (a _MD Fruits_ company) bringing 40+ years of heritage from Andhra Pradesh, India to the Middle East and beyond.
+A world-class, cinematic marketing website for **MDF Exports & Imports** — a premium agricultural export brand rooted in _MD Fruits_ heritage, bringing 40+ years of excellence from Andhra Pradesh, India to the Middle East, Asia-Pacific and beyond.
 
 > _Exporting India's Freshness to the World._
 
@@ -38,48 +38,19 @@ All are optional — sensible defaults are used if unset. See [`.env.example`](.
 
 | Variable | Purpose |
 | --- | --- |
-| `VITE_WHATSAPP_NUMBER` | WhatsApp number (digits only) for the inquiry flow |
-| `VITE_CONTACT_PHONE` | `tel:` link for the call button |
-| `VITE_CONTACT_EMAIL` | Contact email |
-| `VITE_SITE_URL` | Canonical URL used for SEO / OpenGraph |
+| `VITE_WHATSAPP_NUMBER` | WhatsApp number (digits only) |
+| `VITE_CONTACT_PHONE` | Primary phone (`tel:` link) |
+| `VITE_CONTACT_EMAIL` | Primary email |
+| `VITE_SITE_URL` | Canonical URL for SEO / Open Graph |
+| `VITE_MAP_QUERY` | Contact map address or `lat,lng` |
 
-## Project structure
+## Brand
 
-```
-src/
-  lib/            config, constants (products, markets, stats…), images, motion presets, utils
-  hooks/          usePrefersReducedMotion, useMousePosition, useScrollProgress
-  providers/      ThemeProvider (dark/light), SmoothScrollProvider (Lenis + GSAP)
-  components/
-    ui/           Button, Card, Accordion, Badge, Sheet (shadcn-style primitives)
-    layout/       Navbar, MobileMenu, Footer, Logo, ThemeToggle, ScrollProgress, FloatingActions
-    shared/       Container, SectionHeading, RevealText, ParallaxImage, LazyImage,
-                  TiltCard, GlassCard, MagneticButton, Marquee, Icon, SEO
-    sections/     Hero, Storytelling, Products, About, WhyChooseUs, ExportProcess,
-                  Statistics, WorldMap (+ globe/), Certifications, Gallery,
-                  Testimonials, FAQ, Contact
-  App.jsx         Section composition with per-section lazy loading
-  main.jsx        Providers + root render
-```
+Central brand configuration lives in [`src/lib/config.js`](src/lib/config.js). Theme-aware logos:
 
-## Design system
+- [`src/images/DarkPNG.webp`](src/images/DarkPNG.webp) — mark for dark surfaces
+- [`src/images/LightPNG.webp`](src/images/LightPNG.webp) — mark for light surfaces
 
-- **Colors** (CSS variables, light/dark): brand red `#ef233c`, premium gold `#fdc500`, light bg `#F8F8F6`, dark bg `#0D0D0D`.
-- **Type**: Inter Variable — extra-bold headings, medium body, semibold buttons, with a fluid `clamp()` scale.
-- **Motion**: shared easing (`cubic-bezier(0.16, 1, 0.3, 1)`), reveal / parallax / tilt / magnetic presets. Every animation degrades gracefully under `prefers-reduced-motion`.
+## License
 
-## Imagery
-
-Product and lifestyle photography is hotlinked from **Unsplash** with on-the-fly optimisation, centralised in [`src/lib/images.js`](src/lib/images.js). `LazyImage` renders a blur-up placeholder and a branded gradient fallback if any image fails to load. To self-host, download the images and swap the URL helper.
-
-## Accessibility & performance
-
-- Semantic landmarks, skip link, keyboard-navigable menu/accordion/carousel, visible focus rings, reduced-motion fallbacks (including a static globe).
-- Route-level code splitting, lazy images, memoised cards, and manual vendor chunks (`three`, `gsap`, `motion`, `embla`).
-- SEO: meta + OpenGraph + Twitter cards, JSON-LD `Organization` schema, `robots.txt`, `sitemap.xml`.
-
----
-
-### Note on the build environment
-
-If `npm install` hangs or fails with TLS/connection resets to `registry.npmjs.org`, your current network is blocking the npm registry (some ISPs do this via SNI filtering — the same block can also affect `images.unsplash.com`, so photos may fall back to gradients). Install from an unblocked network (mobile hotspot / VPN / alternate DNS such as Cloudflare `1.1.1.1` with DoH), then `npm run dev` works normally.
+Private — all rights reserved by MDF Exports & Imports.
