@@ -17,21 +17,25 @@
       content="MDF Exports &amp; Imports delivers premium fruits, vegetables, spices and agricultural products from Andhra Pradesh, India to the Gulf, Asia-Pacific and beyond — built on 40+ years of agricultural excellence."
     />
 
-    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <!-- Critical: font + LCP hero only. Unsplash is dns-prefetch (not preconnect)
+         so it does not compete with first-party LCP bandwidth. -->
+    <link
+      rel="preload"
+      href="/fonts/inter-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/hero/farm-sunrise-1600.jpg"
+      as="image"
+      imagesrcset="/hero/farm-sunrise-640.jpg 640w, /hero/farm-sunrise-1080.jpg 1080w, /hero/farm-sunrise-1600.jpg 1600w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
     <link rel="dns-prefetch" href="https://images.unsplash.com" />
-
-    <script>
-      // Prevent theme flash: dark is the brand default unless the user saved a preference.
-      (function () {
-        try {
-          var stored = localStorage.getItem("mdf-theme") || localStorage.getItem("ut-theme");
-          var isDark = stored ? stored === "dark" : true;
-          document.documentElement.classList.toggle("dark", isDark);
-        } catch (e) {
-          document.documentElement.classList.add("dark");
-        }
-      })();
-    </script>
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <div id="root"></div>

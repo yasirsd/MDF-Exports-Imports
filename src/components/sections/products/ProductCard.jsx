@@ -67,7 +67,7 @@ export const ProductCard = memo(function ProductCard({
                 aria-hidden="true"
               />
               <div className="absolute left-3 top-3">
-                <span className="inline-flex rounded-full border border-white/25 bg-black/40 px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-white backdrop-blur-md">
+                <span className="inline-flex rounded-full border border-white/25 bg-black/70 px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-[0.12em] text-white">
                   {product.category}
                 </span>
               </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion, useMotionValueEvent, useScroll } from "motion/react";
+import { motion, useMotionValueEvent } from "motion/react";
 import { Menu, MessageCircle } from "lucide-react";
 import { Container } from "@/components/shared/Container";
 import { Button } from "@/components/ui/button";
@@ -9,17 +9,19 @@ import { MobileMenu } from "@/components/layout/MobileMenu";
 import { navLinks } from "@/lib/constants";
 import { brandHello, site } from "@/lib/config";
 import { useScrollTo } from "@/providers/SmoothScrollProvider";
+import { useDocumentScroll } from "@/hooks/useDocumentScroll";
 import { whatsappUrl } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { scrollY } = useScroll();
+  const { scrollY } = useDocumentScroll();
   const scrollTo = useScrollTo();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 24);
+    const next = latest > 24;
+    setScrolled((prev) => (prev === next ? prev : next));
   });
 
   useEffect(() => {
@@ -96,6 +98,8 @@ export function Navbar() {
                 type="button"
                 onClick={() => setMenuOpen(true)}
                 aria-label="Open menu"
+                aria-expanded={menuOpen}
+                aria-controls="mobile-navigation"
                 className={cn(
                   "grid h-12 w-12 place-items-center rounded-full border transition-colors lg:hidden",
                   scrolled

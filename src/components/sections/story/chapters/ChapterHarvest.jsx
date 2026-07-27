@@ -51,7 +51,7 @@ export function ChapterHarvest({ chapter, active }) {
           </div>
 
           <motion.div
-            className="absolute inset-x-3 bottom-3 z-10 rounded-xl border border-amber-400/25 bg-[#151008]/85 px-3 py-3 text-center backdrop-blur-xl sm:inset-x-4 sm:bottom-4"
+            className="absolute inset-x-3 bottom-3 z-10 rounded-xl border border-amber-400/25 bg-[#151008]/92 px-3 py-3 text-center sm:inset-x-4 sm:bottom-4"
             initial={false}
             animate={active && !reduced ? { y: [16, 0], opacity: [0, 1] } : { opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}

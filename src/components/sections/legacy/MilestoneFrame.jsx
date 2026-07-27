@@ -1,6 +1,8 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useTransform } from "motion/react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { useScrollTriggerProgress } from "@/hooks/useScrollTriggerProgress";
+import { easePremium } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 /**
@@ -46,46 +48,36 @@ const GLOW_MASK = {
     "radial-gradient(ellipse 86% 78% at 50% 48%, #000 0%, #000 32%, transparent 76%)",
 };
 
-const EASE = [0.16, 1, 0.3, 1];
+function useIsCoarse() {
+  const [coarse, setCoarse] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return undefined;
+    const mq = window.matchMedia("(pointer: coarse)");
+    const sync = () => setCoarse(mq.matches);
+    sync();
+    mq.addEventListener?.("change", sync);
+    return () => mq.removeEventListener?.("change", sync);
+  }, []);
+  return coarse;
+}
 
-/**
- * Full-viewport editorial frame with scroll parallax + active choreography.
- */
-export function MilestoneFrame({
-  milestone,
-  active,
-  unlocked,
-  children,
-  className,
-}) {
-  const reduced = usePrefersReducedMotion();
-  const accent = ACCENTS[milestone.accent] || ACCENTS.warm;
-  const show = unlocked || active;
-  const sectionRef = useRef(null);
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
+/** Scroll-linked layers — mounted only for the active chapter. */
+function ActiveParallaxDecor({ sectionRef, accent, year, show, reduced, active, children }) {
+  // Motion offset ["start end","end start"] → ST top bottom / bottom top
+  const scrollYProgress = useScrollTriggerProgress(sectionRef, {
+    start: "top bottom",
+    end: "bottom top",
+    enabled: !reduced && active,
   });
 
-  const watermarkY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [48, -56]);
-  const watermarkX = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [12, -18]);
-  const glowY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [-28, 36]);
-  const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], reduced ? [1, 1, 1] : [0.96, 1.04, 0.98]);
-  const mediaY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [36, -28]);
+  const watermarkY = useTransform(scrollYProgress, [0, 1], [48, -56]);
+  const watermarkX = useTransform(scrollYProgress, [0, 1], [12, -18]);
+  const glowY = useTransform(scrollYProgress, [0, 1], [-28, 36]);
+  const glowScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.96, 1.04, 0.98]);
+  const mediaY = useTransform(scrollYProgress, [0, 1], [36, -28]);
 
   return (
-    <section
-      ref={sectionRef}
-      id={`legacy-${milestone.id}`}
-      data-legacy-index
-      aria-label={`${milestone.year}: ${milestone.title}`}
-      className={cn(
-        "relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-visible py-16 sm:py-20 lg:min-h-[100svh] lg:py-24",
-        className
-      )}
-    >
-      {/* Atmosphere — drifts with scroll */}
+    <>
       <motion.div
         className="pointer-events-none absolute -inset-x-6 -inset-y-20 sm:-inset-x-10"
         style={{
@@ -109,7 +101,6 @@ export function MilestoneFrame({
         aria-hidden="true"
       />
 
-      {/* Year watermark — parallax drift */}
       <motion.p
         aria-hidden="true"
         className={cn(
@@ -121,83 +112,181 @@ export function MilestoneFrame({
           opacity: show ? (active ? 1 : 0.55) : 0.28,
           scale: active && !reduced ? 1.02 : 1,
         }}
-        transition={{ duration: 0.8, ease: EASE }}
+        transition={{ duration: 0.8, ease: easePremium }}
       >
-        {milestone.year}
+        {year}
+      </motion.p>
+
+      <motion.div style={{ y: mediaY }} className="relative z-[1] w-full">
+        {children}
+      </motion.div>
+    </>
+  );
+}
+
+function StaticDecor({ accent, year, show, reduced, active, children }) {
+  return (
+    <>
+      <motion.div
+        className="pointer-events-none absolute -inset-x-6 -inset-y-20 sm:-inset-x-10"
+        style={{
+          background: accent.glow,
+          ...GLOW_MASK,
+        }}
+        animate={{ opacity: show ? (active ? 0.9 : 0.55) : 0.22 }}
+        transition={{ duration: 0.7 }}
+        aria-hidden="true"
+      />
+
+      <motion.p
+        aria-hidden="true"
+        className={cn(
+          "pointer-events-none absolute right-2 top-10 select-none text-[clamp(4.5rem,14vw,9rem)] font-extrabold leading-none tracking-[-0.06em] sm:right-4 lg:top-14",
+          accent.watermark
+        )}
+        animate={{
+          opacity: show ? (active ? 1 : 0.55) : 0.28,
+          scale: 1,
+        }}
+        transition={{ duration: 0.8, ease: easePremium }}
+      >
+        {year}
+      </motion.p>
+
+      {children}
+    </>
+  );
+}
+
+/**
+ * Full-viewport editorial frame with scroll parallax + active choreography.
+ * Parallax runs only on the active chapter to cut scroll-main-thread cost.
+ */
+export function MilestoneFrame({
+  milestone,
+  active,
+  unlocked,
+  children,
+  className,
+}) {
+  const reduced = usePrefersReducedMotion();
+  const accent = ACCENTS[milestone.accent] || ACCENTS.warm;
+  const show = unlocked || active;
+  const sectionRef = useRef(null);
+  const coarse = useIsCoarse();
+  const parallaxOn = active && !reduced && !coarse;
+
+  const body = (
+    <motion.div
+      initial={false}
+      animate={
+        show
+          ? { opacity: 1, y: 0 }
+          : reduced
+            ? { opacity: 0.45, y: 0 }
+            : { opacity: 0.3, y: 32 }
+      }
+      transition={{ duration: 0.7, ease: easePremium }}
+      className="relative z-[1] w-full"
+    >
+      <div className="mb-5 flex flex-wrap items-center gap-3">
+        <motion.span
+          key={`pill-${milestone.id}`}
+          initial={reduced ? false : { opacity: 0, x: -12 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, ease: easePremium }}
+          className={cn(
+            "inline-flex rounded-full border px-3.5 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.18em]",
+            accent.pill
+          )}
+        >
+          {milestone.pill}
+        </motion.span>
+        {active ? (
+          <motion.span
+            initial={reduced ? false : { opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, ease: easePremium }}
+            className="inline-flex items-center gap-1.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-brand-orange-bright"
+          >
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-orange-bright" />
+            Now reading
+          </motion.span>
+        ) : null}
+      </div>
+
+      <motion.h3
+        key={`title-${milestone.id}`}
+        initial={false}
+        animate={
+          active || show
+            ? { opacity: 1, y: 0, letterSpacing: "-0.035em" }
+            : { opacity: 0.45, y: 18 }
+        }
+        transition={{ duration: 0.6, delay: active && !reduced ? 0.05 : 0, ease: easePremium }}
+        className="max-w-3xl text-[clamp(2rem,4.2vw,3.5rem)] font-extrabold leading-[1.05] tracking-[-0.035em] text-white [overflow-wrap:anywhere]"
+      >
+        {milestone.title}
+      </motion.h3>
+
+      <motion.p
+        initial={false}
+        animate={show ? { opacity: 1, y: 0 } : { opacity: 0.35, y: 20 }}
+        transition={{ duration: 0.55, delay: show && !reduced ? 0.1 : 0, ease: easePremium }}
+        className="mt-4 max-w-2xl text-[clamp(1rem,1.15vw,1.15rem)] leading-relaxed text-white/65"
+      >
+        {milestone.copy}
       </motion.p>
 
       <motion.div
         initial={false}
-        animate={
-          show
-            ? { opacity: 1, y: 0 }
-            : reduced
-              ? { opacity: 0.45, y: 0 }
-              : { opacity: 0.3, y: 32 }
-        }
-        transition={{ duration: 0.7, ease: EASE }}
-        className="relative z-[1] w-full"
+        animate={{ opacity: show ? 1 : 0.25 }}
+        transition={{ duration: 0.65, delay: show && !reduced ? 0.14 : 0, ease: easePremium }}
+        className="mt-9 w-full"
       >
-        <div className="mb-5 flex flex-wrap items-center gap-3">
-          <motion.span
-            key={`pill-${milestone.id}-${active}`}
-            initial={reduced ? false : { opacity: 0, x: -12 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, ease: EASE }}
-            className={cn(
-              "inline-flex rounded-full border px-3.5 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.18em]",
-              accent.pill
-            )}
-          >
-            {milestone.pill}
-          </motion.span>
-          {active ? (
-            <motion.span
-              initial={reduced ? false : { opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, ease: EASE }}
-              className="inline-flex items-center gap-1.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-brand-orange-bright"
-            >
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-orange-bright" />
-              Now reading
-            </motion.span>
-          ) : null}
-        </div>
-
-        <motion.h3
-          key={`title-${milestone.id}-${active}`}
-          initial={false}
-          animate={
-            active || show
-              ? { opacity: 1, y: 0, letterSpacing: "-0.035em" }
-              : { opacity: 0.45, y: 18 }
-          }
-          transition={{ duration: 0.6, delay: active && !reduced ? 0.05 : 0, ease: EASE }}
-          className="max-w-3xl text-[clamp(2rem,4.2vw,3.5rem)] font-extrabold leading-[1.05] tracking-[-0.035em] text-white [overflow-wrap:anywhere]"
-        >
-          {milestone.title}
-        </motion.h3>
-
-        <motion.p
-          initial={false}
-          animate={show ? { opacity: 1, y: 0 } : { opacity: 0.35, y: 20 }}
-          transition={{ duration: 0.55, delay: show && !reduced ? 0.1 : 0, ease: EASE }}
-          className="mt-4 max-w-2xl text-[clamp(1rem,1.15vw,1.15rem)] leading-relaxed text-white/65"
-        >
-          {milestone.copy}
-        </motion.p>
-
-        <motion.div
-          initial={false}
-          animate={{ opacity: show ? 1 : 0.25 }}
-          transition={{ duration: 0.65, delay: show && !reduced ? 0.14 : 0, ease: EASE }}
-          className="mt-9 w-full"
-        >
-          <motion.div style={reduced ? undefined : { y: mediaY }}>
-            {children}
-          </motion.div>
-        </motion.div>
+        {children}
       </motion.div>
+    </motion.div>
+  );
+
+  return (
+    <section
+      ref={sectionRef}
+      id={`legacy-${milestone.id}`}
+      data-legacy-index
+      aria-label={`${milestone.year}: ${milestone.title}`}
+      className={cn(
+        "relative flex min-h-[100svh] scroll-mt-24 flex-col justify-center overflow-visible py-16 sm:py-20 lg:min-h-[100svh] lg:py-24",
+        className
+      )}
+      style={
+        !active
+          ? { contentVisibility: "auto", containIntrinsicSize: "1px 100svh" }
+          : undefined
+      }
+    >
+      {parallaxOn ? (
+        <ActiveParallaxDecor
+          sectionRef={sectionRef}
+          accent={accent}
+          year={milestone.year}
+          show={show}
+          reduced={reduced}
+          active={active}
+        >
+          {body}
+        </ActiveParallaxDecor>
+      ) : (
+        <StaticDecor
+          accent={accent}
+          year={milestone.year}
+          show={show}
+          reduced={reduced}
+          active={active}
+        >
+          {body}
+        </StaticDecor>
+      )}
     </section>
   );
 }

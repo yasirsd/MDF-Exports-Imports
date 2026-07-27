@@ -4,20 +4,24 @@ import { Container } from "@/components/shared/Container";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Badge } from "@/components/ui/badge";
 import { certifications } from "@/lib/constants";
-import { fadeUp, viewportOnce } from "@/lib/motion";
+import { fadeUp, fadeUpReduced, motionSafe, viewportOnce } from "@/lib/motion";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 
 export function Certifications() {
+  const reduced = usePrefersReducedMotion();
+  const variants = motionSafe(reduced, fadeUp, fadeUpReduced);
+
   return (
-    <section id="certifications" className="section-py bg-background">
+    <section aria-label="Certifications" className="section-py bg-background">
       <Container>
         <SectionHeading
           contained={false}
           align="center"
           annotate
           eyebrow="Compliance & Trust"
-          title="Certified for global trade."
-          description="We operate to recognised food-safety and export standards — with more on our roadmap."
+          title="Built for export compliance."
+          description="We work within recognised Indian food-safety and export frameworks — ask our desk for market-specific documentation. More certifications are on our roadmap."
         />
 
         <motion.div
@@ -31,7 +35,7 @@ export function Certifications() {
             return (
               <motion.div
                 key={cert.code}
-                variants={fadeUp}
+                variants={variants}
                 custom={i}
                 className={cn(
                   "group relative flex flex-col justify-between overflow-hidden rounded-3xl border p-6 shadow-soft transition-all duration-500 hover:shadow-soft-lg",
@@ -48,7 +52,7 @@ export function Certifications() {
                     {future ? <Clock className="h-6 w-6" /> : <BadgeCheck className="h-6 w-6" />}
                   </span>
                   <Badge variant={future ? "gold" : "success"}>
-                    {future ? "Roadmap" : "Certified"}
+                    {future ? "Roadmap" : "In use"}
                   </Badge>
                 </div>
                 <div className="mt-6">

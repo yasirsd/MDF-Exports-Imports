@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { Quote, ArrowLeft, ArrowRight, Star } from "lucide-react";
@@ -7,12 +7,18 @@ import { SectionHeading } from "@/components/shared/SectionHeading";
 import { GlassCard } from "@/components/shared/GlassCard";
 import { testimonials } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 export function Testimonials() {
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, align: "start" },
-    [Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true })]
+  const reduced = usePrefersReducedMotion();
+  const plugins = useMemo(
+    () =>
+      reduced
+        ? []
+        : [Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true })],
+    [reduced]
   );
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" }, plugins);
   const [selected, setSelected] = useState(0);
   const [snaps, setSnaps] = useState([]);
 
@@ -29,11 +35,12 @@ export function Testimonials() {
     emblaApi.on("reInit", onSelect);
     return () => {
       emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
     };
   }, [emblaApi]);
 
   return (
-    <section id="testimonials" className="section-py relative overflow-hidden bg-background">
+    <section aria-label="Testimonials" className="section-py relative overflow-hidden bg-background">
       <div
         className="pointer-events-none absolute inset-x-0 top-1/2 -z-0 h-[420px] -translate-y-1/2 opacity-40 blur-3xl"
         style={{ background: "radial-gradient(50% 50% at 50% 50%, rgba(253,197,0,0.18), transparent 70%)" }}
@@ -43,8 +50,9 @@ export function Testimonials() {
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
             contained={false}
-            eyebrow="Trusted Globally"
-            title="What our partners say."
+            eyebrow="Buyer Themes"
+            title="What importers value."
+            description="Representative themes from GCC trade conversations — replace with attributed quotes when available."
           />
           <div className="flex gap-2">
             <button

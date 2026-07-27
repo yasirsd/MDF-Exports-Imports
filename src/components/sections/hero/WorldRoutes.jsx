@@ -4,8 +4,7 @@ import { origin, markets } from "@/lib/constants";
 
 const MAP_W = 600;
 const MAP_H = 300;
-const MASK_SRC = "/textures/earth-water.png";
-const FALLBACK_SRC = "/textures/earth-blue-marble.jpg";
+const MASK_SRC = "/textures/earth-water-mask.jpg";
 
 /** Equirectangular projection into the MAP_W x MAP_H viewport. */
 const project = (lat, lng) => ({
@@ -120,18 +119,20 @@ export function WorldRoutes({ reduced = false }) {
           }}
         />
 
-        {/* Dotted continents (or fallback map) */}
-        {failed ? (
-          <img
-            src={FALLBACK_SRC}
-            alt="World map of MDF Exports & Imports export routes"
-            className="absolute inset-0 h-full w-full object-cover opacity-40"
-            loading="lazy"
-            decoding="async"
-          />
-        ) : (
+        {/* Soft ocean plane — never load the 1.4MB marble as fallback */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 70% at 50% 45%, #163a5c 0%, #0c1e30 55%, #071018 100%)",
+          }}
+        />
+
+        {/* Dotted continents from compressed land mask */}
+        {!failed ? (
           <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" aria-hidden="true" />
-        )}
+        ) : null}
 
         {/* Routes + markers */}
         <svg

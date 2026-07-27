@@ -3,7 +3,8 @@ import { Container } from "@/components/shared/Container";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Icon } from "@/components/shared/Icon";
 import { advantages } from "@/lib/constants";
-import { viewportOnce } from "@/lib/motion";
+import { fadeUpReduced, motionSafe, viewportOnce } from "@/lib/motion";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 
 const cardVariant = {
@@ -17,8 +18,11 @@ const cardVariant = {
 };
 
 export function WhyChooseUs() {
+  const reduced = usePrefersReducedMotion();
+  const variants = motionSafe(reduced, cardVariant, fadeUpReduced);
+
   return (
-    <section id="why" className="section-py relative bg-background">
+    <section aria-label="Why MDF" className="section-py relative bg-background">
       <Container>
         <SectionHeading
           contained={false}
@@ -39,7 +43,7 @@ export function WhyChooseUs() {
             <motion.div
               key={item.title}
               custom={i}
-              variants={cardVariant}
+              variants={variants}
               className={cn(
                 "group relative overflow-hidden rounded-3xl border border-border bg-surface p-6 shadow-soft transition-shadow duration-500 hover:shadow-soft-lg",
                 item.span

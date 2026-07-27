@@ -1,43 +1,100 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { Container } from "@/components/shared/Container";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { Badge } from "@/components/ui/badge";
+import { StaticGlobe } from "@/components/sections/globe/StaticGlobe";
 import { markets, origin } from "@/lib/constants";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { fadeUp, viewportOnce } from "@/lib/motion";
+import { cn } from "@/lib/utils";
 
 const Globe = lazy(() => import("@/components/sections/globe/Globe"));
 
-function GlobeFallback() {
-  return (
-    <div className="grid h-full w-full place-items-center">
-      <span className="text-sm font-medium text-muted-foreground">Loading globe…</span>
-    </div>
-  );
+function isConstrainedConnection() {
+  const conn = typeof navigator !== "undefined" ? navigator.connection : null;
+  if (!conn) return false;
+  if (conn.saveData) return true;
+  const type = conn.effectiveType;
+  return type === "slow-2g" || type === "2g" || type === "3g";
 }
 
-/** Static Earth used when reduced motion is preferred — no circular frame. */
-function StaticGlobe() {
+function GlobeReadyBridge({ onReady, children }) {
+  useEffect(() => {
+    let cancelled = false;
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (!cancelled) onReady();
+      });
+    });
+    return () => {
+      cancelled = true;
+      cancelAnimationFrame(id);
+    };
+  }, [onReady]);
+
+  return children;
+}
+
+/**
+ * Static Earth is always painted first.
+ * R3F Globe loads when near + not constrained; crossfades in when ready.
+ */
+function GlobeViewport({ reduced }) {
+  const ref = useRef(null);
+  const [near, setNear] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [liveReady, setLiveReady] = useState(false);
+  const [constrained] = useState(() => isConstrainedConnection());
+
+  const onLiveReady = useCallback(() => setLiveReady(true), []);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const isNear = entry.isIntersecting;
+        setNear(isNear);
+        setPlaying(isNear && entry.intersectionRatio >= 0.12);
+        if (!isNear) setLiveReady(false);
+      },
+      { root: null, rootMargin: "30% 0px", threshold: [0, 0.12, 0.25, 0.5] }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const allowLive = !reduced && !constrained;
+  const mountLive = allowLive && near;
+
   return (
-    <div className="grid h-full w-full place-items-center">
-      <div className="relative aspect-square w-full max-w-md overflow-visible">
-        <img
-          src="/textures/earth-blue-marble.jpg"
-          alt="World map highlighting MDF Exports & Imports export markets"
-          loading="lazy"
-          decoding="async"
-          className="h-full w-full scale-[1.15] object-cover"
-          style={{
-            objectPosition: "62% 42%",
-            WebkitMaskImage:
-              "radial-gradient(circle at 50% 50%, #000 58%, transparent 72%)",
-            maskImage:
-              "radial-gradient(circle at 50% 50%, #000 58%, transparent 72%)",
-          }}
-        />
-        <span className="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-gold shadow-[0_0_12px_rgba(253,197,0,0.55)]" />
+    <div ref={ref} className="relative h-full w-full" data-globe-slot="">
+      <div
+        className={cn(
+          "absolute inset-0 transition-opacity duration-700 ease-out",
+          liveReady ? "pointer-events-none opacity-0" : "opacity-100"
+        )}
+        aria-hidden={liveReady}
+      >
+        <StaticGlobe priority={near ? "high" : "auto"} loading={near ? "eager" : "lazy"} />
       </div>
+
+      {mountLive ? (
+        <div
+          className={cn(
+            "absolute inset-0 transition-opacity duration-700 ease-out",
+            liveReady ? "opacity-100" : "opacity-0"
+          )}
+        >
+          <Suspense fallback={null}>
+            <GlobeReadyBridge onReady={onLiveReady}>
+              <Globe playing={playing} />
+            </GlobeReadyBridge>
+          </Suspense>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -46,7 +103,7 @@ export function WorldMap() {
   const prefersReduced = usePrefersReducedMotion();
 
   return (
-    <section id="markets" className="section-py relative overflow-x-clip bg-background">
+    <section aria-label="Global markets" className="section-py relative overflow-x-clip bg-background">
       <Container className="relative z-[1]">
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-6 xl:gap-10">
           <div className="relative z-[2]">
@@ -91,15 +148,8 @@ export function WorldMap() {
             </motion.ul>
           </div>
 
-          {/* Globe stage — open edges, no circular crop / red halo */}
           <div className="relative z-[1] -mx-4 h-[min(88vw,34rem)] sm:-mx-6 sm:h-[min(80vw,38rem)] lg:mx-0 lg:-mr-10 lg:h-[min(52vw,42rem)] xl:-mr-16">
-            {prefersReduced ? (
-              <StaticGlobe />
-            ) : (
-              <Suspense fallback={<GlobeFallback />}>
-                <Globe />
-              </Suspense>
-            )}
+            <GlobeViewport reduced={prefersReduced} />
           </div>
         </div>
       </Container>

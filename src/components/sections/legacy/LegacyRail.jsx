@@ -1,3 +1,4 @@
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 /** Node column width — spine is centered on this column (no magic left offsets). */
@@ -5,6 +6,7 @@ const NODE = "w-7"; // 1.75rem / 28px
 
 /**
  * Premium story spine — glass panel, track locked through node centers.
+ * `progress` may be a number or a MotionValue (preferred — no scroll-driven React re-renders).
  */
 export function LegacyRail({
   milestones,
@@ -13,14 +15,16 @@ export function LegacyRail({
   onSelect,
   className,
 }) {
-  const n = Math.max(milestones.length - 1, 1);
-  const fill = Math.min(1, Math.max(0, progress));
+  const isMotion = progress && typeof progress === "object" && "get" in progress;
+  const numericFill = isMotion
+    ? null
+    : Math.min(1, Math.max(0, Number(progress) || 0));
 
   return (
     <nav
       aria-label="Company legacy timeline"
       className={cn(
-        "pointer-events-auto flex h-[min(72svh,38rem)] w-[5.75rem] flex-col rounded-2xl border border-white/10 bg-black/40 px-3 py-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:w-[6.5rem] lg:w-[8.75rem] lg:px-3.5 lg:py-5",
+        "pointer-events-auto flex h-[min(72svh,38rem)] w-[5.75rem] flex-col rounded-2xl border border-white/10 bg-black/70 px-3 py-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)] sm:w-[6.5rem] lg:w-[8.75rem] lg:px-3.5 lg:py-5",
         className
       )}
     >
@@ -29,7 +33,6 @@ export function LegacyRail({
       </p>
 
       <div className="relative min-h-0 flex-1">
-        {/* Track column — same width as nodes, line dead-centered */}
         <div
           className={cn(
             "pointer-events-none absolute bottom-[0.875rem] top-[0.875rem] left-0",
@@ -38,16 +41,23 @@ export function LegacyRail({
           aria-hidden="true"
         >
           <div className="absolute inset-y-0 left-1/2 w-0.5 -translate-x-1/2 rounded-full bg-white/12" />
-          <div
-            className="absolute top-0 left-1/2 w-0.5 origin-top -translate-x-1/2 rounded-full bg-gradient-to-b from-brand-orange-bright via-[#ff9a40] to-brand-orange-bright/55 shadow-[0_0_12px_rgba(255,122,26,0.45)]"
-            style={{ height: `${fill * 100}%` }}
-          />
+          {isMotion ? (
+            <motion.div
+              className="absolute top-0 left-1/2 w-0.5 origin-top -translate-x-1/2 rounded-full bg-gradient-to-b from-brand-orange-bright via-[#ff9a40] to-brand-orange-bright/55 shadow-[0_0_12px_rgba(255,122,26,0.45)]"
+              style={{ scaleY: progress, height: "100%" }}
+            />
+          ) : (
+            <div
+              className="absolute top-0 left-1/2 w-0.5 origin-top -translate-x-1/2 rounded-full bg-gradient-to-b from-brand-orange-bright via-[#ff9a40] to-brand-orange-bright/55 shadow-[0_0_12px_rgba(255,122,26,0.45)]"
+              style={{ height: `${(numericFill || 0) * 100}%` }}
+            />
+          )}
         </div>
 
         <ol className="relative z-[1] flex h-full flex-col justify-between">
           {milestones.map((m, i) => {
-            const threshold = i / n;
-            const completed = fill >= threshold - 0.001;
+            // Completed follows active year (IO-driven) — avoids per-frame React updates.
+            const completed = i <= activeIndex;
             const active = i === activeIndex;
 
             return (
@@ -59,7 +69,6 @@ export function LegacyRail({
                   aria-label={`Go to ${m.year}: ${m.title}`}
                   className="group grid w-full grid-cols-[1.75rem_minmax(0,1fr)] items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange-bright focus-visible:ring-offset-2 focus-visible:ring-offset-black/40"
                 >
-                  {/* Dot — no scale transform (keeps spine alignment locked) */}
                   <span
                     className={cn(
                       "relative mx-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-[border-color,background-color,box-shadow] duration-500 ease-premium",

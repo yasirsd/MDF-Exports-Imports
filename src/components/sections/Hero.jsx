@@ -1,32 +1,69 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { useEffect, useRef } from "react";
+import { motion, useMotionValue, useTransform } from "motion/react";
 import { ArrowRight, ArrowDown, Leaf, MapPin, Ship, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/shared/Container";
 import { LazyImage } from "@/components/shared/LazyImage";
 import { MagneticButton } from "@/components/shared/MagneticButton";
 import { Button } from "@/components/ui/button";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { useDocumentScroll } from "@/hooks/useDocumentScroll";
 import { useScrollTo } from "@/providers/SmoothScrollProvider";
 import { WorldRoutes } from "@/components/sections/hero/WorldRoutes";
 import { HeroSketch } from "@/components/sections/hero/HeroSketch";
-import { scenes, unsplash, unsplashLQ, unsplashSrcSet } from "@/lib/images";
+import { scenes, unsplash, unsplashLQ } from "@/lib/images";
 import { certifications, exportDestinations } from "@/lib/constants";
 import { brandHello, site } from "@/lib/config";
 import { whatsappUrl } from "@/lib/utils";
+import { easePremium } from "@/lib/motion";
 
-const easePremium = [0.16, 1, 0.3, 1];
+const certified = certifications.filter((c) => c.status === "operating");
 
-const certified = certifications.filter((c) => c.status === "certified");
+/**
+ * Hero parallax progress from shared document scroll — no GSAP/ScrollTrigger.
+ * For a top-of-page section this matches ST start "top top" / end "bottom top"
+ * (and Motion offset ["start start","end start"]): progress = scrollY / height.
+ */
+function useHeroDocumentProgress(sectionRef, enabled) {
+  const { scrollY } = useDocumentScroll();
+  const progress = useMotionValue(0);
+
+  useEffect(() => {
+    if (!enabled) {
+      progress.set(0);
+      return undefined;
+    }
+
+    const update = () => {
+      const el = sectionRef.current;
+      if (!el) return;
+      const h = el.offsetHeight || 1;
+      const y = scrollY.get();
+      progress.set(Math.min(1, Math.max(0, y / h)));
+    };
+
+    const unsub = scrollY.on("change", update);
+    update();
+
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
+    if (ro && sectionRef.current) ro.observe(sectionRef.current);
+    window.addEventListener("resize", update, { passive: true });
+
+    return () => {
+      unsub();
+      ro?.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, [sectionRef, enabled, scrollY, progress]);
+
+  return progress;
+}
 
 export function Hero() {
   const ref = useRef(null);
   const prefersReduced = usePrefersReducedMotion();
   const scrollTo = useScrollTo();
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
+  const scrollYProgress = useHeroDocumentProgress(ref, !prefersReduced);
 
   const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "16%"]);
   const bgScale = useTransform(scrollYProgress, [0, 1], [1.08, 1.2]);
@@ -45,10 +82,14 @@ export function Hero() {
         className="absolute inset-0"
       >
         <LazyImage
-          src={unsplash(scenes.farmSunrise, 2400)}
-          srcSet={unsplashSrcSet(scenes.farmSunrise, [640, 828, 1080, 1440, 1920, 2400])}
+          src="/hero/farm-sunrise-1600.jpg"
+          srcSet={[
+            "/hero/farm-sunrise-640.jpg 640w",
+            "/hero/farm-sunrise-1080.jpg 1080w",
+            "/hero/farm-sunrise-1600.jpg 1600w",
+          ].join(", ")}
           sizes="100vw"
-          lqip={unsplashLQ(scenes.farmSunrise)}
+          lqip="/hero/farm-sunrise-lq.jpg"
           alt="Sunrise over agricultural fields in Andhra Pradesh, India"
           eager
           fallbackLabel="Sunrise over the farm"
@@ -92,7 +133,7 @@ export function Hero() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, ease: easePremium }}
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-md"
+                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/45 px-4 py-2 text-sm font-medium text-white"
               >
                 <Leaf className="h-4 w-4 text-brand-orange" />
                 <span>{site.experience} of agricultural excellence</span>
@@ -123,16 +164,12 @@ export function Hero() {
                 </span>
               </h1>
 
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.9, delay: 0.6, ease: easePremium }}
-                className="mt-6 max-w-lg text-lead text-white/85"
-              >
+              {/* LCP element — paint immediately (no opacity/delay gate). */}
+              <p className="mt-6 max-w-lg text-lead text-white/85">
                 Premium Indian fruits, vegetables and spices — sourced at peak
                 freshness and shipped under an unbroken cold chain to importers
                 across the Gulf and beyond.
-              </motion.p>
+              </p>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -194,13 +231,13 @@ export function Hero() {
               >
                 <span className="mr-1 flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.14em] text-white/55">
                   <ShieldCheck className="h-4 w-4 text-brand-orange" />
-                  <span>Certified</span>
+                  <span>Compliance</span>
                 </span>
                 {certified.map((c) => (
                   <span
                     key={c.code}
                     title={c.name}
-                    className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-white/90 backdrop-blur-sm"
+                    className="rounded-full border border-white/15 bg-black/45 px-3 py-1 text-xs font-semibold text-white/90"
                   >
                     {c.code}
                   </span>
@@ -222,7 +259,7 @@ export function Hero() {
                 initial={{ opacity: 0, y: -16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.95, ease: easePremium }}
-                className="absolute -right-5 -top-5 z-20 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-white backdrop-blur-xl"
+                className="absolute -right-5 -top-5 z-20 rounded-2xl border border-white/15 bg-black/55 px-4 py-3 text-white"
               >
                 <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/65">
                   Exporting to

@@ -279,7 +279,7 @@ export const stats = [
   { id: "years", value: 40, suffix: "+", label: "Years Experience" },
   { id: "network", value: 1000, suffix: "+", label: "Farm Network" },
   { id: "quality", value: 100, suffix: "%", label: "Quality Checked" },
-  { id: "support", value: 24, suffix: "/7", label: "Support" },
+  { id: "markets", value: 6, suffix: "+", label: "GCC Markets" },
 ];
 
 /** Why-choose-us bento cards. */
@@ -393,22 +393,25 @@ export const timeline = legacyMilestones.map((m) => ({
   desc: m.copy,
 }));
 
-/** Certifications. */
+/** Certifications — status reflects trade readiness; registration numbers added when verified. */
 export const certifications = [
-  { code: "APEDA", name: "Agricultural & Processed Food Products Export Development Authority", status: "certified" },
-  { code: "FSSAI", name: "Food Safety and Standards Authority of India", status: "certified" },
-  { code: "IEC", name: "Import Export Code", status: "certified" },
-  { code: "Phytosanitary", name: "Phytosanitary Certification", status: "certified" },
+  { code: "APEDA", name: "Agricultural & Processed Food Products Export Development Authority", status: "operating" },
+  { code: "FSSAI", name: "Food Safety and Standards Authority of India", status: "operating" },
+  { code: "IEC", name: "Import Export Code", status: "operating" },
+  { code: "Phytosanitary", name: "Phytosanitary documentation for consignments", status: "operating" },
   { code: "Global G.A.P.", name: "Good Agricultural Practices", status: "future" },
   { code: "ISO", name: "ISO 22000 Food Safety Management", status: "future" },
 ];
 
-/** Testimonials. */
+/**
+ * Representative importer feedback — composites based on typical GCC buyer themes.
+ * Replace with attributed, permissioned quotes before presenting as verified reviews.
+ */
 export const testimonials = [
-  { quote: "Consistent quality and reliable timelines. MDF Exports & Imports has become our default partner for Indian produce.", name: "Ahmed Al-Farsi", role: "Importer", location: "Dubai, UAE", flag: "🇦🇪" },
-  { quote: "Their cold chain discipline is exceptional — produce arrives as fresh as the day it was picked.", name: "Khalid Rahman", role: "Distribution Head", location: "Riyadh, Saudi Arabia", flag: "🇸🇦" },
-  { quote: "Four decades of experience shows. Documentation, grading and communication are all flawless.", name: "Yusuf Hassan", role: "Wholesale Buyer", location: "Doha, Qatar", flag: "🇶🇦" },
-  { quote: "A rare supplier that treats every consignment like their own reputation depends on it.", name: "Salim Al-Balushi", role: "Retail Chain Buyer", location: "Muscat, Oman", flag: "🇴🇲" },
+  { quote: "Consistent grading and predictable sailings matter more than slogans — that is what we look for in an Indian produce partner.", name: "Gulf importer", role: "Composite feedback", location: "UAE", flag: "🇦🇪" },
+  { quote: "Cold-chain discipline and clear lot communication are the difference between retail-ready and write-off.", name: "Distribution buyer", role: "Composite feedback", location: "Saudi Arabia", flag: "🇸🇦" },
+  { quote: "Documentation readiness and responsive export desk support shorten the path from enquiry to first container.", name: "Wholesale buyer", role: "Composite feedback", location: "Qatar", flag: "🇶🇦" },
+  { quote: "We value suppliers who treat every consignment like their reputation travels with the crate.", name: "Retail buyer", role: "Composite feedback", location: "Oman", flag: "🇴🇲" },
 ];
 
 /**
@@ -508,7 +511,7 @@ export const storyChapters = [
     stats: [
       { value: "0°–5°C", label: "Reefer range", icon: "Snowflake" },
       { value: "GCC", label: "Active lanes", icon: "Ship" },
-      { value: "24/7", label: "Chain watch", icon: "Clock" },
+      { value: "Monitored", label: "Reefer watch", icon: "Clock" },
     ],
     timeline: [
       { n: "01", title: "Farm", desc: "Harvest cool" },
@@ -538,7 +541,7 @@ export const faqs = [
   { q: "Which countries do you currently export to?", a: "We actively serve the UAE (Dubai, Abu Dhabi), Saudi Arabia, Qatar, Oman, Kuwait and Bahrain, with European markets on our expansion roadmap." },
   { q: "What is your minimum order quantity?", a: "MOQs vary by product and destination. Most consignments are shipped by the full or part reefer container. Share your requirement and we will tailor a quote." },
   { q: "How do you ensure produce stays fresh in transit?", a: "An unbroken cold chain — pre-cooling, temperature-controlled storage and reefer containers — keeps produce at optimal condition from farm to destination port." },
-  { q: "Which certifications do you hold?", a: "We operate with APEDA, FSSAI, IEC and Phytosanitary certification, and are pursuing Global G.A.P. and ISO 22000 as part of our roadmap." },
+  { q: "Which certifications do you hold?", a: "We operate under APEDA, FSSAI, IEC and phytosanitary documentation pathways required for export consignments, and are pursuing Global G.A.P. and ISO 22000 as part of our roadmap. Ask our desk for the latest registration details for your market." },
   { q: "Can you handle custom packaging and private labelling?", a: "Yes. We offer export-grade, ventilated packaging and can accommodate branded and private-label requirements." },
   { q: "How do I start importing with MDF Exports & Imports?", a: "Send us your product list, volumes and destination via the contact form or WhatsApp. Our team will respond with pricing, lead times and documentation." },
 ];

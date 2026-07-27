@@ -14,12 +14,12 @@ export function ChapterPill({ children, className }) {
   );
 }
 
-/** Right-edge chapter rail — always-visible active label, larger targets. */
+/** Right-edge chapter rail — keyboard-reachable on all breakpoints. */
 export function ChapterRail({ chapters, active, onSelect }) {
   return (
     <nav
       aria-label="Story chapters"
-      className="absolute right-3 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-end gap-3 lg:flex xl:right-5"
+      className="absolute right-2 top-1/2 z-30 flex -translate-y-1/2 flex-col items-end gap-2 sm:right-3 sm:gap-3 xl:right-5"
     >
       {chapters.map((c, i) => {
         const isActive = i === active;
@@ -30,14 +30,14 @@ export function ChapterRail({ chapters, active, onSelect }) {
             onClick={() => onSelect?.(i)}
             aria-current={isActive ? "true" : undefined}
             aria-label={`Chapter ${c.step}: ${c.rail}`}
-            className="group flex min-h-8 items-center gap-2.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange-bright"
+            className="group flex min-h-9 min-w-9 items-center justify-end gap-2.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange-bright"
           >
             <span
               className={cn(
                 "max-w-[7.5rem] truncate whitespace-nowrap rounded-full px-2 py-0.5 text-[0.6rem] font-semibold uppercase tracking-[0.14em] transition-all duration-300 ease-premium",
                 isActive
-                  ? "bg-black/45 text-brand-orange-bright opacity-100 backdrop-blur-sm"
-                  : "text-white/35 opacity-0 group-hover:opacity-100"
+                  ? "bg-black/70 text-brand-orange-bright opacity-100"
+                  : "hidden text-white/35 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 lg:inline"
               )}
             >
               {c.step} {c.rail}
@@ -47,7 +47,7 @@ export function ChapterRail({ chapters, active, onSelect }) {
                 "block rounded-full transition-all duration-300 ease-premium",
                 isActive
                   ? "h-[2px] w-7 bg-brand-orange-bright shadow-[0_0_10px_rgba(255,122,26,0.7)]"
-                  : "h-1.5 w-1.5 bg-white/30 group-hover:bg-white/70"
+                  : "h-2 w-2 bg-white/35 group-hover:bg-white/70 group-focus-visible:bg-white/70"
               )}
             />
           </button>
@@ -61,9 +61,9 @@ export function ChapterRail({ chapters, active, onSelect }) {
 export function ScrollHint({ step, total, progress = 0 }) {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-5 z-30 flex justify-center sm:bottom-7">
-      <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/40 px-4 py-2 backdrop-blur-md">
+      <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/70 px-4 py-2">
         <span className="text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-white/45">
-          Scroll
+          Scroll / keys
         </span>
         <span className="relative h-px w-12 overflow-hidden rounded-full bg-white/15 sm:w-16">
           <span

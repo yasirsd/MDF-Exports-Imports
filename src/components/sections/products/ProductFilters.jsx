@@ -12,7 +12,7 @@ export function ProductFilters({
   resultLabel,
 }) {
   return (
-    <div className="sticky top-[4.5rem] z-20 -mx-5 border-y border-border/70 bg-background/90 px-5 py-3 backdrop-blur-md sm:-mx-0 sm:rounded-2xl sm:border sm:px-4">
+    <div className="sticky top-[4.5rem] z-20 -mx-5 border-y border-border/70 bg-background/95 px-5 py-3 sm:-mx-0 sm:rounded-2xl sm:border sm:px-4">
       <div
         className="touch-scroll flex gap-2 overflow-x-auto pb-1"
         role="tablist"

@@ -42,13 +42,13 @@ export function ProductFeatured({ product, onViewSpecs }) {
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#140e0a]/75 via-transparent to-transparent" />
           <div className="absolute left-4 top-4 sm:left-5 sm:top-5">
-            <span className="inline-flex rounded-full border border-white/20 bg-black/35 px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white backdrop-blur-md">
+            <span className="inline-flex rounded-full border border-white/20 bg-black/70 px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white">
               {product.category}
             </span>
           </div>
           {product.featured ? (
             <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5">
-              <span className="inline-flex rounded-full border border-brand-orange-bright/50 bg-brand-orange-bright/15 px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-brand-orange-bright backdrop-blur-md">
+              <span className="inline-flex rounded-full border border-brand-orange-bright/50 bg-[#1a0e06]/85 px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-brand-orange-bright">
                 Flagship line
               </span>
             </div>

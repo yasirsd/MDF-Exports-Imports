@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Container } from "@/components/shared/Container";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { ProductCard } from "@/components/sections/products/ProductCard";
@@ -31,11 +31,11 @@ export function Products() {
     return `Showing ${n} ${active.toLowerCase()}`;
   }, [active, filtered.length]);
 
-  const openProduct = (product) => setSelected(product);
+  const openProduct = useCallback((product) => setSelected(product), []);
   const drawerOpen = Boolean(selected);
 
   return (
-    <section id="products" className="section-py relative bg-background">
+    <section aria-label="Products" className="section-py relative bg-background">
       {/* Soft atmospheric bridge from Story */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-[28rem] bg-[radial-gradient(ellipse_at_20%_0%,rgba(255,122,26,0.08),transparent_55%)]"

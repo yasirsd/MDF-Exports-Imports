@@ -90,9 +90,12 @@ export function Footer() {
           <p>
             © {year} {site.name}. All rights reserved.
           </p>
-          <p>
-            Crafted with care · {site.location}
-          </p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <a href="#privacy" className="font-medium text-foreground transition-colors hover:text-brand-red">
+              Privacy Policy
+            </a>
+            <p>Crafted with care · {site.location}</p>
+          </div>
         </div>
       </Container>
     </footer>

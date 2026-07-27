@@ -1,3 +1,4 @@
+import { memo } from "react";
 import CountUp from "react-countup";
 import { motion } from "motion/react";
 import { MapPin } from "lucide-react";
@@ -12,9 +13,8 @@ import {
 } from "@/components/sections/legacy/legacyViz";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { unsplash, unsplashLQ, unsplashSrcSet } from "@/lib/images";
+import { easePremium } from "@/lib/motion";
 import { cn } from "@/lib/utils";
-
-const EASE = [0.16, 1, 0.3, 1];
 
 function MaskImage({ id, alt, className, eager, imgClassName, active }) {
   const reduced = usePrefersReducedMotion();
@@ -39,7 +39,7 @@ function MaskImage({ id, alt, className, eager, imgClassName, active }) {
         transition={
           active && !reduced
             ? { duration: 14, repeat: Infinity, repeatType: "reverse", ease: "linear" }
-            : { duration: 0.8, ease: EASE }
+            : { duration: 0.8, ease: easePremium }
         }
       >
         <LazyImage
@@ -72,7 +72,7 @@ function StaggerIn({ active, children, className, delay = 0 }) {
             ? { opacity: 1, y: 0 }
             : { opacity: 0.85, y: 12 }
       }
-      transition={{ duration: 0.55, delay: active && !reduced ? delay : 0, ease: EASE }}
+      transition={{ duration: 0.55, delay: active && !reduced ? delay : 0, ease: easePremium }}
     >
       {children}
     </motion.div>
@@ -102,7 +102,7 @@ function ChipList({ items, active, tone = "emerald" }) {
           transition={{
             duration: 0.4,
             delay: active && !reduced ? 0.15 + i * 0.06 : 0,
-            ease: EASE,
+            ease: easePremium,
           }}
           className={cn(
             "rounded-full border px-3.5 py-1.5 text-xs font-semibold",
@@ -157,8 +157,13 @@ function OriginPanel({ milestone, active, unlocked }) {
           </motion.div>
           <div className="rounded-[1.75rem] border border-brand-orange-bright/30 bg-gradient-to-br from-brand-orange-bright/15 to-transparent p-6 sm:p-7">
             <p className="text-[clamp(3rem,6vw,4.5rem)] font-extrabold leading-none tracking-tight text-brand-orange-bright">
-              {live ? (
+              {active ? (
                 <CountUp end={milestone.stat.end} duration={2.2} suffix={milestone.stat.suffix} />
+              ) : live ? (
+                <>
+                  {milestone.stat.end}
+                  {milestone.stat.suffix}
+                </>
               ) : (
                 <span>0{milestone.stat.suffix}</span>
               )}
@@ -216,8 +221,13 @@ function NetworkPanel({ milestone, active, unlocked }) {
             active={active}
             stats={(milestone.stats || []).map((s) => ({
               ...s,
-              display: live ? (
+              display: active ? (
                 <CountUp end={s.end} duration={2.2} suffix={s.suffix} separator="," />
+              ) : live ? (
+                <>
+                  {s.end.toLocaleString?.() ?? s.end}
+                  {s.suffix}
+                </>
               ) : (
                 <>0{s.suffix}</>
               ),
@@ -293,7 +303,7 @@ function TodayPanel({ milestone, active, unlocked }) {
             <motion.p
               initial={false}
               animate={active ? { opacity: 1, y: 0 } : { opacity: 0.7, y: 8 }}
-              transition={{ duration: 0.5, delay: active ? 0.2 : 0, ease: EASE }}
+              transition={{ duration: 0.5, delay: active ? 0.2 : 0, ease: easePremium }}
               className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-5 text-base font-semibold leading-snug text-white sm:p-7 sm:text-lg"
             >
               {milestone.closing}
@@ -317,7 +327,12 @@ const PANELS = {
   today: TodayPanel,
 };
 
-export function MilestonePanel({ milestone, active, unlocked }) {
+/** Memo — inactive milestones skip reconcile when only the active index changes. */
+export const MilestonePanel = memo(function MilestonePanel({
+  milestone,
+  active,
+  unlocked,
+}) {
   const Comp = PANELS[milestone.layout] || OriginPanel;
   return <Comp milestone={milestone} active={active} unlocked={unlocked} />;
-}
+});

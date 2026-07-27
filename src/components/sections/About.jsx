@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useScroll, useTransform, motion } from "motion/react";
+import { useTransform, motion } from "motion/react";
 import { LegacyRail } from "@/components/sections/legacy/LegacyRail";
 import { MilestonePanel } from "@/components/sections/legacy/MilestonePanels";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { useScrollTriggerProgress } from "@/hooks/useScrollTriggerProgress";
 import { useLenis } from "@/providers/SmoothScrollProvider";
 import { legacyMilestones } from "@/lib/constants";
 
@@ -18,23 +19,23 @@ export function About() {
   const [unlocked, setUnlocked] = useState(() => new Set([0]));
   const [sectionInView, setSectionInView] = useState(false);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
+  // Motion offset ["start start","end end"] → ST top top / bottom bottom
+  const scrollYProgress = useScrollTriggerProgress(sectionRef, {
+    start: "top top",
+    end: "bottom bottom",
+    enabled: !reduced,
   });
 
+  // MotionValue — LegacyRail reads this without React re-renders per frame.
+  // Under reduced motion, rail shows full progress (1).
   const progress = useTransform(scrollYProgress, [0, 1], [0, 1]);
   const closingOpacity = useTransform(scrollYProgress, [0.9, 1], [0.2, 1]);
-  const [progressValue, setProgressValue] = useState(0);
 
   useEffect(() => {
     if (reduced) {
-      setProgressValue(1);
       setUnlocked(new Set(legacyMilestones.map((_, i) => i)));
-      return undefined;
     }
-    return progress.on("change", (v) => setProgressValue(v));
-  }, [progress, reduced]);
+  }, [reduced]);
 
   // Mobile year strip is position:fixed — only show while Our Story is on screen.
   useEffect(() => {
@@ -82,7 +83,9 @@ export function About() {
             best = idx;
           }
         }
-        if (bestRatio > 0) setActiveIndex(best);
+        if (bestRatio > 0) {
+          setActiveIndex((prev) => (prev === best ? prev : best));
+        }
       },
       {
         root: null,
@@ -114,7 +117,6 @@ export function About() {
   return (
     <section
       ref={sectionRef}
-      id="about"
       aria-label="Our story — company legacy timeline"
       className="relative overflow-x-clip bg-[#070605] text-white"
     >
@@ -151,7 +153,7 @@ export function About() {
         <aside className="sticky top-[18svh] z-20 hidden self-start sm:block">
           <LegacyRail
             milestones={milestones}
-            progress={progressValue}
+            progress={reduced ? 1 : progress}
             activeIndex={activeIndex}
             onSelect={scrollToMilestone}
           />
@@ -160,7 +162,7 @@ export function About() {
         {/* Mobile year strip — fixed, but only while #about is in view */}
         <div
           className={[
-            "fixed bottom-20 left-1/2 z-30 flex -translate-x-1/2 gap-1.5 rounded-full border border-white/15 bg-black/70 px-2 py-1.5 backdrop-blur-xl transition-[opacity,visibility,transform] duration-300 sm:hidden",
+            "fixed bottom-20 left-1/2 z-30 flex -translate-x-1/2 gap-1.5 rounded-full border border-white/15 bg-black/75 px-2 py-1.5 transition-[opacity,visibility,transform] duration-300 sm:hidden",
             sectionInView
               ? "pointer-events-auto visible translate-y-0 opacity-100"
               : "pointer-events-none invisible translate-y-3 opacity-0",
@@ -193,7 +195,7 @@ export function About() {
 
           <motion.p
             className="pb-6 text-center text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-white/35"
-            style={{ opacity: closingOpacity }}
+            style={{ opacity: reduced ? 1 : closingOpacity }}
           >
             The journey continues
           </motion.p>

@@ -45,7 +45,7 @@ const item = {
 
 export function Gallery() {
   return (
-    <section id="gallery" className="section-py bg-surface-2">
+    <section aria-label="Gallery" className="section-py bg-surface-2">
       <Container>
         <SectionHeading
           contained={false}
@@ -69,7 +69,7 @@ export function Gallery() {
             >
               <LazyImage
                 src={unsplash(img, 900)}
-                srcSet={unsplashSrcSet(img)}
+                srcSet={unsplashSrcSet(img, [384, 480, 640, 768, 960], 80)}
                 sizes="(min-width:768px) 25vw, 50vw"
                 lqip={unsplashLQ(img)}
                 alt={captions[i] || "MDF Exports & Imports export gallery"}

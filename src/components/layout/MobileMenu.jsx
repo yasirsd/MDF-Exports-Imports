@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import { Phone, MessageCircle } from "lucide-react";
 import {
@@ -13,6 +13,7 @@ import { navLinks } from "@/lib/constants";
 import { brandHello, site } from "@/lib/config";
 import { whatsappUrl } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { easePremium } from "@/lib/motion";
 
 const listVariants = {
   hidden: {},
@@ -21,7 +22,7 @@ const listVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, x: 28 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] } },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.45, ease: easePremium } },
 };
 
 /**
@@ -35,11 +36,19 @@ export function MobileMenu({ open, onOpenChange, onNavigate }) {
   const prefersReduced = usePrefersReducedMotion();
   const startX = useRef(null);
   const startY = useRef(null);
+  const navTimer = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (navTimer.current) clearTimeout(navTimer.current);
+    };
+  }, []);
 
   const go = (href) => {
     onOpenChange(false);
     // wait for the close animation before scrolling
-    setTimeout(() => onNavigate(href), 260);
+    if (navTimer.current) clearTimeout(navTimer.current);
+    navTimer.current = setTimeout(() => onNavigate(href), 260);
   };
 
   const handleTouchStart = (e) => {
@@ -65,7 +74,7 @@ export function MobileMenu({ open, onOpenChange, onNavigate }) {
         side="right"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="w-full max-w-none border-l-0 bg-background/85 px-[clamp(1.5rem,6vw,2.5rem)] py-8 backdrop-blur-2xl sm:max-w-md sm:border-l"
+        className="glass w-full max-w-none border-l-0 bg-background/75 px-[clamp(1.5rem,6vw,2.5rem)] py-8 sm:max-w-md sm:border-l"
       >
         <div className="flex min-h-0 flex-1 flex-col gap-8">
           <div>
@@ -73,7 +82,7 @@ export function MobileMenu({ open, onOpenChange, onNavigate }) {
             <SheetDescription>{site.tagline}</SheetDescription>
           </div>
 
-          <nav aria-label="Mobile" className="min-h-0 flex-1 overflow-y-auto no-scrollbar">
+          <nav id="mobile-navigation" aria-label="Mobile" className="min-h-0 flex-1 overflow-y-auto no-scrollbar">
             <motion.ul
               variants={listVariants}
               initial={prefersReduced ? false : "hidden"}

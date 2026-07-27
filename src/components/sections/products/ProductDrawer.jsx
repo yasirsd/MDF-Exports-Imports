@@ -67,7 +67,7 @@ export function ProductDrawer({ product, open, onOpenChange }) {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#140e0a]/80 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-5 right-14">
-              <span className="inline-flex rounded-full border border-white/20 bg-black/35 px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-white backdrop-blur-md">
+              <span className="inline-flex rounded-full border border-white/20 bg-black/70 px-2.5 py-1 text-[0.6rem] font-bold uppercase tracking-[0.14em] text-white">
                 {product.category}
               </span>
               <SheetTitle className="mt-2 text-2xl font-extrabold text-white sm:text-3xl">
@@ -130,7 +130,7 @@ export function ProductDrawer({ product, open, onOpenChange }) {
           </div>
         </div>
 
-        <div className="shrink-0 border-t border-border bg-surface/95 px-5 py-4 backdrop-blur-md sm:px-6">
+        <div className="shrink-0 border-t border-border bg-surface px-5 py-4 sm:px-6">
           <Button
             asChild
             size="lg"

@@ -1,12 +1,14 @@
-import { motion, useScroll, useSpring } from "motion/react";
+import { motion, useSpring } from "motion/react";
+import { useDocumentScroll } from "@/hooks/useDocumentScroll";
 
 /** Slim gradient progress bar fixed to the top of the viewport. */
 export function ScrollProgress() {
-  const { scrollYProgress } = useScroll();
+  const { scrollYProgress } = useDocumentScroll();
   const scaleX = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 30,
-    restDelta: 0.001,
+    stiffness: 140,
+    damping: 36,
+    // Larger restDelta = fewer spring ticks near idle (same visual bar).
+    restDelta: 0.01,
   });
 
   return (

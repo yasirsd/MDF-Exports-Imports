@@ -51,7 +51,7 @@ export function ChapterPeople({ chapter, active }) {
           </div>
 
           <motion.blockquote
-            className="absolute inset-x-3 bottom-3 z-10 rounded-xl border border-white/15 bg-[#0c1410]/80 p-3 backdrop-blur-xl sm:inset-x-4 sm:bottom-4 sm:p-3.5"
+            className="absolute inset-x-3 bottom-3 z-10 rounded-xl border border-white/15 bg-[#0c1410]/92 p-3 sm:inset-x-4 sm:bottom-4 sm:p-3.5"
             initial={false}
             animate={active && !reduced ? { y: [16, 0], opacity: [0, 1] } : { opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
