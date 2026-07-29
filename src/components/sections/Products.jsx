@@ -51,14 +51,21 @@ export function Products() {
         />
 
         <p className="mt-5 max-w-2xl text-sm text-muted-foreground">
-          Origin spotlight:{" "}
+          Origin spotlights:{" "}
           <a
             href="/products/guntur-red-chilli"
             className="font-semibold text-brand-red underline-offset-4 hover:underline"
           >
             Guntur Red Chilli export guide
+          </a>
+          {" · "}
+          <a
+            href="/products/indian-apple"
+            className="font-semibold text-brand-red underline-offset-4 hover:underline"
+          >
+            Premium Indian Apple export guide
           </a>{" "}
-          — dried Teja &amp; Sannam grades for importers and processors.
+          — dried spice and cold-chain fruit programmes for importers.
         </p>
 
         <div className="mt-10 lg:mt-12">

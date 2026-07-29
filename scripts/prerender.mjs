@@ -4,6 +4,7 @@
  * 1) Homepage → dist/index.html (never privacy / product landings)
  * 2) Privacy Policy → dist/privacy/index.html
  * 3) Guntur chilli → dist/products/guntur-red-chilli/index.html
+ * 4) Indian apple → dist/products/indian-apple/index.html
  *
  * Capture host is localhost; Helmet URLs use VITE_SITE_URL.
  * Real users still boot createRoot CSR on top of this HTML.
@@ -26,6 +27,9 @@ const PRIVACY_INDEX = path.join(PRIVACY_DIR, "index.html");
 const GUNTUR_DIR = path.join(DIST, "products", "guntur-red-chilli");
 const GUNTUR_INDEX = path.join(GUNTUR_DIR, "index.html");
 const GUNTUR_PATH = "/products/guntur-red-chilli";
+const APPLE_DIR = path.join(DIST, "products", "indian-apple");
+const APPLE_INDEX = path.join(APPLE_DIR, "index.html");
+const APPLE_PATH = "/products/indian-apple";
 
 /** DeferMount ids that must be force-mounted for the home capture. */
 const SECTION_IDS = [
@@ -46,10 +50,70 @@ const SECTION_IDS = [
 
 const REQUIRED_SNIPPETS = [
   { label: "Hero copy", re: /Exporting\s+Freshness/i },
+  { label: "Story chapter", re: /Freshness\s+begins\s+at\s+the\s+farm/i },
+  { label: "Products catalogue", re: /Export-ready\s+produce/i },
   { label: "Markets copy", re: /From\s+Andhra\s+Pradesh\s+to\s+the\s+world/i },
   { label: "Market name", re: /Dubai|Riyadh|Doha/i },
   { label: "FAQ", re: /Frequently\s+asked\s+questions/i },
+  { label: "Contact", re: /Let's\s+Trade|Start\s+importing/i },
+  { label: "Footer", re: /All\s+rights\s+reserved/i },
 ];
+
+/** Per-section content that must exist — rejects DeferMount/Suspense placeholder shells. */
+const SECTION_CONTENT = {
+  story: {
+    minChars: 120,
+    re: /Freshness\s+begins\s+at\s+the\s+farm|Grown\s+by\s+hands\s+we\s+trust|The\s+Origin/i,
+  },
+  products: {
+    minChars: 80,
+    re: /The\s+Catalogue|Export-ready\s+produce/i,
+  },
+  about: {
+    minChars: 80,
+    re: /Our\s+Story|MD\s+Fruits|Four\s+decades/i,
+  },
+  why: {
+    minChars: 60,
+    re: /Why\s+MDF/i,
+  },
+  process: {
+    minChars: 80,
+    re: /Farm\s+to\s+Port|Nine\s+steps/i,
+  },
+  statistics: {
+    minChars: 40,
+    re: /Years\s+Experience|Farm\s+Network|GCC/i,
+  },
+  markets: {
+    minChars: 60,
+    re: /From\s+Andhra\s+Pradesh\s+to\s+the\s+world|Global\s+Reach/i,
+  },
+  certifications: {
+    minChars: 60,
+    re: /Compliance|APEDA|Built\s+for\s+export/i,
+  },
+  gallery: {
+    minChars: 40,
+    re: /In\s+the\s+Field/i,
+  },
+  testimonials: {
+    minChars: 60,
+    re: /Buyer\s+Themes|importers/i,
+  },
+  faq: {
+    minChars: 60,
+    re: /Frequently\s+asked\s+questions/i,
+  },
+  contact: {
+    minChars: 60,
+    re: /Let's\s+Trade|Start\s+importing/i,
+  },
+  footer: {
+    minChars: 40,
+    re: /All\s+rights\s+reserved|Privacy\s+Policy/i,
+  },
+};
 
 const PRIVACY_ONLY_MARKERS = [
   /How MDF Exports &amp; Imports collects and uses enquiry/i,
@@ -191,6 +255,61 @@ function assertHomeHtml(html) {
       "[prerender] Homepage missing crawlable link to /products/guntur-red-chilli."
     );
   }
+  if (!/href=["']\/products\/indian-apple["']/i.test(html)) {
+    throw new Error(
+      "[prerender] Homepage missing crawlable link to /products/indian-apple."
+    );
+  }
+  // Reject leftover DeferMount / Suspense placeholder shells in the capture.
+  for (let i = 0; i < SECTION_IDS.length; i++) {
+    const id = SECTION_IDS[i];
+    const shell = new RegExp(
+      `id=["']${id}["'][^>]*>\\s*<div class="[^"]*min-h-[^"]*"[^>]*aria-hidden=["']true["'][^>]*>\\s*</div>\\s*</div>`,
+      "i"
+    );
+    const shellAlt = new RegExp(
+      `id=["']${id}["'][^>]*>\\s*<div[^>]*aria-hidden=["']true["'][^>]*class="[^"]*min-h-[^"]*"[^>]*>\\s*</div>\\s*</div>`,
+      "i"
+    );
+    if (shell.test(html) || shellAlt.test(html)) {
+      throw new Error(
+        `[prerender] Homepage section #${id} is still a DeferMount/Suspense placeholder shell — refusing to ship partial capture.`
+      );
+    }
+    const cfg = SECTION_CONTENT[id];
+    if (!cfg) continue;
+
+    const startRe = new RegExp(`id=["']${id}["']`, "i");
+    const startMatch = startRe.exec(html);
+    if (!startMatch) {
+      throw new Error(`[prerender] Homepage section #${id} id missing from capture.`);
+    }
+    const start = startMatch.index;
+    let end = html.length;
+    for (let j = i + 1; j < SECTION_IDS.length; j++) {
+      const nextRe = new RegExp(`id=["']${SECTION_IDS[j]}["']`, "i");
+      nextRe.lastIndex = start + 1;
+      const nextMatch = nextRe.exec(html);
+      if (nextMatch) {
+        end = nextMatch.index;
+        break;
+      }
+    }
+    const chunk = html.slice(start, end);
+    const text = chunk
+      .replace(/&nbsp;/gi, " ")
+      .replace(/&#160;/gi, " ")
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (text.length < cfg.minChars || !cfg.re.test(text)) {
+      throw new Error(
+        `[prerender] Homepage section #${id} missing real content (chars=${text.length}, marker=${cfg.re}).`
+      );
+    }
+  }
   assertSeoUrls(html, { pathSuffix: "/" });
 }
 
@@ -285,31 +404,90 @@ async function forceEnsureSections(page) {
 }
 
 async function readReadyState(page) {
-  return page.evaluate((ids) => {
-    const root = document.getElementById("root");
-    const bodyText = (root?.textContent || "").replace(/\u00a0/g, " ");
-    const sections = Object.fromEntries(
-      ids.map((id) => {
+  return page.evaluate(
+    ({ ids, content }) => {
+      const root = document.getElementById("root");
+      const bodyText = (root?.textContent || "").replace(/\u00a0/g, " ");
+
+      const isPlaceholderShell = (el) => {
+        if (!el) return true;
+        const kids = Array.from(el.children);
+        if (kids.length === 0) return true;
+        // Classic Suspense/DeferMount fallback: single aria-hidden min-h box.
+        if (kids.length === 1) {
+          const only = kids[0];
+          const cls = only.className || "";
+          const ariaHidden = only.getAttribute("aria-hidden") === "true";
+          if (ariaHidden && /min-h-\[/.test(cls) && !(only.textContent || "").trim()) {
+            return true;
+          }
+        }
+        return false;
+      };
+
+      const sections = {};
+      const failures = [];
+
+      for (const id of ids) {
         const el = document.getElementById(id);
-        return [id, Boolean(el && el.childElementCount > 0)];
-      })
-    );
-    return {
-      hash: location.hash,
-      rootKids: root?.childElementCount ?? 0,
-      hasLd: Boolean(
-        document.querySelector('script[type="application/ld+json"]')
+        const cfg = content[id];
+        const text = (el?.textContent || "").replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
+        const placeholder = isPlaceholderShell(el);
+        const tooShort = !cfg || text.length < cfg.minChars;
+        // Marker: rebuild RegExp from source string passed from Node.
+        const markerOk = cfg && new RegExp(cfg.reSource, cfg.reFlags || "i").test(text);
+        const ok = Boolean(el) && !placeholder && !tooShort && markerOk;
+        sections[id] = {
+          ok,
+          placeholder,
+          chars: text.length,
+          hasEl: Boolean(el),
+          childCount: el?.childElementCount ?? 0,
+        };
+        if (!ok) {
+          const why = !el
+            ? "missing"
+            : placeholder
+              ? "placeholder-shell"
+              : tooShort
+                ? `too-short(${text.length}<${cfg?.minChars})`
+                : "marker-miss";
+          failures.push(`${id}:${why}`);
+        }
+      }
+
+      return {
+        hash: location.hash,
+        rootKids: root?.childElementCount ?? 0,
+        hasLd: Boolean(
+          document.querySelector('script[type="application/ld+json"]')
+        ),
+        hasCanonical: Boolean(document.querySelector('link[rel="canonical"]')),
+        hasOg: Boolean(document.querySelector('meta[property="og:title"]')),
+        hasHero: /Exporting\s+Freshness/i.test(bodyText),
+        hasMarkets: /From\s+Andhra\s+Pradesh\s+to\s+the\s+world/i.test(bodyText),
+        hasFaq: /Frequently\s+asked\s+questions/i.test(bodyText),
+        hasStory: /Freshness\s+begins\s+at\s+the\s+farm/i.test(bodyText),
+        sections,
+        failures,
+        allSections: failures.length === 0,
+        sample: bodyText.slice(0, 160),
+      };
+    },
+    {
+      ids: SECTION_IDS,
+      content: Object.fromEntries(
+        Object.entries(SECTION_CONTENT).map(([id, cfg]) => [
+          id,
+          {
+            minChars: cfg.minChars,
+            reSource: cfg.re.source,
+            reFlags: cfg.re.flags,
+          },
+        ])
       ),
-      hasCanonical: Boolean(document.querySelector('link[rel="canonical"]')),
-      hasOg: Boolean(document.querySelector('meta[property="og:title"]')),
-      hasHero: /Exporting\s+Freshness/i.test(bodyText),
-      hasMarkets: /From\s+Andhra\s+Pradesh\s+to\s+the\s+world/i.test(bodyText),
-      hasFaq: /Frequently\s+asked\s+questions/i.test(bodyText),
-      sections,
-      allSections: ids.every((id) => sections[id]),
-      sample: bodyText.slice(0, 160),
-    };
-  }, SECTION_IDS);
+    }
+  );
 }
 
 function isReady(state) {
@@ -322,6 +500,7 @@ function isReady(state) {
     state.hasHero &&
     state.hasMarkets &&
     state.hasFaq &&
+    state.hasStory &&
     state.allSections
   );
 }
@@ -340,11 +519,11 @@ async function waitForHomeReady(page) {
 
   if (!last || !isReady(last)) {
     console.error("[prerender] Last ready state:", JSON.stringify(last, null, 2));
-    throw new Error("[prerender] Timed out waiting for home sections + Helmet.");
+    const failed = last?.failures?.join(", ") || "unknown";
+    throw new Error(
+      `[prerender] Timed out waiting for home sections + Helmet. Failed sections: ${failed}`
+    );
   }
-
-  // Avoid scrollIntoView during capture — Story/GSAP scroll handlers can briefly
-  // empty #story (and similar) even though content was already mounted.
 }
 
 async function waitForPrivacyReady(page) {
@@ -427,6 +606,94 @@ async function waitForGunturReady(page) {
   }
   console.error("[prerender] Guntur ready state:", JSON.stringify(last, null, 2));
   throw new Error("[prerender] Timed out waiting for Guntur chilli page + Helmet.");
+}
+
+function assertAppleHtml(html) {
+  if (!html || typeof html !== "string") {
+    throw new Error("[prerender] Indian apple capture returned empty HTML.");
+  }
+  const normalized = html
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&#160;/gi, " ")
+    .replace(/\u00a0/g, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ");
+
+  if (!/Premium\s+Indian\s+Apples/i.test(normalized)) {
+    throw new Error("[prerender] Indian apple HTML missing product heading/copy.");
+  }
+  if (!/Where\s+our\s+apples\s+come\s+from/i.test(normalized)) {
+    throw new Error("[prerender] Indian apple HTML missing H2 sections.");
+  }
+  if (!/cold\s+chain|shelf\s+life|Andhra\s+Pradesh/i.test(normalized)) {
+    throw new Error("[prerender] Indian apple HTML missing FAQ content.");
+  }
+  if (/Exporting\s+Freshness/i.test(normalized)) {
+    throw new Error(
+      "[prerender] Indian apple HTML still contains homepage hero — wrong view captured."
+    );
+  }
+  if (!/rel=["']canonical["']/i.test(html) || !/property=["']og:title["']/i.test(html)) {
+    throw new Error("[prerender] Indian apple HTML missing Helmet canonical / OG tags.");
+  }
+  const ldCompact = html.replace(/\s/g, "");
+  if (!ldCompact.includes('"@type":"Product"')) {
+    throw new Error("[prerender] Indian apple HTML missing Product JSON-LD.");
+  }
+  if (!ldCompact.includes('"@type":"FAQPage"')) {
+    throw new Error("[prerender] Indian apple HTML missing FAQPage JSON-LD.");
+  }
+  if (!/<div id="root"[^>]*>[\s\S]{200,}<\/div>/i.test(html)) {
+    throw new Error("[prerender] Indian apple #root still looks empty after capture.");
+  }
+  assertSeoUrls(html, { pathSuffix: APPLE_PATH });
+}
+
+async function waitForAppleReady(page) {
+  const deadline = Date.now() + 60_000;
+  let last = null;
+  while (Date.now() < deadline) {
+    last = await page.evaluate((path) => {
+      const root = document.getElementById("root");
+      const bodyText = (root?.textContent || "").replace(/\u00a0/g, " ");
+      const canonical =
+        document.querySelector('link[rel="canonical"]')?.getAttribute("href") ||
+        "";
+      const ld = Array.from(
+        document.querySelectorAll('script[type="application/ld+json"]')
+      )
+        .map((s) => s.textContent || "")
+        .join("");
+      return {
+        path: location.pathname,
+        rootKids: root?.childElementCount ?? 0,
+        hasTitle: /Premium\s+Indian\s+Apples/i.test(bodyText),
+        hasH2: /Where\s+our\s+apples\s+come\s+from/i.test(bodyText),
+        hasHero: /Exporting\s+Freshness/i.test(bodyText),
+        hasCanonical: canonical.includes(path),
+        hasOg: Boolean(document.querySelector('meta[property="og:title"]')),
+        hasProductLd: ld.includes('"Product"'),
+        hasFaqLd: ld.includes('"FAQPage"'),
+      };
+    }, APPLE_PATH);
+    if (
+      last.rootKids > 0 &&
+      last.hasTitle &&
+      last.hasH2 &&
+      !last.hasHero &&
+      last.hasCanonical &&
+      last.hasOg &&
+      last.hasProductLd &&
+      last.hasFaqLd
+    ) {
+      return;
+    }
+    await sleep(400);
+  }
+  console.error("[prerender] Indian apple ready state:", JSON.stringify(last, null, 2));
+  throw new Error("[prerender] Timed out waiting for Indian apple page + Helmet.");
 }
 
 async function captureHtml(page) {
@@ -599,9 +866,41 @@ async function main() {
 
     await mkdir(GUNTUR_DIR, { recursive: true });
     await writeFile(GUNTUR_INDEX, gunturHtml, "utf8");
+    console.log(
+      `[prerender] Wrote ${GUNTUR_INDEX} (${Buffer.byteLength(gunturHtml, "utf8")} bytes)`
+    );
+
+    // --- Indian apple product landing ---
+    console.log(`[prerender] Starting ${APPLE_PATH} capture…`);
+    const appleUrl = new URL(APPLE_PATH, baseUrl).href;
+    await page.goto(appleUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 90_000,
+    });
+    await page.waitForSelector("#root > *", { timeout: 60_000 });
+    await waitForAppleReady(page);
+
+    const appleHtml = await captureHtml(page);
+    console.log(
+      "[prerender] Indian apple captured bytes:",
+      Buffer.byteLength(appleHtml, "utf8")
+    );
+    try {
+      assertAppleHtml(appleHtml);
+    } catch (err) {
+      await writeFile(
+        path.join(DIST, "apple.prerender-failed.html"),
+        appleHtml,
+        "utf8"
+      );
+      throw err;
+    }
+
+    await mkdir(APPLE_DIR, { recursive: true });
+    await writeFile(APPLE_INDEX, appleHtml, "utf8");
     const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
     console.log(
-      `[prerender] Wrote ${GUNTUR_INDEX} (${Buffer.byteLength(gunturHtml, "utf8")} bytes); total ${elapsed}s`
+      `[prerender] Wrote ${APPLE_INDEX} (${Buffer.byteLength(appleHtml, "utf8")} bytes); total ${elapsed}s`
     );
   } finally {
     await browser?.close().catch(() => {});

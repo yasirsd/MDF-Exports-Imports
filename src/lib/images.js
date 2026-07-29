@@ -92,6 +92,7 @@ export const productImages = {
   seasonalFruits: "1619566636858-adf3ef46400b",
   dryRedChilli: "1596040033229-a9821ebd058d",
   spices: "1509358271058-acd22cc93898",
+  indianApple: "1560806887-1e4cd0b6cbd6",
 };
 
 /** Gallery imagery (mixed lifestyle + product). */

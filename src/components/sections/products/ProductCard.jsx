@@ -94,7 +94,7 @@ export const ProductCard = memo(function ProductCard({
                 href={product.landingHref}
                 className="text-sm font-semibold text-brand-red underline-offset-4 hover:underline"
               >
-                Learn more — Guntur export
+                {product.landingLabel || "Learn more"}
               </a>
             </div>
           ) : null}

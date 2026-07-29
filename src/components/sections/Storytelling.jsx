@@ -17,6 +17,7 @@ import { ChapterJourney } from "@/components/sections/story/chapters/ChapterJour
 import { ChapterArrival } from "@/components/sections/story/chapters/ChapterArrival";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useLenis } from "@/providers/SmoothScrollProvider";
+import { isPrerender } from "@/lib/prerender";
 import { storyChapters } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -83,9 +84,21 @@ function ReducedStory() {
  *
  * P1: panel shells always exist for GSAP; heavy chapter trees stay warm only
  * for active ± 1 (and visited). Visibility is driven by GSAP autoAlpha only.
+ *
+ * Build-time prerender: SmoothScrollProvider skips Lenis/GSAP, and the live
+ * path only warms ~2 chapters — so we render ReducedStory (all chapter copy,
+ * no pin/Observer) the same way WorldMap skips R3F during capture.
  */
 export function Storytelling() {
   const prefersReduced = usePrefersReducedMotion();
+
+  // Static full-copy capture path — do not initialize ScrollTrigger pin.
+  if (isPrerender() || prefersReduced) return <ReducedStory />;
+
+  return <StorytellingLive />;
+}
+
+function StorytellingLive() {
   const lenis = useLenis();
   const lenisRef = useRef(lenis);
   lenisRef.current = lenis;
@@ -109,7 +122,6 @@ export function Storytelling() {
   }, [active, total]);
 
   useLayoutEffect(() => {
-    if (prefersReduced) return undefined;
     const root = rootRef.current;
     if (!root) return undefined;
 
@@ -396,13 +408,11 @@ export function Storytelling() {
       unlockPageScroll();
       ctx.revert();
     };
-  }, [prefersReduced, total]);
+  }, [total]);
 
   const scrollToChapter = useCallback((i) => {
     apiRef.current?.goTo(i);
   }, []);
-
-  if (prefersReduced) return <ReducedStory />;
 
   const stepLabel = String(active + 1).padStart(2, "0");
   const activeChapter = storyChapters[active];

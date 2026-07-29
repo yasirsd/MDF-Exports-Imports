@@ -16,6 +16,7 @@ const GunturRedChilli = named(
   () => import("@/components/sections/GunturRedChilli"),
   "GunturRedChilli"
 );
+const IndianApple = named(() => import("@/components/sections/IndianApple"), "IndianApple");
 const Storytelling = named(() => import("@/components/sections/Storytelling"), "Storytelling");
 const Products = named(() => import("@/components/sections/Products"), "Products");
 const About = named(() => import("@/components/sections/About"), "About");
@@ -152,6 +153,11 @@ import {
   GUNTUR_CHILLI_PATH,
   gunturFaqs,
 } from "@/lib/gunturChilliPage";
+import {
+  INDIAN_APPLE_META,
+  INDIAN_APPLE_PATH,
+  indianAppleFaqs,
+} from "@/lib/indianApplePage";
 import { site } from "@/lib/config";
 
 function resolvePage() {
@@ -159,6 +165,7 @@ function resolvePage() {
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
   if (path === "/privacy" || window.location.hash === "#privacy") return "privacy";
   if (path === GUNTUR_CHILLI_PATH) return "guntur-chilli";
+  if (path === INDIAN_APPLE_PATH) return "indian-apple";
   return "home";
 }
 
@@ -208,6 +215,36 @@ function gunturJsonLd() {
   ];
 }
 
+function indianAppleJsonLd() {
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: "Premium Indian Apple",
+      alternateName: "Indian Apple",
+      description: INDIAN_APPLE_META.description,
+      category: "Fresh fruit",
+      brand: {
+        "@type": "Brand",
+        name: site.name,
+      },
+      url: `${site.url}${INDIAN_APPLE_PATH}`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: indianAppleFaqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: f.a,
+        },
+      })),
+    },
+  ];
+}
+
 export default function App() {
   usePrefetchHeavyChunks();
   const page = useAppPage();
@@ -238,6 +275,22 @@ export default function App() {
         />
         <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
           <GunturRedChilli />
+        </Suspense>
+      </>
+    );
+  }
+
+  if (page === "indian-apple") {
+    return (
+      <>
+        <SEO
+          documentTitle={INDIAN_APPLE_META.documentTitle}
+          description={INDIAN_APPLE_META.description}
+          path={INDIAN_APPLE_META.path}
+          jsonLd={indianAppleJsonLd()}
+        />
+        <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
+          <IndianApple />
         </Suspense>
       </>
     );
