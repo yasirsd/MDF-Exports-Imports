@@ -143,17 +143,25 @@ function usePrefetchHeavyChunks() {
   }, []);
 }
 
-function useHashPage() {
-  const [page, setPage] = useState(() =>
-    typeof window !== "undefined" && window.location.hash === "#privacy" ? "privacy" : "home"
-  );
+function resolvePage() {
+  if (typeof window === "undefined") return "home";
+  const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  if (path === "/privacy" || window.location.hash === "#privacy") return "privacy";
+  return "home";
+}
+
+/** Home vs Privacy — supports /privacy (crawlable) and legacy #privacy hash. */
+function useAppPage() {
+  const [page, setPage] = useState(resolvePage);
 
   useEffect(() => {
-    const sync = () => {
-      setPage(window.location.hash === "#privacy" ? "privacy" : "home");
-    };
+    const sync = () => setPage(resolvePage());
     window.addEventListener("hashchange", sync);
-    return () => window.removeEventListener("hashchange", sync);
+    window.addEventListener("popstate", sync);
+    return () => {
+      window.removeEventListener("hashchange", sync);
+      window.removeEventListener("popstate", sync);
+    };
   }, []);
 
   return page;
@@ -161,7 +169,7 @@ function useHashPage() {
 
 export default function App() {
   usePrefetchHeavyChunks();
-  const page = useHashPage();
+  const page = useAppPage();
 
   if (page === "privacy") {
     return (
@@ -169,7 +177,7 @@ export default function App() {
         <SEO
           title="Privacy Policy"
           description="How MDF Exports & Imports collects and uses enquiry information on this website."
-          path="/#privacy"
+          path="/privacy"
         />
         <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
           <PrivacyPolicy />

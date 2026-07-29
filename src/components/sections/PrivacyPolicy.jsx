@@ -7,10 +7,15 @@ const updated = "27 July 2026";
 
 /**
  * Lightweight privacy notice for the marketing site (enquiry / WhatsApp leads).
- * Opened via #privacy — no router required.
+ * Crawlable at /privacy; legacy in-app hash #privacy still works.
  */
 export function PrivacyPolicy() {
   const backHome = () => {
+    const path = window.location.pathname.replace(/\/+$/, "") || "/";
+    if (path === "/privacy") {
+      window.location.href = "/";
+      return;
+    }
     // Leave #privacy for the home experience (any non-privacy hash works).
     window.location.hash = "top";
   };

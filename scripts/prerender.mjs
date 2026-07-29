@@ -1,17 +1,16 @@
 /**
- * Build-time homepage prerender for the Vite SPA.
+ * Build-time prerender for the Vite SPA.
  *
- * Loads dist/ via Vite preview in Playwright, forces every DeferMount section
- * to mount (home only — never #privacy), waits for Helmet + body content, then
- * writes the rendered HTML back to dist/index.html.
+ * 1) Homepage → dist/index.html (never the #privacy / /privacy view)
+ * 2) Privacy Policy → dist/privacy/index.html (crawlable /privacy)
  *
- * Real users still boot createRoot CSR on top of this HTML; crawlers get
- * meaningful first-byte markup.
+ * Capture host is localhost; Helmet URLs use VITE_SITE_URL.
+ * Real users still boot createRoot CSR on top of this HTML.
  *
  * Deploy trigger check: keep this file in git so main → Vercel auto-deploys.
  */
 import { execSync } from "node:child_process";
-import { copyFile, readFile, writeFile } from "node:fs/promises";
+import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
@@ -21,6 +20,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = path.join(ROOT, "dist");
 const INDEX = path.join(DIST, "index.html");
 const INDEX_BEFORE = path.join(DIST, "index.before-prerender.html");
+const PRIVACY_DIR = path.join(DIST, "privacy");
+const PRIVACY_INDEX = path.join(PRIVACY_DIR, "index.html");
 
 /** DeferMount ids that must be force-mounted for the home capture. */
 const SECTION_IDS = [
@@ -101,7 +102,7 @@ async function launchBrowser() {
   });
 }
 
-function assertSeoUrls(html) {
+function assertSeoUrls(html, { pathSuffix = "/" } = {}) {
   const canonical =
     html.match(/<link[^>]+rel=["']canonical["'][^>]*>/i)?.[0] || "";
   const ogUrl =
@@ -124,8 +125,18 @@ function assertSeoUrls(html) {
     );
   }
 
+  const expectedPath =
+    pathSuffix === "/"
+      ? `${EXPECTED_SITE_ORIGIN}/`
+      : `${EXPECTED_SITE_ORIGIN}${pathSuffix}`;
+  if (!canonical.includes(expectedPath) && !ogUrl.includes(expectedPath)) {
+    throw new Error(
+      `[prerender] Expected canonical/og:url path ${expectedPath} — got canonical=${canonical} og:url=${ogUrl}`
+    );
+  }
+
   console.log(
-    `[prerender] SEO URLs OK — origin ${EXPECTED_SITE_ORIGIN} present; no localhost.`
+    `[prerender] SEO URLs OK — ${expectedPath}; no localhost.`
   );
 }
 
@@ -171,7 +182,41 @@ function assertHomeHtml(html) {
   if (!/<div id="root"[^>]*>[\s\S]{200,}<\/div>/i.test(html)) {
     throw new Error("[prerender] #root still looks empty after capture.");
   }
-  assertSeoUrls(html);
+  assertSeoUrls(html, { pathSuffix: "/" });
+}
+
+function assertPrivacyHtml(html) {
+  if (!html || typeof html !== "string") {
+    throw new Error("[prerender] Privacy capture returned empty HTML.");
+  }
+  const normalized = html
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&#160;/gi, " ")
+    .replace(/\u00a0/g, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ");
+
+  if (!/Privacy\s+Policy/i.test(normalized)) {
+    throw new Error("[prerender] Privacy HTML missing Privacy Policy heading/copy.");
+  }
+  if (!/enquiry|WhatsApp|Information we collect/i.test(normalized)) {
+    throw new Error("[prerender] Privacy HTML missing policy body content.");
+  }
+  // Must not be a homepage duplicate.
+  if (/Exporting\s+Freshness/i.test(normalized)) {
+    throw new Error(
+      "[prerender] Privacy HTML still contains homepage hero — wrong view captured."
+    );
+  }
+  if (!/rel=["']canonical["']/i.test(html) || !/property=["']og:title["']/i.test(html)) {
+    throw new Error("[prerender] Privacy HTML missing Helmet canonical / OG tags.");
+  }
+  if (!/<div id="root"[^>]*>[\s\S]{200,}<\/div>/i.test(html)) {
+    throw new Error("[prerender] Privacy #root still looks empty after capture.");
+  }
+  assertSeoUrls(html, { pathSuffix: "/privacy" });
 }
 
 async function forceEnsureSections(page) {
@@ -248,6 +293,43 @@ async function waitForHomeReady(page) {
 
   // Avoid scrollIntoView during capture — Story/GSAP scroll handlers can briefly
   // empty #story (and similar) even though content was already mounted.
+}
+
+async function waitForPrivacyReady(page) {
+  const deadline = Date.now() + 60_000;
+  let last = null;
+  while (Date.now() < deadline) {
+    last = await page.evaluate(() => {
+      const root = document.getElementById("root");
+      const bodyText = (root?.textContent || "").replace(/\u00a0/g, " ");
+      const canonical =
+        document.querySelector('link[rel="canonical"]')?.getAttribute("href") ||
+        "";
+      return {
+        path: location.pathname,
+        hash: location.hash,
+        rootKids: root?.childElementCount ?? 0,
+        hasPrivacy: /Privacy\s+Policy/i.test(bodyText),
+        hasBody: /Information we collect/i.test(bodyText),
+        hasHero: /Exporting\s+Freshness/i.test(bodyText),
+        hasCanonical: /\/privacy\/?$/.test(canonical),
+        hasOg: Boolean(document.querySelector('meta[property="og:title"]')),
+      };
+    });
+    if (
+      last.rootKids > 0 &&
+      last.hasPrivacy &&
+      last.hasBody &&
+      !last.hasHero &&
+      last.hasCanonical &&
+      last.hasOg
+    ) {
+      return;
+    }
+    await sleep(400);
+  }
+  console.error("[prerender] Privacy ready state:", JSON.stringify(last, null, 2));
+  throw new Error("[prerender] Timed out waiting for /privacy view + Helmet.");
 }
 
 async function captureHtml(page) {
@@ -350,14 +432,47 @@ async function main() {
 
     await writeFile(INDEX, html, "utf8");
 
-    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+    const elapsedHome = ((Date.now() - t0) / 1000).toFixed(1);
     const beforeBytes = Buffer.byteLength(beforeHtml, "utf8");
     const afterBytes = Buffer.byteLength(html, "utf8");
     console.log(
-      `[prerender] Wrote ${INDEX} (${beforeBytes} → ${afterBytes} bytes) in ${elapsed}s`
+      `[prerender] Wrote ${INDEX} (${beforeBytes} → ${afterBytes} bytes) in ${elapsedHome}s`
     );
     console.log(
       `[prerender] Shell snapshot saved at ${INDEX_BEFORE} for before/after compare`
+    );
+
+    // --- Privacy page (crawlable /privacy) ---
+    console.log("[prerender] Starting /privacy capture…");
+    const privacyUrl = new URL("/privacy", baseUrl).href;
+    await page.goto(privacyUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 90_000,
+    });
+    await page.waitForSelector("#root > *", { timeout: 60_000 });
+    await waitForPrivacyReady(page);
+
+    const privacyHtml = await captureHtml(page);
+    console.log(
+      "[prerender] Privacy captured bytes:",
+      Buffer.byteLength(privacyHtml, "utf8")
+    );
+    try {
+      assertPrivacyHtml(privacyHtml);
+    } catch (err) {
+      await writeFile(
+        path.join(DIST, "privacy.prerender-failed.html"),
+        privacyHtml,
+        "utf8"
+      );
+      throw err;
+    }
+
+    await mkdir(PRIVACY_DIR, { recursive: true });
+    await writeFile(PRIVACY_INDEX, privacyHtml, "utf8");
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
+    console.log(
+      `[prerender] Wrote ${PRIVACY_INDEX} (${Buffer.byteLength(privacyHtml, "utf8")} bytes); total ${elapsed}s`
     );
   } finally {
     await browser?.close().catch(() => {});
