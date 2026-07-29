@@ -112,7 +112,7 @@ export function ProductFeatured({ product, onViewSpecs }) {
             </a>
           </Button>
           {product.landingHref ? (
-            <Button asChild variant="ghost" size="lg">
+            <Button asChild variant="outline" size="lg">
               <a href={product.landingHref}>
                 {product.featuredLandingLabel || product.landingLabel || "Export guide"}
               </a>

@@ -92,9 +92,10 @@ export const ProductCard = memo(function ProductCard({
             <div className="border-t border-border px-4 pb-4 sm:px-5 sm:pb-5">
               <a
                 href={product.landingHref}
-                className="text-sm font-semibold text-brand-red underline-offset-4 hover:underline"
+                className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-red underline-offset-4 transition-colors hover:underline"
               >
-                {product.landingLabel || "Learn more"}
+                {product.landingLabel || "Open export guide"}
+                <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
             </div>
           ) : null}

@@ -6,6 +6,7 @@ import { ProductDrawer } from "@/components/sections/products/ProductDrawer";
 import { ProductFeatured } from "@/components/sections/products/ProductFeatured";
 import { ProductFilters } from "@/components/sections/products/ProductFilters";
 import { ProductProof } from "@/components/sections/products/ProductProof";
+import { PremiumExports } from "@/components/sections/products/PremiumExports";
 import {
   defaultProductCategory,
   getFeaturedProduct,
@@ -50,32 +51,9 @@ export function Products() {
           description="Premium fruits, vegetables and spices — sourced at peak freshness, packed to international standards, and ready for Gulf programmes."
         />
 
-        <p className="mt-5 max-w-3xl text-sm text-muted-foreground">
-          Origin spotlights:{" "}
-          <a
-            href="/products/guntur-red-chilli"
-            className="font-semibold text-brand-red underline-offset-4 hover:underline"
-          >
-            Guntur Red Chilli export guide
-          </a>
-          {" · "}
-          <a
-            href="/products/indian-apple"
-            className="font-semibold text-brand-red underline-offset-4 hover:underline"
-          >
-            Premium Indian Apple export guide
-          </a>
-          {" · "}
-          <a
-            href="/products/indian-pomegranate"
-            className="font-semibold text-brand-red underline-offset-4 hover:underline"
-          >
-            Indian Pomegranate export guide
-          </a>{" "}
-          — dried spice and cold-chain fruit programmes for importers.
-        </p>
+        <PremiumExports />
 
-        <div className="mt-10 lg:mt-12">
+        <div className="mt-12 lg:mt-14">
           <ProductFeatured product={featured} onViewSpecs={openProduct} />
         </div>
 

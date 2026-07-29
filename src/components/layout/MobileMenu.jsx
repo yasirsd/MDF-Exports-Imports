@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { navLinks } from "@/lib/constants";
+import { premiumProducts } from "@/lib/premiumProducts";
 import { brandHello, site } from "@/lib/config";
 import { whatsappUrl } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
@@ -101,6 +102,25 @@ export function MobileMenu({ open, onOpenChange, onNavigate }) {
                 </motion.li>
               ))}
             </motion.ul>
+
+            <div className="mt-8 border-t border-border pt-6">
+              <p className="px-4 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                Premium exports
+              </p>
+              <ul className="mt-3 flex flex-col gap-1">
+                {premiumProducts.map((item) => (
+                  <li key={item.path}>
+                    <a
+                      href={item.path}
+                      className="tap-target flex w-full items-center rounded-2xl px-4 py-3 text-left text-base font-semibold text-foreground transition-colors hover:bg-surface-2 active:bg-surface-2"
+                      onClick={() => onOpenChange(false)}
+                    >
+                      {item.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </nav>
         </div>
 

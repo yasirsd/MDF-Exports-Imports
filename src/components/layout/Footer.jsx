@@ -2,6 +2,7 @@ import { Linkedin, Instagram, Facebook, Youtube, ArrowUpRight } from "lucide-rea
 import { Container } from "@/components/shared/Container";
 import { Logo } from "@/components/layout/Logo";
 import { navLinks, markets } from "@/lib/constants";
+import { premiumProducts } from "@/lib/premiumProducts";
 import { site } from "@/lib/config";
 import { useScrollTo } from "@/providers/SmoothScrollProvider";
 
@@ -15,7 +16,7 @@ export function Footer() {
     <footer className="relative overflow-hidden border-t border-border bg-surface">
       <Container className="py-16 md:py-20">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-1">
             <Logo size="footer" />
             <p className="mt-6 max-w-md text-lead text-muted-foreground">{site.tagline}</p>
             <p className="mt-2 text-sm text-muted-foreground">
@@ -56,6 +57,25 @@ export function Footer() {
                     className="group inline-flex items-center gap-1 text-foreground transition-colors hover:text-brand-red"
                   >
                     {link.label}
+                    <ArrowUpRight className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav aria-label="Premium export guides">
+            <h3 className="text-sm font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+              Premium exports
+            </h3>
+            <ul className="mt-4 flex flex-col gap-3">
+              {premiumProducts.map((item) => (
+                <li key={item.path}>
+                  <a
+                    href={item.path}
+                    className="group inline-flex items-center gap-1 text-foreground transition-colors hover:text-brand-red"
+                  >
+                    {item.title}
                     <ArrowUpRight className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
                   </a>
                 </li>

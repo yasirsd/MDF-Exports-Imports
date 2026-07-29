@@ -131,16 +131,25 @@ export function ProductDrawer({ product, open, onOpenChange }) {
         </div>
 
         <div className="shrink-0 border-t border-border bg-surface px-5 py-4 sm:px-6">
-          <Button
-            asChild
-            size="lg"
-            className="w-full bg-brand-orange-bright text-[#1a0e06] hover:bg-[#ff8a2a] hover:brightness-100"
-          >
-            <a href={enquireHref} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="h-5 w-5" />
-              Enquire on WhatsApp
-            </a>
-          </Button>
+          <div className="flex flex-col gap-2.5">
+            <Button
+              asChild
+              size="lg"
+              className="w-full bg-brand-orange-bright text-[#1a0e06] hover:bg-[#ff8a2a] hover:brightness-100"
+            >
+              <a href={enquireHref} target="_blank" rel="noopener noreferrer">
+                <MessageCircle className="h-5 w-5" />
+                Enquire on WhatsApp
+              </a>
+            </Button>
+            {product.landingHref ? (
+              <Button asChild variant="outline" size="lg" className="w-full">
+                <a href={product.landingHref}>
+                  {product.featuredLandingLabel || product.landingLabel || "Open export guide"}
+                </a>
+              </Button>
+            ) : null}
+          </div>
           <p className="mt-2 text-center text-[0.65rem] text-muted-foreground">
             Specs, volumes and destination — we reply with a tailored quote.
           </p>

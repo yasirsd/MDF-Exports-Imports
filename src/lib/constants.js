@@ -78,6 +78,8 @@ export const products = [
     image: productImages.indianApple,
     landingHref: "/products/indian-apple",
     landingLabel: "Learn more — Indian apple export",
+    featured: true,
+    featuredLandingLabel: "Apple export guide",
     blurb: "Premium hill-origin fruit, reefer ready.",
     copy: "Premium Indian apples sourced from Himachal Pradesh and Jammu & Kashmir — graded for export programmes with unbroken cold-chain handling via reefer sea freight.",
     varieties: ["Kinnaur", "Shimla", "Seasonal lots"],
@@ -256,9 +258,13 @@ export function getProductCategoryCounts() {
   return counts;
 }
 
-/** Featured product for a category (flagship first, else first in list). */
+/** Featured product for a category — prefer premium landing guides when present. */
 export function getFeaturedProduct(category = defaultProductCategory) {
   const list = getProductsByCategory(category);
+  const landingFeatured = list.find((p) => p.landingHref && p.featured);
+  if (landingFeatured) return landingFeatured;
+  const landing = list.find((p) => p.landingHref);
+  if (landing) return landing;
   return list.find((p) => p.featured) || list[0] || null;
 }
 
