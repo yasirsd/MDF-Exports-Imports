@@ -50,7 +50,7 @@ export function Products() {
           description="Premium fruits, vegetables and spices — sourced at peak freshness, packed to international standards, and ready for Gulf programmes."
         />
 
-        <p className="mt-5 max-w-2xl text-sm text-muted-foreground">
+        <p className="mt-5 max-w-3xl text-sm text-muted-foreground">
           Origin spotlights:{" "}
           <a
             href="/products/guntur-red-chilli"
@@ -64,6 +64,13 @@ export function Products() {
             className="font-semibold text-brand-red underline-offset-4 hover:underline"
           >
             Premium Indian Apple export guide
+          </a>
+          {" · "}
+          <a
+            href="/products/indian-pomegranate"
+            className="font-semibold text-brand-red underline-offset-4 hover:underline"
+          >
+            Indian Pomegranate export guide
           </a>{" "}
           — dried spice and cold-chain fruit programmes for importers.
         </p>

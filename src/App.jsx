@@ -17,6 +17,10 @@ const GunturRedChilli = named(
   "GunturRedChilli"
 );
 const IndianApple = named(() => import("@/components/sections/IndianApple"), "IndianApple");
+const IndianPomegranate = named(
+  () => import("@/components/sections/IndianPomegranate"),
+  "IndianPomegranate"
+);
 const Storytelling = named(() => import("@/components/sections/Storytelling"), "Storytelling");
 const Products = named(() => import("@/components/sections/Products"), "Products");
 const About = named(() => import("@/components/sections/About"), "About");
@@ -158,6 +162,11 @@ import {
   INDIAN_APPLE_PATH,
   indianAppleFaqs,
 } from "@/lib/indianApplePage";
+import {
+  INDIAN_POMEGRANATE_META,
+  INDIAN_POMEGRANATE_PATH,
+  indianPomegranateFaqs,
+} from "@/lib/indianPomegranatePage";
 import { site } from "@/lib/config";
 
 function resolvePage() {
@@ -166,6 +175,7 @@ function resolvePage() {
   if (path === "/privacy" || window.location.hash === "#privacy") return "privacy";
   if (path === GUNTUR_CHILLI_PATH) return "guntur-chilli";
   if (path === INDIAN_APPLE_PATH) return "indian-apple";
+  if (path === INDIAN_POMEGRANATE_PATH) return "indian-pomegranate";
   return "home";
 }
 
@@ -245,6 +255,35 @@ function indianAppleJsonLd() {
   ];
 }
 
+function indianPomegranateJsonLd() {
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: "Indian Pomegranate",
+      description: INDIAN_POMEGRANATE_META.description,
+      category: "Fresh fruit",
+      brand: {
+        "@type": "Brand",
+        name: site.name,
+      },
+      url: `${site.url}${INDIAN_POMEGRANATE_PATH}`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: indianPomegranateFaqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: f.a,
+        },
+      })),
+    },
+  ];
+}
+
 export default function App() {
   usePrefetchHeavyChunks();
   const page = useAppPage();
@@ -291,6 +330,22 @@ export default function App() {
         />
         <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
           <IndianApple />
+        </Suspense>
+      </>
+    );
+  }
+
+  if (page === "indian-pomegranate") {
+    return (
+      <>
+        <SEO
+          documentTitle={INDIAN_POMEGRANATE_META.documentTitle}
+          description={INDIAN_POMEGRANATE_META.description}
+          path={INDIAN_POMEGRANATE_META.path}
+          jsonLd={indianPomegranateJsonLd()}
+        />
+        <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
+          <IndianPomegranate />
         </Suspense>
       </>
     );

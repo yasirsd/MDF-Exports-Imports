@@ -5,6 +5,7 @@
  * 2) Privacy Policy → dist/privacy/index.html
  * 3) Guntur chilli → dist/products/guntur-red-chilli/index.html
  * 4) Indian apple → dist/products/indian-apple/index.html
+ * 5) Indian pomegranate → dist/products/indian-pomegranate/index.html
  *
  * Capture host is localhost; Helmet URLs use VITE_SITE_URL.
  * Real users still boot createRoot CSR on top of this HTML.
@@ -30,6 +31,9 @@ const GUNTUR_PATH = "/products/guntur-red-chilli";
 const APPLE_DIR = path.join(DIST, "products", "indian-apple");
 const APPLE_INDEX = path.join(APPLE_DIR, "index.html");
 const APPLE_PATH = "/products/indian-apple";
+const POM_DIR = path.join(DIST, "products", "indian-pomegranate");
+const POM_INDEX = path.join(POM_DIR, "index.html");
+const POM_PATH = "/products/indian-pomegranate";
 
 /** DeferMount ids that must be force-mounted for the home capture. */
 const SECTION_IDS = [
@@ -258,6 +262,11 @@ function assertHomeHtml(html) {
   if (!/href=["']\/products\/indian-apple["']/i.test(html)) {
     throw new Error(
       "[prerender] Homepage missing crawlable link to /products/indian-apple."
+    );
+  }
+  if (!/href=["']\/products\/indian-pomegranate["']/i.test(html)) {
+    throw new Error(
+      "[prerender] Homepage missing crawlable link to /products/indian-pomegranate."
     );
   }
   // Reject leftover DeferMount / Suspense placeholder shells in the capture.
@@ -696,6 +705,99 @@ async function waitForAppleReady(page) {
   throw new Error("[prerender] Timed out waiting for Indian apple page + Helmet.");
 }
 
+function assertPomegranateHtml(html) {
+  if (!html || typeof html !== "string") {
+    throw new Error("[prerender] Indian pomegranate capture returned empty HTML.");
+  }
+  const normalized = html
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&#160;/gi, " ")
+    .replace(/\u00a0/g, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ");
+
+  if (!/Indian\s+Pomegranates/i.test(normalized)) {
+    throw new Error("[prerender] Indian pomegranate HTML missing product heading/copy.");
+  }
+  if (!/Where\s+our\s+pomegranates\s+come\s+from/i.test(normalized)) {
+    throw new Error("[prerender] Indian pomegranate HTML missing H2 sections.");
+  }
+  if (!/Bhagwa|Ganesh|GI-tagged|shelf\s+life/i.test(normalized)) {
+    throw new Error("[prerender] Indian pomegranate HTML missing FAQ/variety content.");
+  }
+  if (/Exporting\s+Freshness/i.test(normalized)) {
+    throw new Error(
+      "[prerender] Indian pomegranate HTML still contains homepage hero — wrong view captured."
+    );
+  }
+  if (!/rel=["']canonical["']/i.test(html) || !/property=["']og:title["']/i.test(html)) {
+    throw new Error("[prerender] Indian pomegranate HTML missing Helmet canonical / OG tags.");
+  }
+  const ldCompact = html.replace(/\s/g, "");
+  if (!ldCompact.includes('"@type":"Product"')) {
+    throw new Error("[prerender] Indian pomegranate HTML missing Product JSON-LD.");
+  }
+  if (!ldCompact.includes('"@type":"FAQPage"')) {
+    throw new Error("[prerender] Indian pomegranate HTML missing FAQPage JSON-LD.");
+  }
+  if (!/<div id="root"[^>]*>[\s\S]{200,}<\/div>/i.test(html)) {
+    throw new Error("[prerender] Indian pomegranate #root still looks empty after capture.");
+  }
+  assertSeoUrls(html, { pathSuffix: POM_PATH });
+}
+
+async function waitForPomegranateReady(page) {
+  const deadline = Date.now() + 60_000;
+  let last = null;
+  while (Date.now() < deadline) {
+    last = await page.evaluate((path) => {
+      const root = document.getElementById("root");
+      const bodyText = (root?.textContent || "").replace(/\u00a0/g, " ");
+      const canonical =
+        document.querySelector('link[rel="canonical"]')?.getAttribute("href") ||
+        "";
+      const ld = Array.from(
+        document.querySelectorAll('script[type="application/ld+json"]')
+      )
+        .map((s) => s.textContent || "")
+        .join("");
+      return {
+        path: location.pathname,
+        rootKids: root?.childElementCount ?? 0,
+        hasTitle: /Indian\s+Pomegranates/i.test(bodyText),
+        hasH2: /Where\s+our\s+pomegranates\s+come\s+from/i.test(bodyText),
+        hasHero: /Exporting\s+Freshness/i.test(bodyText),
+        hasCanonical: canonical.includes(path),
+        hasOg: Boolean(document.querySelector('meta[property="og:title"]')),
+        hasProductLd: ld.includes('"Product"'),
+        hasFaqLd: ld.includes('"FAQPage"'),
+      };
+    }, POM_PATH);
+    if (
+      last.rootKids > 0 &&
+      last.hasTitle &&
+      last.hasH2 &&
+      !last.hasHero &&
+      last.hasCanonical &&
+      last.hasOg &&
+      last.hasProductLd &&
+      last.hasFaqLd
+    ) {
+      return;
+    }
+    await sleep(400);
+  }
+  console.error(
+    "[prerender] Indian pomegranate ready state:",
+    JSON.stringify(last, null, 2)
+  );
+  throw new Error(
+    "[prerender] Timed out waiting for Indian pomegranate page + Helmet."
+  );
+}
+
 async function captureHtml(page) {
   await page.evaluate(() => {
     const style = document.createElement("style");
@@ -898,9 +1000,41 @@ async function main() {
 
     await mkdir(APPLE_DIR, { recursive: true });
     await writeFile(APPLE_INDEX, appleHtml, "utf8");
+    console.log(
+      `[prerender] Wrote ${APPLE_INDEX} (${Buffer.byteLength(appleHtml, "utf8")} bytes)`
+    );
+
+    // --- Indian pomegranate product landing ---
+    console.log(`[prerender] Starting ${POM_PATH} capture…`);
+    const pomUrl = new URL(POM_PATH, baseUrl).href;
+    await page.goto(pomUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 90_000,
+    });
+    await page.waitForSelector("#root > *", { timeout: 60_000 });
+    await waitForPomegranateReady(page);
+
+    const pomHtml = await captureHtml(page);
+    console.log(
+      "[prerender] Indian pomegranate captured bytes:",
+      Buffer.byteLength(pomHtml, "utf8")
+    );
+    try {
+      assertPomegranateHtml(pomHtml);
+    } catch (err) {
+      await writeFile(
+        path.join(DIST, "pomegranate.prerender-failed.html"),
+        pomHtml,
+        "utf8"
+      );
+      throw err;
+    }
+
+    await mkdir(POM_DIR, { recursive: true });
+    await writeFile(POM_INDEX, pomHtml, "utf8");
     const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
     console.log(
-      `[prerender] Wrote ${APPLE_INDEX} (${Buffer.byteLength(appleHtml, "utf8")} bytes); total ${elapsed}s`
+      `[prerender] Wrote ${POM_INDEX} (${Buffer.byteLength(pomHtml, "utf8")} bytes); total ${elapsed}s`
     );
   } finally {
     await browser?.close().catch(() => {});
