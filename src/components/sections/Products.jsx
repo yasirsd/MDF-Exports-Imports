@@ -50,6 +50,17 @@ export function Products() {
           description="Premium fruits, vegetables and spices — sourced at peak freshness, packed to international standards, and ready for Gulf programmes."
         />
 
+        <p className="mt-5 max-w-2xl text-sm text-muted-foreground">
+          Origin spotlight:{" "}
+          <a
+            href="/products/guntur-red-chilli"
+            className="font-semibold text-brand-red underline-offset-4 hover:underline"
+          >
+            Guntur Red Chilli export guide
+          </a>{" "}
+          — dried Teja &amp; Sannam grades for importers and processors.
+        </p>
+
         <div className="mt-10 lg:mt-12">
           <ProductFeatured product={featured} onViewSpecs={openProduct} />
         </div>

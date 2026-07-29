@@ -1,8 +1,9 @@
 /**
  * Build-time prerender for the Vite SPA.
  *
- * 1) Homepage → dist/index.html (never the #privacy / /privacy view)
- * 2) Privacy Policy → dist/privacy/index.html (crawlable /privacy)
+ * 1) Homepage → dist/index.html (never privacy / product landings)
+ * 2) Privacy Policy → dist/privacy/index.html
+ * 3) Guntur chilli → dist/products/guntur-red-chilli/index.html
  *
  * Capture host is localhost; Helmet URLs use VITE_SITE_URL.
  * Real users still boot createRoot CSR on top of this HTML.
@@ -22,6 +23,9 @@ const INDEX = path.join(DIST, "index.html");
 const INDEX_BEFORE = path.join(DIST, "index.before-prerender.html");
 const PRIVACY_DIR = path.join(DIST, "privacy");
 const PRIVACY_INDEX = path.join(PRIVACY_DIR, "index.html");
+const GUNTUR_DIR = path.join(DIST, "products", "guntur-red-chilli");
+const GUNTUR_INDEX = path.join(GUNTUR_DIR, "index.html");
+const GUNTUR_PATH = "/products/guntur-red-chilli";
 
 /** DeferMount ids that must be force-mounted for the home capture. */
 const SECTION_IDS = [
@@ -182,6 +186,11 @@ function assertHomeHtml(html) {
   if (!/<div id="root"[^>]*>[\s\S]{200,}<\/div>/i.test(html)) {
     throw new Error("[prerender] #root still looks empty after capture.");
   }
+  if (!/href=["']\/products\/guntur-red-chilli["']/i.test(html)) {
+    throw new Error(
+      "[prerender] Homepage missing crawlable link to /products/guntur-red-chilli."
+    );
+  }
   assertSeoUrls(html, { pathSuffix: "/" });
 }
 
@@ -217,6 +226,49 @@ function assertPrivacyHtml(html) {
     throw new Error("[prerender] Privacy #root still looks empty after capture.");
   }
   assertSeoUrls(html, { pathSuffix: "/privacy" });
+}
+
+function assertGunturHtml(html) {
+  if (!html || typeof html !== "string") {
+    throw new Error("[prerender] Guntur capture returned empty HTML.");
+  }
+  const normalized = html
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&#160;/gi, " ")
+    .replace(/\u00a0/g, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ");
+
+  if (!/Guntur\s+Red\s+Chilli/i.test(normalized)) {
+    throw new Error("[prerender] Guntur HTML missing product heading/copy.");
+  }
+  if (!/Why\s+Guntur\s+red\s+chilli\s+stands\s+apart/i.test(normalized)) {
+    throw new Error("[prerender] Guntur HTML missing H2 sections.");
+  }
+  if (!/Scoville|packaging|import clearance/i.test(normalized)) {
+    throw new Error("[prerender] Guntur HTML missing FAQ content.");
+  }
+  if (/Exporting\s+Freshness/i.test(normalized)) {
+    throw new Error(
+      "[prerender] Guntur HTML still contains homepage hero — wrong view captured."
+    );
+  }
+  if (!/rel=["']canonical["']/i.test(html) || !/property=["']og:title["']/i.test(html)) {
+    throw new Error("[prerender] Guntur HTML missing Helmet canonical / OG tags.");
+  }
+  const ldCompact = html.replace(/\s/g, "");
+  if (!ldCompact.includes('"@type":"Product"')) {
+    throw new Error("[prerender] Guntur HTML missing Product JSON-LD.");
+  }
+  if (!ldCompact.includes('"@type":"FAQPage"')) {
+    throw new Error("[prerender] Guntur HTML missing FAQPage JSON-LD.");
+  }
+  if (!/<div id="root"[^>]*>[\s\S]{200,}<\/div>/i.test(html)) {
+    throw new Error("[prerender] Guntur #root still looks empty after capture.");
+  }
+  assertSeoUrls(html, { pathSuffix: GUNTUR_PATH });
 }
 
 async function forceEnsureSections(page) {
@@ -330,6 +382,51 @@ async function waitForPrivacyReady(page) {
   }
   console.error("[prerender] Privacy ready state:", JSON.stringify(last, null, 2));
   throw new Error("[prerender] Timed out waiting for /privacy view + Helmet.");
+}
+
+async function waitForGunturReady(page) {
+  const deadline = Date.now() + 60_000;
+  let last = null;
+  while (Date.now() < deadline) {
+    last = await page.evaluate((path) => {
+      const root = document.getElementById("root");
+      const bodyText = (root?.textContent || "").replace(/\u00a0/g, " ");
+      const canonical =
+        document.querySelector('link[rel="canonical"]')?.getAttribute("href") ||
+        "";
+      const ld = Array.from(
+        document.querySelectorAll('script[type="application/ld+json"]')
+      )
+        .map((s) => s.textContent || "")
+        .join("");
+      return {
+        path: location.pathname,
+        rootKids: root?.childElementCount ?? 0,
+        hasTitle: /Guntur\s+Red\s+Chilli/i.test(bodyText),
+        hasH2: /Why\s+Guntur\s+red\s+chilli\s+stands\s+apart/i.test(bodyText),
+        hasHero: /Exporting\s+Freshness/i.test(bodyText),
+        hasCanonical: canonical.includes(path),
+        hasOg: Boolean(document.querySelector('meta[property="og:title"]')),
+        hasProductLd: ld.includes('"Product"'),
+        hasFaqLd: ld.includes('"FAQPage"'),
+      };
+    }, GUNTUR_PATH);
+    if (
+      last.rootKids > 0 &&
+      last.hasTitle &&
+      last.hasH2 &&
+      !last.hasHero &&
+      last.hasCanonical &&
+      last.hasOg &&
+      last.hasProductLd &&
+      last.hasFaqLd
+    ) {
+      return;
+    }
+    await sleep(400);
+  }
+  console.error("[prerender] Guntur ready state:", JSON.stringify(last, null, 2));
+  throw new Error("[prerender] Timed out waiting for Guntur chilli page + Helmet.");
 }
 
 async function captureHtml(page) {
@@ -470,9 +567,41 @@ async function main() {
 
     await mkdir(PRIVACY_DIR, { recursive: true });
     await writeFile(PRIVACY_INDEX, privacyHtml, "utf8");
+    console.log(
+      `[prerender] Wrote ${PRIVACY_INDEX} (${Buffer.byteLength(privacyHtml, "utf8")} bytes)`
+    );
+
+    // --- Guntur chilli product landing ---
+    console.log(`[prerender] Starting ${GUNTUR_PATH} capture…`);
+    const gunturUrl = new URL(GUNTUR_PATH, baseUrl).href;
+    await page.goto(gunturUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 90_000,
+    });
+    await page.waitForSelector("#root > *", { timeout: 60_000 });
+    await waitForGunturReady(page);
+
+    const gunturHtml = await captureHtml(page);
+    console.log(
+      "[prerender] Guntur captured bytes:",
+      Buffer.byteLength(gunturHtml, "utf8")
+    );
+    try {
+      assertGunturHtml(gunturHtml);
+    } catch (err) {
+      await writeFile(
+        path.join(DIST, "guntur.prerender-failed.html"),
+        gunturHtml,
+        "utf8"
+      );
+      throw err;
+    }
+
+    await mkdir(GUNTUR_DIR, { recursive: true });
+    await writeFile(GUNTUR_INDEX, gunturHtml, "utf8");
     const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
     console.log(
-      `[prerender] Wrote ${PRIVACY_INDEX} (${Buffer.byteLength(privacyHtml, "utf8")} bytes); total ${elapsed}s`
+      `[prerender] Wrote ${GUNTUR_INDEX} (${Buffer.byteLength(gunturHtml, "utf8")} bytes); total ${elapsed}s`
     );
   } finally {
     await browser?.close().catch(() => {});

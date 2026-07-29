@@ -88,6 +88,16 @@ export const ProductCard = memo(function ProductCard({
               </p>
             </div>
           </button>
+          {product.landingHref ? (
+            <div className="border-t border-border px-4 pb-4 sm:px-5 sm:pb-5">
+              <a
+                href={product.landingHref}
+                className="text-sm font-semibold text-brand-red underline-offset-4 hover:underline"
+              >
+                Learn more — Guntur export
+              </a>
+            </div>
+          ) : null}
         </article>
       </TiltCard>
     </motion.div>

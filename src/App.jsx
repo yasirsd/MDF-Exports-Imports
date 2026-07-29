@@ -12,6 +12,10 @@ import { MarketsGlobeShell } from "@/components/sections/globe/StaticGlobe";
 const named = (loader, name) => lazy(() => loader().then((m) => ({ default: m[name] })));
 
 const PrivacyPolicy = named(() => import("@/components/sections/PrivacyPolicy"), "PrivacyPolicy");
+const GunturRedChilli = named(
+  () => import("@/components/sections/GunturRedChilli"),
+  "GunturRedChilli"
+);
 const Storytelling = named(() => import("@/components/sections/Storytelling"), "Storytelling");
 const Products = named(() => import("@/components/sections/Products"), "Products");
 const About = named(() => import("@/components/sections/About"), "About");
@@ -143,14 +147,22 @@ function usePrefetchHeavyChunks() {
   }, []);
 }
 
+import {
+  GUNTUR_CHILLI_META,
+  GUNTUR_CHILLI_PATH,
+  gunturFaqs,
+} from "@/lib/gunturChilliPage";
+import { site } from "@/lib/config";
+
 function resolvePage() {
   if (typeof window === "undefined") return "home";
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
   if (path === "/privacy" || window.location.hash === "#privacy") return "privacy";
+  if (path === GUNTUR_CHILLI_PATH) return "guntur-chilli";
   return "home";
 }
 
-/** Home vs Privacy — supports /privacy (crawlable) and legacy #privacy hash. */
+/** Home vs Privacy vs product landings — real paths + legacy #privacy hash. */
 function useAppPage() {
   const [page, setPage] = useState(resolvePage);
 
@@ -167,6 +179,35 @@ function useAppPage() {
   return page;
 }
 
+function gunturJsonLd() {
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: "Guntur Red Chilli",
+      description: GUNTUR_CHILLI_META.description,
+      category: "Dried spices",
+      brand: {
+        "@type": "Brand",
+        name: site.name,
+      },
+      url: `${site.url}${GUNTUR_CHILLI_PATH}`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: gunturFaqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: f.a,
+        },
+      })),
+    },
+  ];
+}
+
 export default function App() {
   usePrefetchHeavyChunks();
   const page = useAppPage();
@@ -181,6 +222,22 @@ export default function App() {
         />
         <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
           <PrivacyPolicy />
+        </Suspense>
+      </>
+    );
+  }
+
+  if (page === "guntur-chilli") {
+    return (
+      <>
+        <SEO
+          documentTitle={GUNTUR_CHILLI_META.documentTitle}
+          description={GUNTUR_CHILLI_META.description}
+          path={GUNTUR_CHILLI_META.path}
+          jsonLd={gunturJsonLd()}
+        />
+        <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
+          <GunturRedChilli />
         </Suspense>
       </>
     );

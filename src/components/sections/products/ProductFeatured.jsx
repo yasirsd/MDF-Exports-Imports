@@ -111,6 +111,11 @@ export function ProductFeatured({ product, onViewSpecs }) {
               Enquire
             </a>
           </Button>
+          {product.landingHref ? (
+            <Button asChild variant="ghost" size="lg">
+              <a href={product.landingHref}>Guntur export guide</a>
+            </Button>
+          ) : null}
         </div>
       </div>
     </motion.div>

@@ -3,14 +3,21 @@ import { site } from "@/lib/config";
 
 /**
  * Per-page SEO: meta, OpenGraph, Twitter cards and JSON-LD structured data.
+ * @param {string} [documentTitle] — exact <title> / og:title (skips "— site.name" template)
+ * @param {object|object[]} [jsonLd] — extra JSON-LD graph(s) besides Organization
  */
 export function SEO({
   title,
   description,
   path = "/",
   image = "/og-image.jpg",
+  documentTitle,
+  jsonLd,
+  includeOrganization = true,
 }) {
-  const fullTitle = title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`;
+  const fullTitle =
+    documentTitle ||
+    (title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`);
   const desc = description || site.description;
   const url = `${site.url}${path}`;
   const imageUrl = image.startsWith("http") ? image : `${site.url}${image}`;
@@ -50,6 +57,12 @@ export function SEO({
     sameAs: site.socials.map((s) => s.href),
   };
 
+  const extraSchemas = jsonLd
+    ? Array.isArray(jsonLd)
+      ? jsonLd
+      : [jsonLd]
+    : [];
+
   return (
     <Helmet>
       <html lang="en" />
@@ -66,14 +79,21 @@ export function SEO({
       <meta property="og:image:type" content="image/jpeg" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={`${site.name} — ${site.tagline}`} />
+      <meta property="og:image:alt" content={fullTitle} />
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={desc} />
       <meta name="twitter:image" content={imageUrl} />
 
-      <script type="application/ld+json">{JSON.stringify(orgSchema)}</script>
+      {includeOrganization ? (
+        <script type="application/ld+json">{JSON.stringify(orgSchema)}</script>
+      ) : null}
+      {extraSchemas.map((schema, i) => (
+        <script key={i} type="application/ld+json">
+          {JSON.stringify(schema)}
+        </script>
+      ))}
     </Helmet>
   );
 }
