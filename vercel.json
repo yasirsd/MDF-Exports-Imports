@@ -1,4 +1,7 @@
 {
+  "env": {
+    "VITE_SITE_URL": "https://www.mdfexport.com"
+  },
   "build": {
     "env": {
       "VITE_SITE_URL": "https://www.mdfexport.com"
