@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { bindDocumentScroll } from "@/lib/documentScroll";
+import { isPrerender } from "@/lib/prerender";
 
 const LenisContext = createContext(null);
 
@@ -34,7 +35,8 @@ export function SmoothScrollProvider({ children }) {
   const storyLockedRef = useRef(false);
 
   useEffect(() => {
-    if (prefersReduced) return undefined;
+    // Skip Lenis/GSAP during build prerender — faster capture, no scroll pin races.
+    if (prefersReduced || isPrerender()) return undefined;
 
     let cancelled = false;
     let instance = null;

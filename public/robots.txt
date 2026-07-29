@@ -1,4 +1,4 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://mdfexportsimports.com/sitemap.xml
+User-agent: *
+Allow: /
+
+Sitemap: https://www.mdfexport.com/sitemap.xml

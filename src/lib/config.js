@@ -19,7 +19,7 @@ export const site = {
   location: "Andhra Pradesh, India",
   foundingYear: "1984",
   mapQuery: env("VITE_MAP_QUERY", "Andhra Pradesh, India"),
-  url: env("VITE_SITE_URL", "https://mdfexportsimports.com"),
+  url: env("VITE_SITE_URL", "https://www.mdfexport.com"),
   whatsapp: env("VITE_WHATSAPP_NUMBER", DEFAULT_WHATSAPP),
   phone: env("VITE_CONTACT_PHONE", DEFAULT_PHONE),
   email: env("VITE_CONTACT_EMAIL", DEFAULT_EMAIL),

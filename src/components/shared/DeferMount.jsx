@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { isPrerender } from "@/lib/prerender";
 import { cn } from "@/lib/utils";
 
 function normalizeTarget(target) {
@@ -12,6 +13,8 @@ function normalizeTarget(target) {
  *
  * `id` stays on the wrapper at all times so nav / hash links resolve even before
  * the section chunk mounts. Nav clicks dispatch `ut:ensure-section` to force mount.
+ * Build-time prerender sets `window.__PRERENDER__` and/or dispatches
+ * `ut:ensure-section` with `target: "*"` so every section mounts for HTML capture.
  */
 export function DeferMount({
   id,
@@ -25,7 +28,7 @@ export function DeferMount({
   placeholder = null,
 }) {
   const ref = useRef(null);
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(() => isPrerender());
 
   useEffect(() => {
     if (ready) return undefined;
@@ -34,7 +37,9 @@ export function DeferMount({
 
     const onEnsure = (event) => {
       const target = normalizeTarget(event?.detail?.target);
-      if (id && target === id) forceReady();
+      if (target === "*" || target === "__all__" || (id && target === id)) {
+        forceReady();
+      }
     };
 
     const onHash = () => {

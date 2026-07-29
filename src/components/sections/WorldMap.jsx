@@ -7,6 +7,7 @@ import { StaticGlobe } from "@/components/sections/globe/StaticGlobe";
 import { markets, origin } from "@/lib/constants";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { fadeUp, viewportOnce } from "@/lib/motion";
+import { isPrerender } from "@/lib/prerender";
 import { cn } from "@/lib/utils";
 
 const Globe = lazy(() => import("@/components/sections/globe/Globe"));
@@ -101,6 +102,8 @@ function GlobeViewport({ reduced }) {
 
 export function WorldMap() {
   const prefersReduced = usePrefersReducedMotion();
+  // Headless prerender: keep StaticGlobe + market copy; skip unreliable WebGL/R3F.
+  const skipLiveGlobe = prefersReduced || isPrerender();
 
   return (
     <section aria-label="Global markets" className="section-py relative overflow-x-clip bg-background">
@@ -149,7 +152,7 @@ export function WorldMap() {
           </div>
 
           <div className="relative z-[1] -mx-4 h-[min(88vw,34rem)] sm:-mx-6 sm:h-[min(80vw,38rem)] lg:mx-0 lg:-mr-10 lg:h-[min(52vw,42rem)] xl:-mr-16">
-            <GlobeViewport reduced={prefersReduced} />
+            <GlobeViewport reduced={skipLiveGlobe} />
           </div>
         </div>
       </Container>

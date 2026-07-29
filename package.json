@@ -6,7 +6,9 @@
   "description": "MDF Exports & Imports — premium agricultural export company website.",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.mjs",
+    "build:vite": "vite build",
+    "prerender": "node scripts/prerender.mjs",
     "preview": "vite preview",
     "lint": "eslint ."
   },
@@ -35,6 +37,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
+    "@sparticuz/chromium": "^133.0.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
@@ -44,6 +47,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
+    "playwright": "^1.50.1",
     "postcss": "^8.5.1",
     "tailwindcss": "^3.4.17",
     "vite": "^6.0.11"

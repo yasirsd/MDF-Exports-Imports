@@ -82,6 +82,8 @@ function isConstrainedConnection() {
  */
 function usePrefetchHeavyChunks() {
   useEffect(() => {
+    if (typeof window !== "undefined" && window.__PRERENDER__) return undefined;
+
     let io;
     let idleId;
     let timeoutId;
@@ -207,7 +209,7 @@ export default function App() {
         <Section id="process" minH="min-h-[100svh]">
           <ExportProcess />
         </Section>
-        <Section minH="min-h-[60vh]">
+        <Section id="statistics" minH="min-h-[60vh]">
           <Statistics />
         </Section>
         {/* Markets: IO DeferMount only (no eagerIdle). Globe warm is gated in
@@ -229,7 +231,7 @@ export default function App() {
         <Section id="testimonials">
           <Testimonials />
         </Section>
-        <Section minH="min-h-[70vh]">
+        <Section id="faq" minH="min-h-[70vh]">
           <FAQ />
         </Section>
         <Section id="contact" minH="min-h-[90vh]">
@@ -237,7 +239,7 @@ export default function App() {
         </Section>
       </main>
 
-      <Section minH="min-h-[40vh]">
+      <Section id="footer" minH="min-h-[40vh]">
         <Footer />
       </Section>
       <FloatingActions />

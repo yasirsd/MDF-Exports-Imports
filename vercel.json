@@ -1,4 +1,9 @@
 {
+  "build": {
+    "env": {
+      "VITE_SITE_URL": "https://www.mdfexport.com"
+    }
+  },
   "headers": [
     {
       "source": "/assets/(.*)",

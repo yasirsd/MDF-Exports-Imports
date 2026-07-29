@@ -12,16 +12,11 @@ import { MessageCircle } from "lucide-react";
 import { faqs } from "@/lib/constants";
 import { brandHello, site } from "@/lib/config";
 import { whatsappUrl } from "@/lib/utils";
-import { fadeUp, fadeUpReduced, motionSafe, viewportOnce } from "@/lib/motion";
-import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
+import { fadeUp, viewportOnce } from "@/lib/motion";
 
 export function FAQ() {
-  const reduced = usePrefersReducedMotion();
-  const variants = motionSafe(reduced, fadeUp, fadeUpReduced);
-  const askHref = whatsappUrl(site.whatsapp, brandHello("I have a question about exporting."));
-
   return (
-    <section className="section-py bg-surface-2">
+    <section className="section-py bg-surface-2" aria-label="Frequently asked questions">
       <Container className="max-w-4xl">
         <SectionHeading
           contained={false}
@@ -33,7 +28,7 @@ export function FAQ() {
         <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} className="mt-12">
           <Accordion type="single" collapsible className="flex flex-col gap-4">
             {faqs.map((faq, i) => (
-              <motion.div key={faq.q} variants={variants} custom={i}>
+              <motion.div key={faq.q} variants={fadeUp} custom={i}>
                 <AccordionItem value={`item-${i}`}>
                   <AccordionTrigger>{faq.q}</AccordionTrigger>
                   <AccordionContent>{faq.a}</AccordionContent>
@@ -47,7 +42,11 @@ export function FAQ() {
           <p className="text-lg font-semibold">Still have questions?</p>
           <p className="text-muted-foreground">Our export team is a message away.</p>
           <Button asChild variant="primary" size="lg">
-            <a href={askHref} target="_blank" rel="noopener noreferrer">
+            <a
+              href={whatsappUrl(site.whatsapp, brandHello("I have a question about exporting."))}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <MessageCircle className="h-5 w-5" />
               Chat on WhatsApp
             </a>

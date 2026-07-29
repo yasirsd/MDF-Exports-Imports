@@ -10,6 +10,9 @@ node_modules
 dist
 dist-ssr
 *.local
+/playwright/.cache
+/test-results
+/playwright-report
 
 # Editor
 .vscode/*
