@@ -798,24 +798,37 @@ async function waitForPomegranateReady(page) {
   );
 }
 
+/**
+ * Never ship the temporary visibility override — `#root * { opacity: 1 !important }`
+ * breaks LazyImage LQIP fade-out (blur stuck forever) and tanks scroll compositing.
+ */
+function assertNoPrerenderVisLeak(html, label = "capture") {
+  if (/data-prerender-vis/i.test(html)) {
+    throw new Error(
+      `[prerender] ${label} HTML still contains data-prerender-vis — refusing to ship.`
+    );
+  }
+  if (/#root\s*,\s*#root\s*\*[\s\S]*?opacity\s*:\s*1\s*!important/i.test(html)) {
+    throw new Error(
+      `[prerender] ${label} HTML still contains #root opacity:1 !important leak — refusing to ship.`
+    );
+  }
+}
+
 async function captureHtml(page) {
+  // Optional in-capture visibility force for debugging asserts only — always removed
+  // before page.content() so it never reaches dist/ or production.
   await page.evaluate(() => {
-    const style = document.createElement("style");
-    style.setAttribute("data-prerender-vis", "");
-    style.textContent = `
-      #root, #root * {
-        opacity: 1 !important;
-        visibility: visible !important;
-      }
-    `;
-    document.head.appendChild(style);
+    document.querySelectorAll("style[data-prerender-vis]").forEach((n) => n.remove());
   });
 
   let html = await page.content();
   if (!/^<!doctype/i.test(html)) {
     html = `<!doctype html>\n${html}`;
   }
-  return html.endsWith("\n") ? html : `${html}\n`;
+  html = html.endsWith("\n") ? html : `${html}\n`;
+  assertNoPrerenderVisLeak(html);
+  return html;
 }
 
 async function main() {

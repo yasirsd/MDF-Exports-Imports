@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { site } from "@/lib/config";
 import { cn } from "@/lib/utils";
 
 /**
  * Lazy, optimised image with blur-up placeholder and a graceful branded
  * gradient fallback if the source fails to load.
+ *
+ * LQIP is unmounted once loaded (not only opacity-0) so a CSS specificity
+ * leak cannot leave blur(24px) painted over the real photo.
  */
 export function LazyImage({
   src,
@@ -20,6 +23,7 @@ export function LazyImage({
 }) {
   const [loaded, setLoaded] = useState(false);
   const [errored, setErrored] = useState(false);
+  const imgRef = useRef(null);
 
   // Notify the smooth-scroll provider so pinned ScrollTriggers recompute
   // once late-loading images change layout height.
@@ -29,17 +33,31 @@ export function LazyImage({
     }
   };
 
+  const markLoaded = () => {
+    setLoaded((prev) => {
+      if (!prev) notifyLayoutChange();
+      return true;
+    });
+  };
+
+  // Cached / prerendered images may already be complete before onLoad binds.
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img || errored) return;
+    if (img.complete && img.naturalWidth > 0) {
+      markLoaded();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-check when src changes
+  }, [src, srcSet, errored]);
+
   return (
     <div className={cn("relative overflow-hidden bg-surface-2", className)}>
-      {lqip && !errored ? (
+      {lqip && !errored && !loaded ? (
         <img
           src={lqip}
           alt=""
           aria-hidden="true"
-          className={cn(
-            "absolute inset-0 h-full w-full scale-105 object-cover blur-xl transition-opacity duration-700",
-            loaded ? "opacity-0" : "opacity-100"
-          )}
+          className="absolute inset-0 h-full w-full scale-105 object-cover blur-xl"
         />
       ) : null}
 
@@ -68,6 +86,7 @@ export function LazyImage({
         </div>
       ) : (
         <img
+          ref={imgRef}
           src={src}
           srcSet={srcSet}
           sizes={srcSet ? sizes || "100vw" : undefined}
@@ -75,10 +94,7 @@ export function LazyImage({
           loading={eager ? "eager" : "lazy"}
           decoding="async"
           fetchPriority={eager ? "high" : "auto"}
-          onLoad={() => {
-            setLoaded(true);
-            notifyLayoutChange();
-          }}
+          onLoad={markLoaded}
           onError={() => {
             setErrored(true);
             notifyLayoutChange();
