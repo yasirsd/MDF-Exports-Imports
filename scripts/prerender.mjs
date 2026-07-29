@@ -7,6 +7,8 @@
  *
  * Real users still boot createRoot CSR on top of this HTML; crawlers get
  * meaningful first-byte markup.
+ *
+ * Deploy trigger check: keep this file in git so main → Vercel auto-deploys.
  */
 import { execSync } from "node:child_process";
 import { copyFile, readFile, writeFile } from "node:fs/promises";
