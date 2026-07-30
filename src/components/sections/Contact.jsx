@@ -129,7 +129,7 @@ export function Contact() {
           annotate
           eyebrow="Let's Trade"
           title="Start importing with us."
-          description="Tell us what you need and where. Our team responds fast — usually within one business day."
+          description="Tell us what you need and where. Our team responds fast. Usually within one business day."
         />
 
         <div className="mt-14 grid gap-6 lg:grid-cols-2">
@@ -271,7 +271,7 @@ export function Contact() {
                 aria-describedby={errors.product ? "product-error" : undefined}
                 className={cn(inputCls, "appearance-none", errors.product && "border-brand-red")}
               >
-                <option value="">Select a category</option>
+                <option value="">Select a product</option>
                 {products.map((p) => (
                   <option key={p.id} value={p.name}>
                     {p.name}

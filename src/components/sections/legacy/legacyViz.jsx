@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { Sprout, MapPinned, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/** 1998 — stylised regional expansion */
+/** 1998. Stylised regional expansion */
 export function RegionalMapViz({ active }) {
   return (
     <div className="relative h-full min-h-[16rem] overflow-hidden rounded-[1.75rem] border border-emerald-400/25 bg-gradient-to-br from-[#0c1410] via-[#0a120e] to-[#07100c] p-5 shadow-[0_24px_60px_rgba(0,0,0,0.35)] sm:min-h-[18rem] sm:p-6 lg:p-7">
@@ -84,7 +84,7 @@ const CLUSTER_NODES = [
   { label: "Quality cells", icon: Users },
 ];
 
-/** 2010 — partner ecosystem (no empty placeholder tiles) */
+/** 2010. Partner ecosystem (no empty placeholder tiles) */
 export function NetworkViz({ active, stats }) {
   return (
     <div className="relative h-full min-h-[16rem] overflow-hidden rounded-[1.75rem] border border-amber-400/25 bg-gradient-to-br from-[#151008] via-[#120e08] to-[#0c0a06] p-5 shadow-[0_24px_60px_rgba(0,0,0,0.35)] sm:min-h-[18rem] sm:p-6 lg:p-7">
@@ -142,7 +142,7 @@ export function NetworkViz({ active, stats }) {
   );
 }
 
-/** 2020 — cold-chain */
+/** 2020. Cold-chain */
 export function InfraViz({ active }) {
   return (
     <div className="relative h-full min-h-[16rem] overflow-hidden rounded-[1.75rem] border border-sky-400/25 bg-gradient-to-br from-[#060b14] via-[#081220] to-[#0a1524] p-5 shadow-[0_24px_60px_rgba(0,0,0,0.35)] sm:min-h-[18rem] sm:p-6 lg:p-7">
@@ -198,7 +198,7 @@ export function InfraViz({ active }) {
   );
 }
 
-/** 2024 — launch routes */
+/** 2024. Launch routes */
 export function LaunchRoutesViz({ active, routes = [] }) {
   return (
     <div className="relative h-full min-h-[16rem] overflow-hidden rounded-[1.75rem] border border-brand-orange-bright/30 bg-gradient-to-br from-[#140d08] via-[#120b07] to-[#0a0806] p-5 shadow-[0_24px_60px_rgba(0,0,0,0.35)] sm:min-h-[18rem] sm:p-6 lg:p-7">
@@ -267,7 +267,7 @@ export function LaunchRoutesViz({ active, routes = [] }) {
   );
 }
 
-/** Today — market presence */
+/** Today. Market presence */
 export function TodayPresenceViz({ markets = [], className, active = false }) {
   return (
     <div

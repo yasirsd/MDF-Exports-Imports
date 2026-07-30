@@ -4,7 +4,7 @@ import { Logo } from "@/components/layout/Logo";
 import { cn } from "@/lib/utils";
 
 /**
- * Dark root shell for product landings — film grain + sticky header.
+ * Dark root shell for product landings. Film grain + sticky header.
  * Matches Export Journey chapter surface language.
  */
 export function ProductPageShell({ children, className }) {
@@ -19,7 +19,7 @@ export function ProductPageShell({ children, className }) {
         className
       )}
     >
-      {/* Film grain — ~3.5% like Story stages */}
+      {/* Film grain. ~3.5% like Story stages */}
       <div
         className="pointer-events-none fixed inset-0 z-[1] opacity-[0.035] mix-blend-overlay"
         style={{

@@ -14,7 +14,7 @@ import { useLenis } from "@/providers/SmoothScrollProvider";
 import { whatsappUrl } from "@/lib/utils";
 
 /**
- * Product spec drawer — scrollable body + sticky enquire.
+ * Product spec drawer. Scrollable body + sticky enquire.
  * Uses data-lenis-prevent so trackpad/wheel can scroll natively inside
  * (Lenis.stop() alone preventDefaults wheel and blocks nested scroll).
  */
@@ -151,7 +151,7 @@ export function ProductDrawer({ product, open, onOpenChange }) {
             ) : null}
           </div>
           <p className="mt-2 text-center text-[0.65rem] text-muted-foreground">
-            Specs, volumes and destination — we reply with a tailored quote.
+            Specs, volumes and destination. We reply with a tailored quote.
           </p>
         </div>
       </SheetContent>

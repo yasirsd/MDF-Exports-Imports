@@ -17,7 +17,7 @@ const MARKETS = [
 ];
 
 /**
- * Chapter 06 — Arrival climax.
+ * Chapter 06. Arrival climax.
  * Matches Chapter 05 polish: one SVG hero + focused copy + markets + CTA.
  * Extra right padding clears the chapter rail.
  */
@@ -52,7 +52,7 @@ export function ChapterArrival({ chapter, active }) {
             {chapter.copy}
           </p>
 
-          {/* Compact market chips — not a second dense list inside the viz */}
+          {/* Compact market chips. Not a second dense list inside the viz */}
           <ul className="mt-7 flex flex-wrap gap-2">
             {MARKETS.map((m, i) => {
               const soon = m.status === "soon";
@@ -122,7 +122,7 @@ export function ChapterArrival({ chapter, active }) {
               </a>
             </Button>
             <p className="mt-3 text-[0.65rem] font-medium text-white/35">
-              From Andhra Pradesh to your port — same care, every mile.
+              From Andhra Pradesh to your port. Same care, every mile.
             </p>
           </motion.div>
         </div>

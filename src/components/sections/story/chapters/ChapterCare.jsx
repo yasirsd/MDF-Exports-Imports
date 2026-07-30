@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const CHIP_ICONS = [Package, ShieldCheck, Tag];
 
 /**
- * Chapter 04 — Packhouse care.
+ * Chapter 04. Packhouse care.
  * Matches Chapter 05 polish: SVG-first PackhouseViz + process timeline + chips.
  * No Unsplash dependency for the hero. Rail-safe padding.
  */

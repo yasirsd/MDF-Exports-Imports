@@ -6,6 +6,7 @@
  * 3) Guntur chilli → dist/products/guntur-red-chilli/index.html
  * 4) Indian apple → dist/products/indian-apple/index.html
  * 5) Indian pomegranate → dist/products/indian-pomegranate/index.html
+ * 6) Banganapalli mango → dist/products/banganapalli-mango/index.html
  *
  * Capture host is localhost; Helmet URLs use VITE_SITE_URL.
  * Real users still boot createRoot CSR on top of this HTML.
@@ -34,11 +35,14 @@ const APPLE_PATH = "/products/indian-apple";
 const POM_DIR = path.join(DIST, "products", "indian-pomegranate");
 const POM_INDEX = path.join(POM_DIR, "index.html");
 const POM_PATH = "/products/indian-pomegranate";
+const MANGO_DIR = path.join(DIST, "products", "banganapalli-mango");
+const MANGO_INDEX = path.join(MANGO_DIR, "index.html");
+const MANGO_PATH = "/products/banganapalli-mango";
 
 /** DeferMount ids that must be force-mounted for the home capture. */
 const SECTION_IDS = [
-  "story",
   "products",
+  "story",
   "about",
   "why",
   "process",
@@ -70,8 +74,8 @@ const SECTION_CONTENT = {
     re: /Freshness\s+begins\s+at\s+the\s+farm|Grown\s+by\s+hands\s+we\s+trust|The\s+Origin/i,
   },
   products: {
-    minChars: 80,
-    re: /The\s+Catalogue|Export-ready\s+produce/i,
+    minChars: 200,
+    re: /(?=[\s\S]*Banganapalli\s+Mango)(?=[\s\S]*Indian\s+Apple)(?=[\s\S]*Pomegranate)(?=[\s\S]*Guntur)/i,
   },
   about: {
     minChars: 80,
@@ -267,6 +271,16 @@ function assertHomeHtml(html) {
   if (!/href=["']\/products\/indian-pomegranate["']/i.test(html)) {
     throw new Error(
       "[prerender] Homepage missing crawlable link to /products/indian-pomegranate."
+    );
+  }
+  if (!/href=["']\/products\/banganapalli-mango["']/i.test(html)) {
+    throw new Error(
+      "[prerender] Homepage missing crawlable link to /products/banganapalli-mango."
+    );
+  }
+  if (/Our\s+primary\s+export\s+guides/i.test(html)) {
+    throw new Error(
+      "[prerender] Homepage still contains removed Premium Exports spotlight."
     );
   }
   // Reject leftover DeferMount / Suspense placeholder shells in the capture.
@@ -798,8 +812,101 @@ async function waitForPomegranateReady(page) {
   );
 }
 
+function assertMangoHtml(html) {
+  if (!html || typeof html !== "string") {
+    throw new Error("[prerender] Banganapalli mango capture returned empty HTML.");
+  }
+  const normalized = html
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&#160;/gi, " ")
+    .replace(/\u00a0/g, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ");
+
+  if (!/Banganapalli\s+Mangoes/i.test(normalized)) {
+    throw new Error("[prerender] Banganapalli mango HTML missing product heading/copy.");
+  }
+  if (!/Where\s+our\s+mangoes\s+come\s+from/i.test(normalized)) {
+    throw new Error("[prerender] Banganapalli mango HTML missing H2 sections.");
+  }
+  if (!/Andhra|VHT|irradiation|10.?13/i.test(normalized)) {
+    throw new Error("[prerender] Banganapalli mango HTML missing FAQ/compliance content.");
+  }
+  if (/Exporting\s+Freshness/i.test(normalized)) {
+    throw new Error(
+      "[prerender] Banganapalli mango HTML still contains homepage hero. Wrong view captured."
+    );
+  }
+  if (!/rel=["']canonical["']/i.test(html) || !/property=["']og:title["']/i.test(html)) {
+    throw new Error("[prerender] Banganapalli mango HTML missing Helmet canonical / OG tags.");
+  }
+  const ldCompact = html.replace(/\s/g, "");
+  if (!ldCompact.includes('"@type":"Product"')) {
+    throw new Error("[prerender] Banganapalli mango HTML missing Product JSON-LD.");
+  }
+  if (!ldCompact.includes('"@type":"FAQPage"')) {
+    throw new Error("[prerender] Banganapalli mango HTML missing FAQPage JSON-LD.");
+  }
+  if (!/<div id="root"[^>]*>[\s\S]{200,}<\/div>/i.test(html)) {
+    throw new Error("[prerender] Banganapalli mango #root still looks empty after capture.");
+  }
+  assertSeoUrls(html, { pathSuffix: MANGO_PATH });
+}
+
+async function waitForMangoReady(page) {
+  const deadline = Date.now() + 60_000;
+  let last = null;
+  while (Date.now() < deadline) {
+    last = await page.evaluate((path) => {
+      const root = document.getElementById("root");
+      const bodyText = (root?.textContent || "").replace(/\u00a0/g, " ");
+      const canonical =
+        document.querySelector('link[rel="canonical"]')?.getAttribute("href") ||
+        "";
+      const ld = Array.from(
+        document.querySelectorAll('script[type="application/ld+json"]')
+      )
+        .map((s) => s.textContent || "")
+        .join("");
+      return {
+        path: location.pathname,
+        rootKids: root?.childElementCount ?? 0,
+        hasTitle: /Banganapalli\s+Mangoes/i.test(bodyText),
+        hasH2: /Where\s+our\s+mangoes\s+come\s+from/i.test(bodyText),
+        hasHero: /Exporting\s+Freshness/i.test(bodyText),
+        hasCanonical: canonical.includes(path),
+        hasOg: Boolean(document.querySelector('meta[property="og:title"]')),
+        hasProductLd: ld.includes('"Product"'),
+        hasFaqLd: ld.includes('"FAQPage"'),
+      };
+    }, MANGO_PATH);
+    if (
+      last.rootKids > 0 &&
+      last.hasTitle &&
+      last.hasH2 &&
+      !last.hasHero &&
+      last.hasCanonical &&
+      last.hasOg &&
+      last.hasProductLd &&
+      last.hasFaqLd
+    ) {
+      return;
+    }
+    await sleep(400);
+  }
+  console.error(
+    "[prerender] Banganapalli mango ready state:",
+    JSON.stringify(last, null, 2)
+  );
+  throw new Error(
+    "[prerender] Timed out waiting for Banganapalli mango page + Helmet."
+  );
+}
+
 /**
- * Never ship the temporary visibility override — `#root * { opacity: 1 !important }`
+ * Never ship the temporary visibility override. `#root * { opacity: 1 !important }`
  * breaks LazyImage LQIP fade-out (blur stuck forever) and tanks scroll compositing.
  */
 function assertNoPrerenderVisLeak(html, label = "capture") {
@@ -1045,9 +1152,41 @@ async function main() {
 
     await mkdir(POM_DIR, { recursive: true });
     await writeFile(POM_INDEX, pomHtml, "utf8");
+    console.log(
+      `[prerender] Wrote ${POM_INDEX} (${Buffer.byteLength(pomHtml, "utf8")} bytes)`
+    );
+
+    // --- Banganapalli mango product landing ---
+    console.log(`[prerender] Starting ${MANGO_PATH} capture…`);
+    const mangoUrl = new URL(MANGO_PATH, baseUrl).href;
+    await page.goto(mangoUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 90_000,
+    });
+    await page.waitForSelector("#root > *", { timeout: 60_000 });
+    await waitForMangoReady(page);
+
+    const mangoHtml = await captureHtml(page);
+    console.log(
+      "[prerender] Banganapalli mango captured bytes:",
+      Buffer.byteLength(mangoHtml, "utf8")
+    );
+    try {
+      assertMangoHtml(mangoHtml);
+    } catch (err) {
+      await writeFile(
+        path.join(DIST, "mango.prerender-failed.html"),
+        mangoHtml,
+        "utf8"
+      );
+      throw err;
+    }
+
+    await mkdir(MANGO_DIR, { recursive: true });
+    await writeFile(MANGO_INDEX, mangoHtml, "utf8");
     const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
     console.log(
-      `[prerender] Wrote ${POM_INDEX} (${Buffer.byteLength(pomHtml, "utf8")} bytes); total ${elapsed}s`
+      `[prerender] Wrote ${MANGO_INDEX} (${Buffer.byteLength(mangoHtml, "utf8")} bytes); total ${elapsed}s`
     );
   } finally {
     await browser?.close().catch(() => {});

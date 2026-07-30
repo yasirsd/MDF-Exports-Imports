@@ -8,7 +8,7 @@ import { useInViewMotion } from "./useInViewMotion";
 import { cn } from "@/lib/utils";
 
 /**
- * Full-bleed product hero — framed 4:5 portrait, not a marketing card dump.
+ * Full-bleed product hero. Framed 4:5 portrait, not a marketing card dump.
  */
 export function ProductHero({
   atmosphere,

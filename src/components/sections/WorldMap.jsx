@@ -114,7 +114,7 @@ export function WorldMap() {
               contained={false}
               eyebrow="Global Reach"
               title="From Andhra Pradesh to the world."
-              description="India highlighted at the origin, with live shipping lanes to the Gulf — and future lanes across Africa, the Americas, Asia-Pacific, and Europe."
+              description="India highlighted at the origin, with live shipping lanes to the Gulf. And future lanes across Africa, the Americas, Asia-Pacific, and Europe."
             />
             <div className="mt-8 flex flex-wrap gap-2">
               <Badge variant="gold">Origin · {origin.name}</Badge>

@@ -9,79 +9,40 @@ export const navLinks = [
   { label: "Contact", href: "#contact" },
 ];
 
-/** Product catalogue — export-ready assortment with B2B spec fields. */
+/**
+ * Product catalogue. Four export lines only.
+ * Category field is a soft badge label (no filter tabs).
+ */
 export const products = [
   {
-    id: "bananas",
-    name: "Bananas",
-    category: "Fruits",
-    image: productImages.bananas,
-    featured: true,
-    blurb: "Cavendish & Robusta, export-grade ripeness.",
-    copy: "Hand-selected bananas graded for colour, size and transit firmness — packed to arrive ready for Gulf retail and wholesale.",
-    varieties: ["Cavendish", "Robusta"],
-    season: "Year-round",
-    pack: "Ventilated carton · 13kg / 18kg",
-    coldChain: "Pre-cooled · held 13°–14°C in transit",
-    markets: ["UAE", "KSA", "Qatar", "Oman"],
-    highlights: ["Export ripeness", "Uniform fingers", "Retail ready"],
-  },
-  {
-    id: "lemons",
-    name: "Lemons",
-    category: "Fruits",
-    image: productImages.lemons,
-    blurb: "High-juice, thin-skin, long shelf life.",
-    copy: "Bright, high-juice lemons with thin skin and excellent shelf life — selected for foodservice and retail programmes.",
-    varieties: ["Eureka", "Local thin-skin"],
-    season: "Year-round",
-    pack: "Ventilated carton · 5kg / 10kg",
-    coldChain: "Cool-chain recommended · 8°–10°C",
-    markets: ["UAE", "KSA", "Kuwait"],
-    highlights: ["High juice", "Long shelf life", "Foodservice grade"],
-  },
-  {
     id: "mangoes",
-    name: "Mangoes",
-    category: "Fruits",
+    name: "Banganapalli Mango",
+    category: "Fruit",
     image: productImages.mangoes,
     featured: true,
-    blurb: "Alphonso, Banganapalli & Kesar varieties.",
-    copy: "Peak-season Indian mangoes — Alphonso, Banganapalli and Kesar — harvested at the right maturity for flavour and arrival condition.",
-    varieties: ["Alphonso", "Banganapalli", "Kesar"],
-    season: "Mar – Jul",
-    pack: "Foam-net + carton · 3kg / 5kg",
-    coldChain: "Controlled ripening · 10°–12°C",
+    landingHref: "/products/banganapalli-mango",
+    landingLabel: "Learn more. Banganapalli mango export",
+    featuredLandingLabel: "Mango export guide",
+    blurb: "Andhra-grown Banganapalli, sea-freight ready.",
+    copy: "Andhra-grown Banganapalli mango packed for export programmes. Firm flesh and transport tolerance suited to reefer sea freight when maturity and cold chain are handled correctly.",
+    varieties: ["Banganapalli"],
+    season: "Typically Mar – Apr (confirm on enquiry)",
+    pack: "CFB carton · foam net / tray · 3–5kg",
+    coldChain: "Typically held / shipped 10°–13°C",
     markets: ["UAE", "KSA", "Qatar", "Oman", "Bahrain"],
-    highlights: ["Peak season", "Premium varieties", "Arrival quality"],
-  },
-  {
-    id: "pomegranate",
-    name: "Pomegranate",
-    category: "Fruits",
-    image: productImages.pomegranate,
-    landingHref: "/products/indian-pomegranate",
-    landingLabel: "Learn more — Indian pomegranate export",
-    blurb: "Deep-red arils, superior brix.",
-    copy: "Deep-red, high-brix pomegranates graded for size and colour — built for premium retail displays across the Gulf. Sourced from Maharashtra (Bhagwa & Ganesh) with cold-chain handling.",
-    varieties: ["Bhagwa", "Ganesh"],
-    season: "Sep – Dec (Hasta Bahar)",
-    pack: "Corrugated carton · 2.7–4.0kg",
-    coldChain: "Pre-cooled · held 5°–7°C",
-    markets: ["UAE", "KSA", "Qatar"],
-    highlights: ["High brix", "Deep colour", "Premium retail"],
+    highlights: ["Andhra origin", "Banganapalli", "Sea-freight ready"],
   },
   {
     id: "indian-apple",
     name: "Indian Apple",
-    category: "Fruits",
+    category: "Fruit",
     image: productImages.indianApple,
     landingHref: "/products/indian-apple",
-    landingLabel: "Learn more — Indian apple export",
+    landingLabel: "Learn more. Indian apple export",
     featured: true,
     featuredLandingLabel: "Apple export guide",
     blurb: "Premium hill-origin fruit, reefer ready.",
-    copy: "Premium Indian apples sourced from Himachal Pradesh and Jammu & Kashmir — graded for export programmes with unbroken cold-chain handling via reefer sea freight.",
+    copy: "Premium Indian apples sourced from Himachal Pradesh and Jammu & Kashmir. Graded for export programmes with unbroken cold-chain handling via reefer sea freight.",
     varieties: ["Kinnaur", "Shimla", "Seasonal lots"],
     season: "On enquiry",
     pack: "Export packing · on enquiry",
@@ -90,185 +51,52 @@ export const products = [
     highlights: ["Hill origin", "Cold-chain graded", "Reefer ready"],
   },
   {
-    id: "coconut",
-    name: "Coconut",
-    category: "Fruits",
-    image: productImages.coconut,
-    blurb: "Tender & semi-husked, freshly sourced.",
-    copy: "Tender and semi-husked coconuts sourced fresh for juice and culinary use — cleaned and packed for export handling.",
-    varieties: ["Tender", "Semi-husked"],
-    season: "Year-round",
-    pack: "Mesh / carton · count packs",
-    coldChain: "Ambient to cool · avoid freezing",
-    markets: ["UAE", "KSA", "Oman"],
-    highlights: ["Fresh sourced", "Clean trimmed", "Count graded"],
-  },
-  {
-    id: "tomatoes",
-    name: "Tomatoes",
-    category: "Vegetables",
-    image: productImages.tomatoes,
-    blurb: "Firm, uniform, cold-chain ready.",
-    copy: "Firm, uniform tomatoes selected for colour break and transit strength — cold-chain ready for Gulf importers.",
-    varieties: ["Hybrid round", "Cluster"],
-    season: "Year-round",
-    pack: "Ventilated crate · 5kg / 7kg",
-    coldChain: "Unbroken cool chain · 10°–12°C",
-    markets: ["UAE", "KSA", "Qatar", "Kuwait"],
-    highlights: ["Firm fruit", "Uniform grade", "Cold-chain ready"],
-  },
-  {
-    id: "onions",
-    name: "Onions",
-    category: "Vegetables",
-    image: productImages.onions,
-    blurb: "Red & pink, export-sized bulbs.",
-    copy: "Red and pink onions sized for export programmes — cured, sorted and packed for stable storage life.",
-    varieties: ["Red", "Pink"],
-    season: "Year-round",
-    pack: "Mesh bag · 10kg / 25kg",
-    coldChain: "Dry ventilated storage · cool preferred",
-    markets: ["UAE", "KSA", "Qatar", "Oman", "Kuwait"],
-    highlights: ["Export size", "Well cured", "Stable storage"],
-  },
-  {
-    id: "green-chilli",
-    name: "Green Chilli",
-    category: "Vegetables",
-    image: productImages.greenChilli,
-    blurb: "Crisp, vibrant, hand-selected.",
-    copy: "Crisp green chillies hand-selected for colour, length and heat profile — packed to protect freshness in transit.",
-    varieties: ["G4", "Byadgi green"],
-    season: "Year-round",
-    pack: "Ventilated carton · 2kg / 5kg",
-    coldChain: "Pre-cooled · 7°–9°C",
+    id: "pomegranate",
+    name: "Pomegranate",
+    category: "Fruit",
+    image: productImages.pomegranate,
+    landingHref: "/products/indian-pomegranate",
+    landingLabel: "Pomegranate export",
+    featuredLandingLabel: "Pomegranate export",
+    blurb: "Deep-red arils, superior brix.",
+    copy: "Deep-red, high-brix pomegranates graded for size and colour. Built for premium retail displays across the Gulf. Sourced from Maharashtra (Bhagwa & Ganesh) with cold-chain handling.",
+    varieties: ["Bhagwa", "Ganesh"],
+    season: "Sep – Dec (Hasta Bahar)",
+    pack: "Corrugated carton · 2.7–4.0kg",
+    coldChain: "Pre-cooled · held 5°–7°C",
     markets: ["UAE", "KSA", "Qatar"],
-    highlights: ["Hand selected", "Vibrant colour", "Protected pack"],
-  },
-  {
-    id: "drumsticks",
-    name: "Drumsticks",
-    category: "Vegetables",
-    image: productImages.drumsticks,
-    blurb: "Tender moringa pods, fibre-graded.",
-    copy: "Tender moringa (drumstick) pods fibre-graded for culinary markets — a distinctive South Indian export line.",
-    varieties: ["PKM", "Local tender"],
-    season: "Nov – Apr",
-    pack: "Ventilated carton · 5kg",
-    coldChain: "Cool chain · 8°–10°C",
-    markets: ["UAE", "KSA", "Oman"],
-    highlights: ["Tender pods", "Fibre graded", "Specialty line"],
-  },
-  {
-    id: "red-chilli",
-    name: "Red Chilli",
-    category: "Spices",
-    image: productImages.redChilli,
-    landingHref: "/products/guntur-red-chilli",
-    landingLabel: "Learn more — Guntur export",
-    blurb: "High-colour, controlled pungency.",
-    copy: "Fresh red chillies with high colour and controlled pungency — graded for spice processors and retail packs.",
-    varieties: ["Teja fresh", "Sannam"],
-    season: "Dec – May",
-    pack: "Ventilated carton · 5kg / 10kg",
-    coldChain: "Cool ventilated · avoid moisture",
-    markets: ["UAE", "KSA", "Qatar", "Kuwait"],
-    highlights: ["High colour", "Controlled heat", "Processor ready"],
+    highlights: ["High brix", "Deep colour", "Premium retail"],
   },
   {
     id: "dry-red-chilli",
-    name: "Dry Red Chilli",
-    category: "Spices",
+    name: "Guntur Dry Red Chilli",
+    category: "Spice",
     image: productImages.dryRedChilli,
     featured: true,
     landingHref: "/products/guntur-red-chilli",
-    landingLabel: "Learn more — Guntur export",
+    landingLabel: "Learn more. Guntur export",
     featuredLandingLabel: "Guntur export guide",
-    blurb: "Teja & Sannam, sun-dried grades.",
-    copy: "Sun-dried Teja and Sannam chillies — Andhra’s signature spice export with clean colour and reliable pungency.",
-    varieties: ["Teja", "Sannam"],
+    blurb: "Teja & Sannam, sun-dried grades from Andhra.",
+    copy: "Sun-dried Teja and Sannam chillies from Guntur. Andhra’s signature spice export with clean colour and reliable pungency for importers and processors.",
+    varieties: ["Teja", "Sannam", "Teja Deluxe"],
     season: "Year-round (dried)",
     pack: "Jute / PP bag · 10kg / 25kg",
     coldChain: "Dry ambient · moisture-controlled store",
     markets: ["UAE", "KSA", "Qatar", "Oman", "Kuwait"],
     highlights: ["Teja & Sannam", "Sun dried", "Andhra origin"],
   },
-  {
-    id: "spices",
-    name: "Spices",
-    category: "Spices",
-    image: productImages.spices,
-    blurb: "Turmeric, cumin, coriander & more.",
-    copy: "A curated spice assortment — turmeric, cumin, coriander and companion lines — packed to importer specifications.",
-    varieties: ["Turmeric", "Cumin", "Coriander"],
-    season: "Year-round",
-    pack: "Food-grade bag / carton · MOQ by SKU",
-    coldChain: "Dry ambient · sealed packs",
-    markets: ["UAE", "KSA", "Qatar", "Europe soon"],
-    highlights: ["Multi-SKU", "Clean grade", "Spec packing"],
-  },
-  {
-    id: "fresh-vegetables",
-    name: "Fresh Vegetables",
-    category: "Assortments",
-    image: productImages.freshVegetables,
-    blurb: "Mixed consignments, made to order.",
-    copy: "Mixed vegetable consignments built to your programme — graded, packed and cold-chain ready for Gulf distribution.",
-    varieties: ["Buyer programme mix"],
-    season: "Year-round",
-    pack: "Mixed ventilated crates · made to order",
-    coldChain: "Unbroken cool chain by SKU",
-    markets: ["UAE", "KSA", "Qatar", "Oman"],
-    highlights: ["Made to order", "Mixed loads", "Programme ready"],
-  },
-  {
-    id: "seasonal-fruits",
-    name: "Seasonal Fruits",
-    category: "Assortments",
-    image: productImages.seasonalFruits,
-    blurb: "Curated by harvest calendar.",
-    copy: "Seasonal fruit assortments curated from the harvest calendar — so importers get peak flavour without guesswork.",
-    varieties: ["Seasonal mix"],
-    season: "By harvest calendar",
-    pack: "Mixed export cartons · programme packs",
-    coldChain: "SKU-specific cool chain",
-    markets: ["UAE", "KSA", "Qatar", "Bahrain"],
-    highlights: ["Calendar led", "Peak flavour", "Curated mix"],
-  },
 ];
 
-/** Category tabs — no "All"; browse by assortment type. */
-export const productCategories = ["Fruits", "Vegetables", "Spices", "Assortments"];
-
-/** Default landing category for the catalogue. */
-export const defaultProductCategory = "Fruits";
-
-/** Filter catalogue by category tab. */
-export function getProductsByCategory(category = defaultProductCategory) {
-  const cat = category || defaultProductCategory;
-  return products.filter((p) => p.category === cat);
-}
-
-/** Counts for category rail badges. */
-export function getProductCategoryCounts() {
-  const counts = {};
-  for (const cat of productCategories) {
-    counts[cat] = products.filter((p) => p.category === cat).length;
-  }
-  return counts;
-}
-
-/** Featured product for a category — prefer premium landing guides when present. */
-export function getFeaturedProduct(category = defaultProductCategory) {
-  const list = getProductsByCategory(category);
-  const landingFeatured = list.find((p) => p.landingHref && p.featured);
+/** Featured catalogue card. Prefer premium landing guides when present. */
+export function getFeaturedProduct() {
+  const landingFeatured = products.find((p) => p.landingHref && p.featured);
   if (landingFeatured) return landingFeatured;
-  const landing = list.find((p) => p.landingHref);
+  const landing = products.find((p) => p.landingHref);
   if (landing) return landing;
-  return list.find((p) => p.featured) || list[0] || null;
+  return products.find((p) => p.featured) || products[0] || null;
 }
 
-/** Target export markets — status drives globe styling. */
+/** Target export markets. Status drives globe styling. */
 export const markets = [
   { name: "Dubai", country: "UAE", lat: 25.2048, lng: 55.2708, status: "active" },
   { name: "Abu Dhabi", country: "UAE", lat: 24.4539, lng: 54.3773, status: "active" },
@@ -277,7 +105,7 @@ export const markets = [
   { name: "Muscat", country: "Oman", lat: 23.588, lng: 58.3829, status: "active" },
   { name: "Kuwait City", country: "Kuwait", lat: 29.3759, lng: 47.9774, status: "active" },
   { name: "Manama", country: "Bahrain", lat: 26.2285, lng: 50.586, status: "active" },
-  // Future expansion — gold markers / arcs on the globe
+  // Future expansion. Gold markers / arcs on the globe
   { name: "Europe", country: "Future", lat: 50.1109, lng: 8.6821, status: "future" },
   { name: "Africa", country: "Future", lat: 6.5244, lng: 3.3792, status: "future" },
   { name: "South Africa", country: "Future", lat: -26.2041, lng: 28.0473, status: "future" },
@@ -323,17 +151,71 @@ export const advantages = [
   { icon: "Handshake", title: "Trusted Farmers", desc: "Four decades of relationships built on fairness." },
 ];
 
-/** Export process stages (horizontal scroll). */
+/** Export process stages. Image must match the step title (not a random SKU still). */
 export const processStages = [
-  { step: "01", title: "Farm", desc: "Sourced from trusted partner farms across Andhra Pradesh.", icon: "Sprout", image: "1523348837708-15d4a09cfac2" },
-  { step: "02", title: "Sorting", desc: "Hand-sorted and graded by size, colour and ripeness.", icon: "ListFilter", image: "1471193945509-9ad0617afabf" },
-  { step: "03", title: "Quality Check", desc: "Multi-point inspection with lab-backed testing.", icon: "ScanSearch", image: "1488459716781-31db52582fe9" },
-  { step: "04", title: "Packaging", desc: "Ventilated, export-grade, branded packaging.", icon: "Package", image: "1607349913338-fca6f7fc42d0" },
-  { step: "05", title: "Cold Storage", desc: "Pre-cooled and held under precise temperature.", icon: "Snowflake", image: "1610348725531-843dff563e2c" },
-  { step: "06", title: "Container Loading", desc: "Reefer containers loaded and sealed with care.", icon: "Container", image: "1605745341112-85968b19335b" },
-  { step: "07", title: "Shipping", desc: "Optimised sea & air routes to destination markets.", icon: "Ship", image: "1494412574643-ff11b0a5c1c3" },
-  { step: "08", title: "Destination Port", desc: "Cleared and handled by trusted partners.", icon: "Anchor", image: "1512453979798-5ea266f8880c" },
-  { step: "09", title: "Customer", desc: "Delivered fresh to importers and distributors.", icon: "Handshake", image: "1553413077-190dd305871c" },
+  {
+    step: "01",
+    title: "Farm",
+    desc: "Sourced from trusted partner farms across Andhra Pradesh.",
+    icon: "Sprout",
+    image: scenes.mangoOrchard,
+  },
+  {
+    step: "02",
+    title: "Sorting",
+    desc: "Hand-sorted and graded by size, colour and ripeness.",
+    icon: "ListFilter",
+    image: scenes.growerHands,
+  },
+  {
+    step: "03",
+    title: "Quality Check",
+    desc: "Multi-point inspection with lab-backed testing.",
+    icon: "ScanSearch",
+    image: scenes.gradedApples,
+  },
+  {
+    step: "04",
+    title: "Packaging",
+    desc: "Ventilated, export-grade, branded packaging.",
+    icon: "Package",
+    image: scenes.packaging, // mangoes in crates. Matches packaging copy
+  },
+  {
+    step: "05",
+    title: "Cold Storage",
+    desc: "Pre-cooled and held under precise temperature.",
+    icon: "Snowflake",
+    image: scenes.warehouse, // distribution bay / cold-chain hold
+  },
+  {
+    step: "06",
+    title: "Container Loading",
+    desc: "Reefer containers loaded and sealed with care.",
+    icon: "Container",
+    image: scenes.portTerminal,
+  },
+  {
+    step: "07",
+    title: "Shipping",
+    desc: "Optimised sea & air routes to destination markets.",
+    icon: "Ship",
+    image: scenes.vesselAtSea,
+  },
+  {
+    step: "08",
+    title: "Destination Port",
+    desc: "Cleared and handled by trusted partners.",
+    icon: "Anchor",
+    image: scenes.portTerminal, // port yard. Not a city skyline
+  },
+  {
+    step: "09",
+    title: "Customer",
+    desc: "Delivered fresh to importers and distributors.",
+    icon: "Handshake",
+    image: scenes.delivered,
+  },
 ];
 
 /**
@@ -347,8 +229,8 @@ export const legacyMilestones = [
     layout: "origin",
     pill: "THE BEGINNING",
     title: "MD Fruits is founded",
-    copy: "A family fruit business takes root in Andhra Pradesh — built on soil, season, and a promise to never ship what we would not eat ourselves.",
-    image: scenes.market,
+    copy: "A family fruit business takes root in Andhra Pradesh. Built on soil, season, and a promise to never ship what we would not eat ourselves.",
+    image: scenes.market, // founding fruit trade. Mango crates
     location: "Andhra Pradesh, India",
     stat: { end: 40, suffix: "+", label: "Years of growing trust" },
     accent: "warm",
@@ -371,7 +253,7 @@ export const legacyMilestones = [
     layout: "network",
     pill: "THE NETWORK",
     title: "Scaling the network",
-    copy: "Hundreds of partner farms join the ecosystem — relationships measured in seasons, not contracts alone.",
+    copy: "Hundreds of partner farms join the ecosystem. Relationships measured in seasons, not contracts alone.",
     image: scenes.farmer,
     stats: [
       { end: 1000, suffix: "+", label: "Partner farms" },
@@ -385,8 +267,8 @@ export const legacyMilestones = [
     layout: "infra",
     pill: "INFRASTRUCTURE",
     title: "Export-grade infrastructure",
-    copy: "Cold chain, packhouse and quality systems mature — so freshness survives the miles before it ever sees a port.",
-    image: scenes.packaging,
+    copy: "Cold chain, packhouse and quality systems mature. So freshness survives the miles before it ever sees a port.",
+    image: scenes.warehouse, // packhouse / cold-chain infrastructure
     chips: ["Pre-cool", "Reefer ready", "Lot traceability"],
     accent: "ice",
   },
@@ -397,7 +279,7 @@ export const legacyMilestones = [
     pill: "GLOBAL LAUNCH",
     title: "MDF Exports & Imports launches",
     copy: "Four decades of MD Fruits heritage step onto the world stage. The same care that began on the farm now clears Gulf ports as MDF Exports & Imports.",
-    image: scenes.containerShip,
+    image: scenes.vesselAtSea,
     routes: ["Dubai", "Riyadh", "Doha", "Muscat"],
     accent: "amber",
   },
@@ -407,22 +289,22 @@ export const legacyMilestones = [
     layout: "today",
     pill: "THE JOURNEY CONTINUES",
     title: "Delivering to the world",
-    copy: "Premium Indian produce reaching the Middle East and beyond — with new continents on the horizon, and the same promise in every crate.",
+    copy: "Premium Indian produce reaching the Middle East and beyond. With new continents on the horizon, and the same promise in every crate.",
     image: scenes.dubai,
     markets: ["UAE", "KSA", "Qatar", "Oman", "Kuwait", "Europe soon"],
-    closing: "From Andhra Pradesh to your port — same care, every mile.",
+    closing: "From Andhra Pradesh to your port. Same care, every mile.",
     accent: "cinematic",
   },
 ];
 
-/** @deprecated Use legacyMilestones — kept for any residual imports. */
+/** @deprecated Use legacyMilestones. Kept for any residual imports. */
 export const timeline = legacyMilestones.map((m) => ({
   year: m.year,
   title: m.title,
   desc: m.copy,
 }));
 
-/** Certifications — status reflects trade readiness; registration numbers added when verified. */
+/** Certifications. Status reflects trade readiness; registration numbers added when verified. */
 export const certifications = [
   { code: "APEDA", name: "Agricultural & Processed Food Products Export Development Authority", status: "operating" },
   { code: "FSSAI", name: "Food Safety and Standards Authority of India", status: "operating" },
@@ -433,11 +315,11 @@ export const certifications = [
 ];
 
 /**
- * Representative importer feedback — composites based on typical GCC buyer themes.
+ * Representative importer feedback. Composites based on typical GCC buyer themes.
  * Replace with attributed, permissioned quotes before presenting as verified reviews.
  */
 export const testimonials = [
-  { quote: "Consistent grading and predictable sailings matter more than slogans — that is what we look for in an Indian produce partner.", name: "Gulf importer", role: "Composite feedback", location: "UAE", flag: "🇦🇪" },
+  { quote: "Consistent grading and predictable sailings matter more than slogans. That is what we look for in an Indian produce partner.", name: "Gulf importer", role: "Composite feedback", location: "UAE", flag: "🇦🇪" },
   { quote: "Cold-chain discipline and clear lot communication are the difference between retail-ready and write-off.", name: "Distribution buyer", role: "Composite feedback", location: "Saudi Arabia", flag: "🇸🇦" },
   { quote: "Documentation readiness and responsive export desk support shorten the path from enquiry to first container.", name: "Wholesale buyer", role: "Composite feedback", location: "Qatar", flag: "🇶🇦" },
   { quote: "We value suppliers who treat every consignment like their reputation travels with the crate.", name: "Retail buyer", role: "Composite feedback", location: "Oman", flag: "🇴🇲" },
@@ -473,7 +355,7 @@ export const storyChapters = [
     pill: "CHAPTER 02 · THE GROWERS",
     eyebrow: "The People",
     title: "Grown by hands we trust.",
-    copy: "Four decades of relationships with the farmers who know the soil, the season, and the standard — long before a crate is packed.",
+    copy: "Four decades of relationships with the farmers who know the soil, the season, and the standard. Long before a crate is packed.",
     quote: "The land remembers every season. So do we.",
     quoteAttr: "Partner grower network",
     image: scenes.farmer,
@@ -495,13 +377,13 @@ export const storyChapters = [
     pill: "CHAPTER 03 · PEAK RIPENESS",
     eyebrow: "How export-grade produce is chosen",
     title: "Picked at peak ripeness.",
-    copy: "Selected by size, colour and sweetness — never before its time. Every lot earns its place in the consignment.",
+    copy: "Selected by size, colour and sweetness. Never before its time. Every lot earns its place in the consignment.",
     giantWord: "FRESH",
     image: scenes.harvest,
     features: [
       { n: "01", title: "Size", desc: "Uniform grading for pack-out and stable stacking at sea.", icon: "Ruler" },
       { n: "02", title: "Colour", desc: "Peak visual maturity checked under natural light.", icon: "Palette" },
-      { n: "03", title: "Sweetness", desc: "Brix sampled at intake — never before its time.", icon: "Droplets" },
+      { n: "03", title: "Sweetness", desc: "Brix sampled at intake. Never before its time.", icon: "Droplets" },
       { n: "04", title: "Grade", desc: "Export-only selection. Domestic grades stay home.", icon: "BadgeCheck" },
     ],
     doodle: "basket",
@@ -514,7 +396,7 @@ export const storyChapters = [
     pill: "CHAPTER 04 · PACKHOUSE",
     eyebrow: "The Care",
     title: "Packed to export standards.",
-    copy: "Ventilated, branded, protective packaging built for the journey — so freshness survives the miles.",
+    copy: "Ventilated, branded, protective packaging built for the journey. So freshness survives the miles.",
     imagePrimary: scenes.packaging,
     imageSecondary: scenes.crates,
     chips: ["Ventilated crates", "Private label ready", "APEDA aligned"],
@@ -534,7 +416,7 @@ export const storyChapters = [
     pill: "CHAPTER 05 · COLD CHAIN",
     eyebrow: "The Journey",
     title: "Shipped across the seas.",
-    copy: "An unbroken cold chain from our packhouse to your port — reefer discipline, documentation, and trusted lanes.",
+    copy: "An unbroken cold chain from our packhouse to your port. Reefer discipline, documentation, and trusted lanes.",
     image: scenes.containerShip,
     tempBadge: "0°–5°C",
     stats: [
@@ -559,7 +441,7 @@ export const storyChapters = [
     pill: "CHAPTER 06 · BEYOND BORDERS",
     eyebrow: "Beyond Borders",
     title: "Delivered to the world.",
-    copy: "Fresh in Dubai, the Gulf, and soon — new continents. The same care that starts on the farm arrives at your door.",
+    copy: "Fresh in Dubai, the Gulf, and soon. New continents. The same care that starts on the farm arrives at your door.",
     image: scenes.dubai,
     doodle: "stamp",
   },
@@ -569,7 +451,7 @@ export const storyChapters = [
 export const faqs = [
   { q: "Which countries do you currently export to?", a: "We actively serve the UAE (Dubai, Abu Dhabi), Saudi Arabia, Qatar, Oman, Kuwait and Bahrain, with European markets on our expansion roadmap." },
   { q: "What is your minimum order quantity?", a: "MOQs vary by product and destination. Most consignments are shipped by the full or part reefer container. Share your requirement and we will tailor a quote." },
-  { q: "How do you ensure produce stays fresh in transit?", a: "An unbroken cold chain — pre-cooling, temperature-controlled storage and reefer containers — keeps produce at optimal condition from farm to destination port." },
+  { q: "How do you ensure produce stays fresh in transit?", a: "An unbroken cold chain. Pre-cooling, temperature-controlled storage and reefer containers keep produce at optimal condition from farm to destination port." },
   { q: "Which certifications do you hold?", a: "We operate under APEDA, FSSAI, IEC and phytosanitary documentation pathways required for export consignments, and are pursuing Global G.A.P. and ISO 22000 as part of our roadmap. Ask our desk for the latest registration details for your market." },
   { q: "Can you handle custom packaging and private labelling?", a: "Yes. We offer export-grade, ventilated packaging and can accommodate branded and private-label requirements." },
   { q: "How do I start importing with MDF Exports & Imports?", a: "Send us your product list, volumes and destination via the contact form or WhatsApp. Our team will respond with pricing, lead times and documentation." },

@@ -3,8 +3,8 @@ import { site } from "@/lib/config";
 
 /**
  * Per-page SEO: meta, OpenGraph, Twitter cards and JSON-LD structured data.
- * @param {string} [documentTitle] — exact <title> / og:title (skips "— site.name" template)
- * @param {object|object[]} [jsonLd] — extra JSON-LD graph(s) besides Organization
+ * @param {string} [documentTitle]. Exact <title> / og:title (skips ". site.name" template)
+ * @param {object|object[]} [jsonLd]. Extra JSON-LD graph(s) besides Organization
  */
 export function SEO({
   title,
@@ -17,7 +17,7 @@ export function SEO({
 }) {
   const fullTitle =
     documentTitle ||
-    (title ? `${title} — ${site.name}` : `${site.name} — ${site.tagline}`);
+    (title ? `${title}. ${site.name}` : `${site.name}. ${site.tagline}`);
   const desc = description || site.description;
   const url = `${site.url}${path}`;
   const imageUrl = image.startsWith("http") ? image : `${site.url}${image}`;

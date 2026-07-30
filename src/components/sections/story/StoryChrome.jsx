@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-/** Chapter pill — cream outline like Ismail, orange active accent. */
+/** Chapter pill. Cream outline like Ismail, orange active accent. */
 export function ChapterPill({ children, className }) {
   return (
     <span
@@ -14,7 +14,7 @@ export function ChapterPill({ children, className }) {
   );
 }
 
-/** Right-edge chapter rail — keyboard-reachable on all breakpoints. */
+/** Right-edge chapter rail. Keyboard-reachable on all breakpoints. */
 export function ChapterRail({ chapters, active, onSelect }) {
   return (
     <nav

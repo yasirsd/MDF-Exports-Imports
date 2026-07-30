@@ -4,7 +4,7 @@ const DEFAULT_WHATSAPP = "919000000000";
 const DEFAULT_PHONE = "+919000000000";
 const DEFAULT_EMAIL = "exports@mdfexportsimports.com";
 
-/** Central site + brand configuration — single source of truth for MDF. */
+/** Central site + brand configuration. Single source of truth for MDF. */
 export const site = {
   name: "MDF Exports & Imports",
   shortName: "MDF",
@@ -12,8 +12,8 @@ export const site = {
   logo: "MDF",
   tagline: "Exporting India's Freshness to the World.",
   shortTag: "Exports & Imports",
-  subheading: "Premium Fruits • Vegetables • Spices • Agricultural Products",
-  /** Heritage lineage — family origins (kept for storytelling authenticity) */
+  subheading: "Indian Fruits • Guntur Dry Red Chilli • Gulf Export",
+  /** Heritage lineage. Family origins (kept for storytelling authenticity) */
   heritage: "MD Fruits",
   experience: "40+ Years",
   location: "Andhra Pradesh, India",
@@ -25,7 +25,7 @@ export const site = {
   email: env("VITE_CONTACT_EMAIL", DEFAULT_EMAIL),
   hours: "Mon–Sat · 9:00 AM – 7:00 PM IST",
   description:
-    "MDF Exports & Imports delivers premium fruits, vegetables, spices and agricultural products from Andhra Pradesh, India to the Gulf, Asia-Pacific and beyond — built on 40+ years of agricultural excellence.",
+    "MDF Exports & Imports ships Andhra Banganapalli mango, Indian apples, pomegranate, and Guntur dry red chilli from Andhra Pradesh to the Gulf. Built on 40+ years of agricultural excellence.",
   socials: [
     { label: "LinkedIn", href: "https://www.linkedin.com/", icon: "Linkedin" },
     { label: "Instagram", href: "https://www.instagram.com/", icon: "Instagram" },
@@ -36,7 +36,7 @@ export const site = {
 
 /** WhatsApp / enquiry opener using the current brand name. */
 export function brandHello(body) {
-  return `Hello ${site.name}${body ? ` — ${body}` : "."}`;
+  return `Hello ${site.name}${body ? `. ${body}` : "."}`;
 }
 
 /** True when real contact details have not been configured via .env. */

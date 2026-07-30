@@ -4,7 +4,7 @@ import { useInViewMotion } from "./useInViewMotion";
 import { cn } from "@/lib/utils";
 
 /**
- * Accent-border metric / feature cards — faux-glass, not GlassCard grids.
+ * Accent-border metric / feature cards. Faux-glass, not GlassCard grids.
  * items: { label, value, note? }[]
  */
 export function ProductFeatureGrid({

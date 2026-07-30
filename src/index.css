@@ -1,4 +1,4 @@
-/* Inter Variable — latin only (skips cyrillic/greek/vietnamese bundles). */
+/* Inter Variable. Latin only (skips cyrillic/greek/vietnamese bundles). */
 @font-face {
   font-family: "Inter Variable";
   font-style: normal;
@@ -104,7 +104,7 @@
 }
 
 @layer components {
-  /* Frosted glass — blur only on fine-pointer (desktop). Coarse/touch gets a
+  /* Frosted glass. Blur only on fine-pointer (desktop). Coarse/touch gets a
      solid-fill fallback to avoid expensive backdrop-filter on mid Android. */
   .glass {
     background: color-mix(in srgb, var(--glass-bg) 92%, #111 8%);
@@ -142,7 +142,7 @@
     background-image: linear-gradient(120deg, #ef233c 0%, #ff6b7d 100%);
   }
 
-  /* Fluid vertical rhythm — scales smoothly from phones to ultrawide and
+  /* Fluid vertical rhythm. Scales smoothly from phones to ultrawide and
      caps at the original desktop value (10rem) so the desktop identity is
      preserved exactly while small screens breathe correctly. */
   .section-py {
@@ -155,6 +155,85 @@
 }
 
 @layer utilities {
+  @keyframes product-showcase-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .product-showcase-progress {
+    transform: scaleX(0);
+    animation: product-showcase-progress 5.5s linear forwards;
+    will-change: transform;
+  }
+
+  .group\/showcase:hover .product-showcase-progress,
+  .group\/showcase:focus-within .product-showcase-progress {
+    animation-play-state: paused;
+  }
+
+  .product-ken-burns {
+    transform: scale(1);
+    animation: product-ken-burns 5.5s linear forwards;
+    will-change: transform;
+  }
+
+  @keyframes product-ken-burns {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(1.05);
+    }
+  }
+
+  .group\/showcase:hover .product-ken-burns,
+  .group\/showcase:focus-within .product-ken-burns {
+    animation-play-state: paused;
+  }
+
+  /*
+   * Product photo soft bleed.
+   * Mobile (default): gentle 4-edge fade for full-bleed backdrop.
+   * lg+: stronger left dissolve for the right-anchored desktop pane.
+   */
+  .product-photo-bleed {
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+    mask-composite: intersect;
+  }
+
+  @media (min-width: 1024px) {
+    .product-photo-bleed {
+      -webkit-mask-image:
+        linear-gradient(to right, transparent 0%, black 20%, black 78%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+      mask-image:
+        linear-gradient(to right, transparent 0%, black 20%, black 78%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%);
+    }
+  }
+
+  /* Whole stage content (dark well + photo) dissolves into page background */
+  .product-stage-bleed {
+    -webkit-mask-image:
+      linear-gradient(to right, transparent 0%, black 6%, black 92%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, black 7%, black 90%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(to right, transparent 0%, black 6%, black 92%, transparent 100%),
+      linear-gradient(to bottom, transparent 0%, black 7%, black 90%, transparent 100%);
+    mask-composite: intersect;
+  }
+
   .mask-fade-x {
     -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
     mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);

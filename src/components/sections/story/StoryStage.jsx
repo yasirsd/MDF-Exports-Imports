@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Consistent chapter stage frame — clears navbar + bottom chrome,
+ * Consistent chapter stage frame. Clears navbar + bottom chrome,
  * keeps content vertically balanced inside the pinned 100svh panel.
  */
 export function StoryStage({ children, className, split = false }) {

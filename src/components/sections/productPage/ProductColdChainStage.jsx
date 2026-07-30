@@ -7,7 +7,7 @@ const ACCENT_STROKE = {
 };
 
 /**
- * Shared CSS SVG cold-chain stage — extracted from Apple/Pom.
+ * Shared CSS SVG cold-chain stage. Extracted from Apple/Pom.
  * props: accent ('sky'|'rose'), tempLabel, nodes?, steps[{n,title,desc}]
  */
 export function ProductColdChainStage({

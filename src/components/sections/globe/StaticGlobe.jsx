@@ -1,4 +1,4 @@
-/** Lightweight static Earth — safe to show before the WorldMap chunk loads. */
+/** Lightweight static Earth. Safe to show before the WorldMap chunk loads. */
 export function StaticGlobe({ priority = "auto", className = "", loading = "lazy" }) {
   return (
     <div className={`grid h-full w-full place-items-center ${className}`.trim()}>
@@ -8,7 +8,7 @@ export function StaticGlobe({ priority = "auto", className = "", loading = "lazy
           alt="World map highlighting MDF Exports & Imports export markets"
           decoding="async"
           loading={loading}
-          fetchPriority={priority}
+          fetchpriority={priority}
           className="h-full w-full scale-[1.15] object-cover"
           style={{
             objectPosition: "62% 42%",

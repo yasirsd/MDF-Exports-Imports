@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-/** ChapterPill DNA — cream outline with optional accent override. */
+/** ChapterPill DNA. Cream outline with optional accent override. */
 export function ProductPill({ children, className, accent }) {
   return (
     <span

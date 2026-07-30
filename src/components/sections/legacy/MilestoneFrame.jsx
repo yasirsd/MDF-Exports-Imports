@@ -6,7 +6,7 @@ import { easePremium } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 /**
- * Soft atmospheres — color blooms, never hard rectangular panels.
+ * Soft atmospheres. Color blooms, never hard rectangular panels.
  */
 const ACCENTS = {
   warm: {
@@ -61,7 +61,7 @@ function useIsCoarse() {
   return coarse;
 }
 
-/** Scroll-linked layers — mounted only for the active chapter. */
+/** Scroll-linked layers. Mounted only for the active chapter. */
 function ActiveParallaxDecor({ sectionRef, accent, year, show, reduced, active, children }) {
   // Motion offset ["start end","end start"] → ST top bottom / bottom top
   const scrollYProgress = useScrollTriggerProgress(sectionRef, {

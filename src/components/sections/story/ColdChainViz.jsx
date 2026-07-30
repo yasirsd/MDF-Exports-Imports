@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * SVG-first cold-chain visualization.
- * Never depends on Unsplash — always looks complete.
+ * Never depends on Unsplash. Always looks complete.
  * Shows reefer container, temperature gauge, and animated route.
  */
 export function ColdChainViz({ active = false, className }) {

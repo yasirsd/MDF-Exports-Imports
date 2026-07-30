@@ -3,7 +3,7 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 
 /**
- * Arrival visualization — SVG-first climax (never Unsplash).
+ * Arrival visualization. SVG-first climax (never Unsplash).
  * One illustration, like ColdChainViz: skyline + clearance arc + glowing markets.
  * No cramped dual-column list inside the card.
  */
@@ -173,6 +173,8 @@ export function ArrivalViz({ active = false, className }) {
           {/* Moving cargo pulse */}
           <motion.circle
             r="7"
+            cx="100"
+            cy="140"
             fill="#ffb060"
             initial={false}
             animate={
@@ -184,6 +186,8 @@ export function ArrivalViz({ active = false, className }) {
           />
           <motion.circle
             r="16"
+            cx="100"
+            cy="140"
             fill="rgba(255,140,40,0.22)"
             initial={false}
             animate={
@@ -204,7 +208,8 @@ export function ArrivalViz({ active = false, className }) {
                 fill="none"
                 stroke="#ff7a1a"
                 strokeWidth="1.5"
-                animate={{ r: [14, 32], opacity: [0.55, 0] }}
+                style={{ transformOrigin: "470px 120px" }}
+                animate={{ scale: [1, 2.3], opacity: [0.55, 0] }}
                 transition={{ duration: 2, repeat: Infinity }}
               />
             ) : null}

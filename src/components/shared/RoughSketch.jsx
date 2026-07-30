@@ -36,7 +36,18 @@ export function RoughSketch({
   useLayoutEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
-    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    // Prefer replaceChildren. Avoids NotFoundError if a child was already moved.
+    if (typeof svg.replaceChildren === "function") {
+      svg.replaceChildren();
+    } else {
+      while (svg.firstChild) {
+        try {
+          svg.removeChild(svg.firstChild);
+        } catch {
+          break;
+        }
+      }
+    }
 
     const rc = rough.svg(svg);
     let anims = [];
@@ -46,7 +57,7 @@ export function RoughSketch({
 
     const makeGroup = (s) => {
       const g = document.createElementNS(SVG_NS, "g");
-      for (const op of ops) {
+      for (const op of ops || []) {
         const base = { roughness, bowing, stroke: "currentColor", strokeWidth, seed: s };
         let node = null;
         if (op.t === "p") {

@@ -1,12 +1,12 @@
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
-/** Node column width — spine is centered on this column (no magic left offsets). */
+/** Node column width. Spine is centered on this column (no magic left offsets). */
 const NODE = "w-7"; // 1.75rem / 28px
 
 /**
- * Premium story spine — glass panel, track locked through node centers.
- * `progress` may be a number or a MotionValue (preferred — no scroll-driven React re-renders).
+ * Premium story spine. Glass panel, track locked through node centers.
+ * `progress` may be a number or a MotionValue (preferred. No scroll-driven React re-renders).
  */
 export function LegacyRail({
   milestones,
@@ -56,7 +56,7 @@ export function LegacyRail({
 
         <ol className="relative z-[1] flex h-full flex-col justify-between">
           {milestones.map((m, i) => {
-            // Completed follows active year (IO-driven) — avoids per-frame React updates.
+            // Completed follows active year (IO-driven). Avoids per-frame React updates.
             const completed = i <= activeIndex;
             const active = i === activeIndex;
 

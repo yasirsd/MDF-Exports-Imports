@@ -20,7 +20,7 @@ function StageCard({ stage, index }) {
           srcSet={unsplashSrcSet(stage.image, [480, 640, 768, 960], 80)}
           sizes="(min-width:1024px) 30vw, (min-width:640px) 46vw, 78vw"
           lqip={unsplashLQ(stage.image)}
-          alt={`${stage.title} — export process step ${stage.step}`}
+          alt={`${stage.title}. Export process step ${stage.step}`}
           fallbackLabel={stage.title}
           className="h-full w-full"
           imgClassName="object-cover transition-transform duration-900 ease-premium group-hover:scale-105"
@@ -53,8 +53,7 @@ function StageCard({ stage, index }) {
 /**
  * Horizontal scrub of nine export stages.
  *
- * Important: ancestors must NOT use content-visibility while this pin is active —
- * contain-intrinsic-size on DeferMount/.cv-auto was collapsing pin-spacer height
+ * Important: ancestors must NOT use content-visibility while this pin is active. * contain-intrinsic-size on DeferMount/.cv-auto was collapsing pin-spacer height
  * so scrub distance stayed ~0 and the track never moved.
  */
 export function ExportProcess() {
@@ -70,7 +69,7 @@ export function ExportProcess() {
 
     const ctx = gsap.context(() => {
       const getScrollDistance = () => {
-        // Use the pinned viewport width, not window — matches what the user sees.
+        // Use the pinned viewport width, not window. Matches what the user sees.
         const viewW = section.clientWidth || window.innerWidth;
         const distance = track.scrollWidth - viewW;
         return Math.max(Math.ceil(distance), 1);
@@ -149,7 +148,7 @@ export function ExportProcess() {
                     srcSet={unsplashSrcSet(stage.image, [480, 640, 768, 960], 80)}
                     sizes="(min-width:768px) 33vw, (min-width:640px) 50vw, 100vw"
                     lqip={unsplashLQ(stage.image)}
-                    alt={`${stage.title} — export process step ${stage.step}`}
+                    alt={`${stage.title}. Export process step ${stage.step}`}
                     fallbackLabel={stage.title}
                     className="h-full w-full"
                     imgClassName="object-cover"

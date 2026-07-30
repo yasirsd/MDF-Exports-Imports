@@ -119,7 +119,7 @@ export function WorldRoutes({ reduced = false }) {
           }}
         />
 
-        {/* Soft ocean plane — never load the 1.4MB marble as fallback */}
+        {/* Soft ocean plane. Never load the 1.4MB marble as fallback */}
         <div
           aria-hidden="true"
           className="absolute inset-0"
@@ -193,7 +193,8 @@ export function WorldRoutes({ reduced = false }) {
               fill="none"
               stroke="#f97316"
               strokeWidth="1.5"
-              animate={{ r: [4, 15], opacity: [0.6, 0] }}
+              style={{ transformOrigin: `${originPt.x}px ${originPt.y}px` }}
+              animate={{ scale: [1, 3.5], opacity: [0.6, 0] }}
               transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
             />
           )}

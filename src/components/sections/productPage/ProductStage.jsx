@@ -2,7 +2,7 @@ import { Container } from "@/components/shared/Container";
 import { cn } from "@/lib/utils";
 
 /**
- * Full-bleed atmosphere band — one idea per section.
+ * Full-bleed atmosphere band. One idea per section.
  * Optional step label e.g. "01 · Origin".
  */
 export function ProductStage({

@@ -51,7 +51,7 @@ export function useScrollTriggerProgress(
         },
       });
       progress.set(stRef.current.progress);
-      // Do NOT call ScrollTrigger.refresh() here — SmoothScrollProvider owns that.
+      // Do NOT call ScrollTrigger.refresh() here. SmoothScrollProvider owns that.
     };
 
     setup();

@@ -21,6 +21,10 @@ const IndianPomegranate = named(
   () => import("@/components/sections/IndianPomegranate"),
   "IndianPomegranate"
 );
+const BanganapalliMango = named(
+  () => import("@/components/sections/BanganapalliMango"),
+  "BanganapalliMango"
+);
 const Storytelling = named(() => import("@/components/sections/Storytelling"), "Storytelling");
 const Products = named(() => import("@/components/sections/Products"), "Products");
 const About = named(() => import("@/components/sections/About"), "About");
@@ -85,7 +89,7 @@ function isConstrainedConnection() {
 }
 
 /**
- * Prefetch Globe/Markets when #markets approaches — not on a fixed post-load
+ * Prefetch Globe/Markets when #markets approaches. Not on a fixed post-load
  * idle. Skip warm-prefetch on constrained connections (DeferMount still loads
  * on demand).
  */
@@ -116,7 +120,7 @@ function usePrefetchHeavyChunks() {
 
     const el = document.getElementById("markets");
     if (!el || typeof IntersectionObserver === "undefined") {
-      // Fallback if placeholder missing — still avoid boot-idle contention.
+      // Fallback if placeholder missing. Still avoid boot-idle contention.
       const onLoad = () => {
         const ric = window.requestIdleCallback;
         if (ric) idleId = ric(scheduleWarm, { timeout: 10000 });
@@ -167,19 +171,25 @@ import {
   INDIAN_POMEGRANATE_PATH,
   indianPomegranateFaqs,
 } from "@/lib/indianPomegranatePage";
+import {
+  BANGANAPALLI_MANGO_META,
+  BANGANAPALLI_MANGO_PATH,
+  banganapalliMangoFaqs,
+} from "@/lib/banganapalliMangoPage";
 import { site } from "@/lib/config";
 
 function resolvePage() {
   if (typeof window === "undefined") return "home";
   const path = window.location.pathname.replace(/\/+$/, "") || "/";
   if (path === "/privacy" || window.location.hash === "#privacy") return "privacy";
+  if (path === BANGANAPALLI_MANGO_PATH) return "banganapalli-mango";
   if (path === GUNTUR_CHILLI_PATH) return "guntur-chilli";
   if (path === INDIAN_APPLE_PATH) return "indian-apple";
   if (path === INDIAN_POMEGRANATE_PATH) return "indian-pomegranate";
   return "home";
 }
 
-/** Home vs Privacy vs product landings — real paths + legacy #privacy hash. */
+/** Home vs Privacy vs product landings. Real paths + legacy #privacy hash. */
 function useAppPage() {
   const [page, setPage] = useState(resolvePage);
 
@@ -284,6 +294,36 @@ function indianPomegranateJsonLd() {
   ];
 }
 
+function banganapalliMangoJsonLd() {
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: "Banganapalli Mango",
+      alternateName: "Andhra Banganapalli Mango",
+      description: BANGANAPALLI_MANGO_META.description,
+      category: "Fresh fruit",
+      brand: {
+        "@type": "Brand",
+        name: site.name,
+      },
+      url: `${site.url}${BANGANAPALLI_MANGO_PATH}`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: banganapalliMangoFaqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: f.a,
+        },
+      })),
+    },
+  ];
+}
+
 export default function App() {
   usePrefetchHeavyChunks();
   const page = useAppPage();
@@ -298,6 +338,22 @@ export default function App() {
         />
         <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
           <PrivacyPolicy />
+        </Suspense>
+      </>
+    );
+  }
+
+  if (page === "banganapalli-mango") {
+    return (
+      <>
+        <SEO
+          documentTitle={BANGANAPALLI_MANGO_META.documentTitle}
+          description={BANGANAPALLI_MANGO_META.description}
+          path={BANGANAPALLI_MANGO_META.path}
+          jsonLd={banganapalliMangoJsonLd()}
+        />
+        <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
+          <BanganapalliMango />
         </Suspense>
       </>
     );
@@ -366,12 +422,12 @@ export default function App() {
 
       <main id="main">
         <Hero />
-        {/* Near-fold: IO-gated — chunks warm via DeferMount proximity. */}
-        <Section id="story" minH="min-h-[100svh]" boundaryName="The export journey">
-          <Storytelling />
-        </Section>
+        {/* Catalogue first. Near-fold IO-gated sections follow. */}
         <Section id="products" minH="min-h-[100vh]">
           <Products />
+        </Section>
+        <Section id="story" minH="min-h-[100svh]" boundaryName="The export journey">
+          <Storytelling />
         </Section>
         <Section id="about" minH="min-h-[220vh]">
           <About />

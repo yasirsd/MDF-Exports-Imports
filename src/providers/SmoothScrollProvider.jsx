@@ -35,7 +35,7 @@ export function SmoothScrollProvider({ children }) {
   const storyLockedRef = useRef(false);
 
   useEffect(() => {
-    // Skip Lenis/GSAP during build prerender — faster capture, no scroll pin races.
+    // Skip Lenis/GSAP during build prerender. Faster capture, no scroll pin races.
     if (prefersReduced || isPrerender()) return undefined;
 
     let cancelled = false;
@@ -54,7 +54,7 @@ export function SmoothScrollProvider({ children }) {
 
     const scheduleRefresh = () => {
       if (!ScrollTrigger) return;
-      // Defer layout refresh while Story Observer owns scroll — but do not drop it.
+      // Defer layout refresh while Story Observer owns scroll. But do not drop it.
       if (storyLockedRef.current) {
         pendingRefresh = true;
         return;
@@ -176,7 +176,7 @@ export function SmoothScrollProvider({ children }) {
             storyIo = null;
           }
         },
-        // Entering/near the Story band — not the generic boot idle window.
+        // Entering/near the Story band. Not the generic boot idle window.
         // (DeferMount may mount the chunk slightly earlier via its own margin.)
         { root: null, rootMargin: "120px 0px", threshold: 0.01 }
       );

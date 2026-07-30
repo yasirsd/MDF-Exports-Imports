@@ -22,7 +22,7 @@ const origins = [
   {
     label: "Himachal Pradesh",
     value: "Shimla & Kinnaur belts",
-    note: "Recognised hill orchards — packhouse partners for graded fruit.",
+    note: "Recognised hill orchards. Packhouse partners for graded fruit.",
   },
   {
     label: "Jammu & Kashmir",
@@ -82,8 +82,8 @@ const compliance = [
 ];
 
 /**
- * Product landing — Premium Indian Apple export (crawlable static route).
- * Chapter DNA: hill origin + shared cold-chain stage — no GSAP / R3F.
+ * Product landing. Premium Indian Apple export (crawlable static route).
+ * Chapter DNA: hill origin + shared cold-chain stage. No GSAP / R3F.
  */
 export function IndianApple() {
   const enquireHref = whatsappUrl(
@@ -102,7 +102,7 @@ export function IndianApple() {
         pill="Himachal & J&K · Fresh · Cold chain"
         titleAccent="Premium Indian Apples"
         title=" for Export"
-        lead="MDF Exports & Imports supplies premium fresh Indian apples for international buyers who need clear origin, consistent grading and a cold-chain story they can trust. Share your preferred varieties, size profile, destination market and packing format — we confirm what we can source and how it can ship."
+        lead="MDF Exports & Imports supplies premium fresh Indian apples for international buyers who need clear origin, consistent grading and a cold-chain story they can trust. Share your preferred varieties, size profile, destination market and packing format. We confirm what we can source and how it can ship."
         enquireHref={enquireHref}
         secondaryHref="#cold-chain"
         secondaryLabel="View cold chain"
@@ -126,8 +126,8 @@ export function IndianApple() {
         </h2>
         <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
           Apples are not grown in Andhra Pradesh. We source from India&apos;s recognised apple-growing
-          regions — Himachal Pradesh (including the Shimla and Kinnaur belts) and Jammu &amp; Kashmir
-          — through trusted grower and packhouse partners. Our commercial base is in Andhra Pradesh:
+          regions in Himachal Pradesh (including the Shimla and Kinnaur belts) and Jammu &amp; Kashmir,
+          through trusted grower and packhouse partners. Our commercial base is in Andhra Pradesh:
           we act as your export counterpart for enquiry, documentation and programme coordination.
         </p>
         <div className="mt-8">
@@ -141,8 +141,8 @@ export function IndianApple() {
           Varieties we can supply
         </h2>
         <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
-          Variety availability follows season and lot. We supply Shimla and Kinnaur apples — trusted
-          regional lines from Himachal Pradesh&apos;s premium growing belts — along with Richared, a
+          Variety availability follows season and lot. We supply Shimla and Kinnaur apples, trusted
+          regional lines from Himachal Pradesh&apos;s premium growing belts, along with Richared, a
           mid-season Delicious-family variety grown across Himachal Pradesh and Jammu &amp; Kashmir.
           We do not treat &quot;Indian apple&quot; as one interchangeable SKU. Tell us the variety mix,
           colour preference and size grades your buyers expect, and we will match available lots or
@@ -162,7 +162,7 @@ export function IndianApple() {
         </h2>
         <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
           Apples are fresh produce. Export programmes depend on grade, sizing, packing discipline and
-          unbroken temperature control — not shelf-stable dry packing. Shipping is arranged via
+          unbroken temperature control, not shelf-stable dry packing. Shipping is arranged via
           reefer container by sea freight, with temperature control maintained from pre-cooling
           through transit. Typical discussion points: grade/class on enquiry, size/count on enquiry,
           packing on enquiry, private label marking on request, minimum order on enquiry, commercial

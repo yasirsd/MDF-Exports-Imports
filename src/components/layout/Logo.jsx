@@ -25,7 +25,7 @@ const SIZE = {
 };
 
 /**
- * MDF brand mark — theme-aware density srcset (WebP).
+ * MDF brand mark. Theme-aware density srcset (WebP).
  * Light mark on dark surfaces; dark mark on light surfaces.
  * `inverted` forces the light mark (transparent nav over a dark hero).
  */
@@ -44,7 +44,7 @@ export function Logo({ className, onClick, inverted = false, size = "nav" }) {
         size === "nav" && "h-10",
         className
       )}
-      aria-label={`${site.name} — home`}
+      aria-label={`${site.name}. Home`}
     >
       <img
         src={preset.src(tone)}

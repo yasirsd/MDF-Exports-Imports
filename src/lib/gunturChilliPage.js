@@ -5,7 +5,7 @@ export const GUNTUR_CHILLI_PATH = "/products/guntur-red-chilli";
 export const GUNTUR_CHILLI_META = {
   documentTitle: "Guntur Red Chilli Export | MDF Exports & Imports",
   description:
-    "Source export-grade Guntur red chilli from Andhra Pradesh. Graded dried chilli for importers and processors — enquire for specs, packing and FOB terms.",
+    "Source export-grade Guntur red chilli from Andhra Pradesh. Graded dried chilli for importers and processors. Enquire for specs, packing and FOB terms.",
   path: GUNTUR_CHILLI_PATH,
 };
 
@@ -16,10 +16,10 @@ export const gunturFaqs = [
   },
   {
     q: "What packaging is used for chilli export?",
-    a: "Packing is agreed per order — bag type, net weight and marking. Standard export-ready jute, PP, and carton formats from 5–50kg are available; private-label marking can be discussed.",
+    a: "Packing is agreed per order, including bag type, net weight and marking. Standard export-ready jute, PP, and carton formats from 5–50kg are available; private-label marking can be discussed.",
   },
   {
     q: "Can you provide documents for import clearance?",
-    a: "Yes — we support consignments with the usual Indian export paperwork path (including phytosanitary where required) and work within APEDA / FSSAI frameworks already in use. Tell us the destination so we can confirm what your side will need.",
+    a: "Yes. We support consignments with the usual Indian export paperwork path (including phytosanitary where required) and work within APEDA / FSSAI frameworks already in use. Tell us the destination so we can confirm what your side will need.",
   },
 ];

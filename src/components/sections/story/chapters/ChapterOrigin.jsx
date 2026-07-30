@@ -5,7 +5,7 @@ import { StoryStage } from "@/components/sections/story/StoryStage";
 import { unsplash, unsplashLQ, unsplashSrcSet } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
-/** Chapter 01 — smaller polaroid; Since seal beside the year block. */
+/** Chapter 01. Smaller polaroid; Since seal beside the year block. */
 export function ChapterOrigin({ chapter, active }) {
   return (
     <StoryStage className={cn(!active && "pointer-events-none")}>
@@ -20,7 +20,7 @@ export function ChapterOrigin({ chapter, active }) {
           </p>
 
           <div className="mt-10 flex flex-wrap items-end gap-6 border-t border-white/10 pt-6">
-            {/* Since seal — beside the year, not colliding with navbar */}
+            {/* Since seal. Beside the year, not colliding with navbar */}
             <div
               className="grid h-[4.25rem] w-[4.25rem] shrink-0 place-items-center rounded-full border border-brand-orange-bright/55 bg-brand-orange-bright/10 text-center shadow-[0_0_28px_rgba(255,122,26,0.25)]"
               aria-hidden="true"

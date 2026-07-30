@@ -93,7 +93,8 @@ export function LazyImage({
           alt={alt}
           loading={eager ? "eager" : "lazy"}
           decoding="async"
-          fetchPriority={eager ? "high" : "auto"}
+          // React DOM expects the lowercase HTML attribute name
+          fetchpriority={eager ? "high" : "auto"}
           onLoad={markLoaded}
           onError={() => {
             setErrored(true);

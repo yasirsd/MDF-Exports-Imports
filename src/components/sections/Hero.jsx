@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { motion, useMotionValue, useTransform } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useMotionValue, useTransform } from "motion/react";
 import { ArrowRight, ArrowDown, Leaf, MapPin, Ship, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/shared/Container";
 import { LazyImage } from "@/components/shared/LazyImage";
@@ -10,7 +10,7 @@ import { useDocumentScroll } from "@/hooks/useDocumentScroll";
 import { useScrollTo } from "@/providers/SmoothScrollProvider";
 import { WorldRoutes } from "@/components/sections/hero/WorldRoutes";
 import { HeroSketch } from "@/components/sections/hero/HeroSketch";
-import { scenes, unsplash, unsplashLQ } from "@/lib/images";
+import { productImages, unsplash, unsplashLQ } from "@/lib/images";
 import { certifications, exportDestinations } from "@/lib/constants";
 import { brandHello, site } from "@/lib/config";
 import { whatsappUrl } from "@/lib/utils";
@@ -18,8 +18,79 @@ import { easePremium } from "@/lib/motion";
 
 const certified = certifications.filter((c) => c.status === "operating");
 
+const FRESH_PRODUCT_SLIDES = [
+  {
+    id: "mangoes",
+    image: productImages.mangoes,
+    alt: "Export-grade Indian mangoes on the farm",
+  },
+  {
+    id: "apple",
+    image: productImages.indianApple,
+    alt: "Premium Indian apples graded for export",
+  },
+  {
+    id: "pomegranate",
+    image: productImages.pomegranate,
+    alt: "Deep-red Indian pomegranates for export",
+  },
+  {
+    id: "chilli",
+    image: productImages.dryRedChilli,
+    alt: "Guntur dry red chillies ready for export",
+  },
+];
+
+const FRESH_PRODUCT_INTERVAL_MS = 3200;
+
+/** Compact hero inset that cycles the four catalogue products. */
+function HeroFreshProductsCard({ reduced = false }) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (reduced || FRESH_PRODUCT_SLIDES.length < 2) return undefined;
+    const id = window.setInterval(() => {
+      setIndex((i) => (i + 1) % FRESH_PRODUCT_SLIDES.length);
+    }, FRESH_PRODUCT_INTERVAL_MS);
+    return () => window.clearInterval(id);
+  }, [reduced]);
+
+  const slide = FRESH_PRODUCT_SLIDES[index];
+
+  return (
+    <div className="absolute -bottom-6 -left-6 z-20 w-36 overflow-hidden rounded-2xl border-2 border-white/20 shadow-soft-lg">
+      <div className="relative aspect-[4/3] w-full bg-[#120e0b]">
+        <AnimatePresence initial={false} mode="sync">
+          <motion.div
+            key={slide.id}
+            className="absolute inset-0 origin-center will-change-transform"
+            initial={reduced ? false : { opacity: 0, scale: 1.08 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={reduced ? undefined : { opacity: 0, scale: 0.96 }}
+            transition={{ duration: reduced ? 0 : 0.7, ease: easePremium }}
+          >
+            <LazyImage
+              src={unsplash(slide.image, 600)}
+              lqip={unsplashLQ(slide.image)}
+              alt={slide.alt}
+              fallbackLabel="Fresh products"
+              eager={index === 0}
+              className="h-full w-full"
+              imgClassName="object-cover"
+            />
+          </motion.div>
+        </AnimatePresence>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" aria-hidden="true" />
+        <span className="absolute bottom-2 left-3 text-xs font-semibold text-white">
+          Fresh products
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /**
- * Hero parallax progress from shared document scroll — no GSAP/ScrollTrigger.
+ * Hero parallax progress from shared document scroll. No GSAP/ScrollTrigger.
  * For a top-of-page section this matches ST start "top top" / end "bottom top"
  * (and Motion offset ["start start","end start"]): progress = scrollY / height.
  */
@@ -164,11 +235,11 @@ export function Hero() {
                 </span>
               </h1>
 
-              {/* LCP element — paint immediately (no opacity/delay gate). */}
+              {/* LCP element. Paint immediately (no opacity/delay gate). */}
               <p className="mt-6 max-w-lg text-lead text-white/85">
-                Premium Indian fruits, vegetables and spices — sourced at peak
-                freshness and shipped under an unbroken cold chain to importers
-                across the Gulf and beyond.
+                Indian Banganapalli mango, apples, pomegranate, and Guntur dry red chilli.
+                Sourced at peak quality and shipped under an unbroken cold chain
+                to importers across the Gulf and beyond.
               </p>
 
               <motion.div
@@ -274,23 +345,8 @@ export function Hero() {
                 </div>
               </motion.div>
 
-              {/* Produce inset â keeps the freshness identity */}
-              <div className="absolute -bottom-6 -left-6 z-20 w-36 overflow-hidden rounded-2xl border-2 border-white/20 shadow-soft-lg">
-                <div className="relative aspect-[4/3] w-full">
-                  <LazyImage
-                    src={unsplash(scenes.crates, 600)}
-                    lqip={unsplashLQ(scenes.crates)}
-                    alt="Export-grade crates of freshly harvested produce"
-                    fallbackLabel="Farm-fresh produce"
-                    className="h-full w-full"
-                    imgClassName="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" aria-hidden="true" />
-                  <span className="absolute bottom-2 left-3 text-xs font-semibold text-white">
-                    Farm-fresh
-                  </span>
-                </div>
-              </div>
+              {/* Fruit inset — cycles mango / apple / pomegranate / chilli */}
+              <HeroFreshProductsCard reduced={prefersReduced} />
             </motion.div>
           </div>
         </Container>

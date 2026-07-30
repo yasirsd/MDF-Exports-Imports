@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "MDF Exports & Imports — premium agricultural export company website.",
+  "description": "MDF Exports & Imports. Premium agricultural export company website.",
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/prerender.mjs",

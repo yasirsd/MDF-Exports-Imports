@@ -52,7 +52,7 @@ export function Testimonials() {
             contained={false}
             eyebrow="Buyer Themes"
             title="What importers value."
-            description="Representative themes from GCC trade conversations — replace with attributed quotes when available."
+            description="Representative themes from GCC trade conversations. Replace with attributed quotes when available."
           />
           <div className="flex gap-2">
             <button

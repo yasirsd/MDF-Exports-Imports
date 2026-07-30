@@ -116,7 +116,7 @@ function ChipList({ items, active, tone = "emerald" }) {
   );
 }
 
-/** 1984 — immersive origin split */
+/** 1984. Immersive origin split */
 function OriginPanel({ milestone, active, unlocked }) {
   const live = active || unlocked;
   const reduced = usePrefersReducedMotion();
@@ -176,7 +176,7 @@ function OriginPanel({ milestone, active, unlocked }) {
   );
 }
 
-/** 1998 — map + landscape */
+/** 1998. Map + landscape */
 function RegionalPanel({ milestone, active, unlocked }) {
   return (
     <MilestoneFrame milestone={milestone} active={active} unlocked={unlocked}>
@@ -201,7 +201,7 @@ function RegionalPanel({ milestone, active, unlocked }) {
   );
 }
 
-/** 2010 — people + ecosystem */
+/** 2010. People + ecosystem */
 function NetworkPanel({ milestone, active, unlocked }) {
   const live = active || unlocked;
   return (
@@ -239,7 +239,7 @@ function NetworkPanel({ milestone, active, unlocked }) {
   );
 }
 
-/** 2020 — infra */
+/** 2020. Infra */
 function InfraPanel({ milestone, active, unlocked }) {
   return (
     <MilestoneFrame milestone={milestone} active={active} unlocked={unlocked}>
@@ -264,7 +264,7 @@ function InfraPanel({ milestone, active, unlocked }) {
   );
 }
 
-/** 2024 — launch */
+/** 2024. Launch */
 function LaunchPanel({ milestone, active, unlocked }) {
   return (
     <MilestoneFrame milestone={milestone} active={active} unlocked={unlocked}>
@@ -286,7 +286,7 @@ function LaunchPanel({ milestone, active, unlocked }) {
   );
 }
 
-/** Today — closing */
+/** Today. Closing */
 function TodayPanel({ milestone, active, unlocked }) {
   return (
     <MilestoneFrame milestone={milestone} active={active} unlocked={unlocked}>
@@ -327,7 +327,7 @@ const PANELS = {
   today: TodayPanel,
 };
 
-/** Memo — inactive milestones skip reconcile when only the active index changes. */
+/** Memo. Inactive milestones skip reconcile when only the active index changes. */
 export const MilestonePanel = memo(function MilestonePanel({
   milestone,
   active,

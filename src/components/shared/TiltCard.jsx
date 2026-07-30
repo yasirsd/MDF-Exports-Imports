@@ -79,7 +79,7 @@ export function TiltCard({
       style={{
         rotateX,
         rotateY,
-        // Required — invalid `[transform-perspective:…]` class was a no-op before
+        // Required. Invalid `[transform-perspective:…]` class was a no-op before
         transformPerspective: perspective,
         transformStyle: "preserve-3d",
       }}

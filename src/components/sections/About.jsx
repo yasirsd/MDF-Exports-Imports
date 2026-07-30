@@ -8,7 +8,7 @@ import { useLenis } from "@/providers/SmoothScrollProvider";
 import { legacyMilestones } from "@/lib/constants";
 
 /**
- * Our Story — cinematic legacy timeline.
+ * Our Story. Cinematic legacy timeline.
  * Sticky glass spine + full-viewport editorial chapters.
  */
 export function About() {
@@ -26,7 +26,7 @@ export function About() {
     enabled: !reduced,
   });
 
-  // MotionValue — LegacyRail reads this without React re-renders per frame.
+  // MotionValue. LegacyRail reads this without React re-renders per frame.
   // Under reduced motion, rail shows full progress (1).
   const progress = useTransform(scrollYProgress, [0, 1], [0, 1]);
   const closingOpacity = useTransform(scrollYProgress, [0.9, 1], [0.2, 1]);
@@ -37,7 +37,7 @@ export function About() {
     }
   }, [reduced]);
 
-  // Mobile year strip is position:fixed — only show while Our Story is on screen.
+  // Mobile year strip is position:fixed. Only show while Our Story is on screen.
   useEffect(() => {
     const root = sectionRef.current;
     if (!root) return undefined;
@@ -117,10 +117,10 @@ export function About() {
   return (
     <section
       ref={sectionRef}
-      aria-label="Our story — company legacy timeline"
+      aria-label="Our story. Company legacy timeline"
       className="relative overflow-x-clip bg-[#070605] text-white"
     >
-      {/* Soft page wash — no hard panel edges */}
+      {/* Soft page wash. No hard panel edges */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -134,7 +134,7 @@ export function About() {
         aria-hidden="true"
       />
 
-      {/* Compact intro — clears fixed navbar, no clipping */}
+      {/* Compact intro. Clears fixed navbar, no clipping */}
       <header className="relative z-[1] mx-auto max-w-[90rem] px-5 pb-8 pt-28 sm:px-8 sm:pt-32 lg:px-12 lg:pb-10 lg:pt-36">
         <p className="text-[0.7rem] font-bold uppercase tracking-[0.22em] text-brand-orange-bright">
           Our Story
@@ -144,7 +144,7 @@ export function About() {
           <span className="text-white/90"> now global.</span>
         </h2>
         <p className="mt-4 max-w-2xl text-[clamp(0.95rem,1.1vw,1.125rem)] leading-relaxed text-white/58">
-          Follow the spine. Each year unlocks a chapter — from MD Fruits in Andhra Pradesh
+          Follow the spine. Each year unlocks a chapter, from MD Fruits in Andhra Pradesh
           to MDF Exports & Imports, delivering freshness across the Gulf and beyond.
         </p>
       </header>
@@ -159,7 +159,7 @@ export function About() {
           />
         </aside>
 
-        {/* Mobile year strip — fixed, but only while #about is in view */}
+        {/* Mobile year strip. Fixed, but only while #about is in view */}
         <div
           className={[
             "fixed bottom-20 left-1/2 z-30 flex -translate-x-1/2 gap-1.5 rounded-full border border-white/15 bg-black/75 px-2 py-1.5 transition-[opacity,visibility,transform] duration-300 sm:hidden",

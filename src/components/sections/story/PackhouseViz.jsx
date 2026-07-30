@@ -3,7 +3,7 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 
 /**
- * Packhouse visualization — SVG-first (never Unsplash).
+ * Packhouse visualization. SVG-first (never Unsplash).
  * Shows Sort → Pack → Seal with a ventilated crate illustration.
  * Matches ColdChainViz craft level for Chapter 04.
  */

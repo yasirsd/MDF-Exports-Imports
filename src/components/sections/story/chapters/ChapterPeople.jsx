@@ -15,7 +15,7 @@ const TRUST_STEPS = [
 ];
 
 /**
- * Chapter 02 — Organic immersive storytelling.
+ * Chapter 02. Organic immersive storytelling.
  * Unique identity: framed grower portrait + trust timeline + alive counters.
  * Direct Lucide icons (no registry). Title never clips (fluid clamp + wrap).
  */
@@ -32,7 +32,7 @@ export function ChapterPeople({ chapter, active }) {
         !active && "pointer-events-none"
       )}
     >
-      {/* Contained editorial portrait — smaller, sharper, no full-bleed stretch */}
+      {/* Contained editorial portrait. Smaller, sharper, no full-bleed stretch */}
       <div className="relative flex w-full shrink-0 justify-center px-5 pt-[max(4.5rem,10svh)] sm:px-8 lg:w-[42%] lg:justify-end lg:px-6 lg:pt-24 xl:px-10">
         <div className="relative w-full max-w-[15.5rem] sm:max-w-[18rem] lg:max-w-[20rem]">
           <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/12 shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
@@ -81,7 +81,7 @@ export function ChapterPeople({ chapter, active }) {
             {chapter.copy}
           </p>
 
-          {/* Trust timeline — chapter's unique visual idea */}
+          {/* Trust timeline. Chapter's unique visual idea */}
           <div className="relative mt-7">
             <div
               className="pointer-events-none absolute left-[12%] right-[12%] top-3.5 hidden h-px bg-gradient-to-r from-emerald-500/20 via-emerald-400/50 to-emerald-500/20 sm:block"

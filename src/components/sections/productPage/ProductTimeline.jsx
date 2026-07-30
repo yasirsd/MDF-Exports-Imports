@@ -4,7 +4,7 @@ import { useInViewMotion } from "./useInViewMotion";
 import { cn } from "@/lib/utils";
 
 /**
- * Numbered 01–N timeline nodes — Harvest / Journey pattern.
+ * Numbered 01–N timeline nodes. Harvest / Journey pattern.
  * items: { title, note }[]
  */
 export function ProductTimeline({ items, accent = "brand-orange", className }) {

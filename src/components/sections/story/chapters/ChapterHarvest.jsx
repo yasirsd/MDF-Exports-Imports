@@ -16,7 +16,7 @@ const GRADE_STEPS = [
 ];
 
 /**
- * Chapter 03 — Peak ripeness.
+ * Chapter 03. Peak ripeness.
  * Matches Chapter 02 polish: framed harvest portrait + grading timeline + feature cards.
  * Direct Lucide icons. Rail-safe padding. Warm sunlight atmosphere from shell.
  */
@@ -91,7 +91,7 @@ export function ChapterHarvest({ chapter, active }) {
             {chapter.copy}
           </p>
 
-          {/* Grading timeline — chapter's unique visual idea */}
+          {/* Grading timeline. Chapter's unique visual idea */}
           <div className="relative mt-7">
             <div
               className="pointer-events-none absolute left-[12%] right-[12%] top-3.5 hidden h-px bg-gradient-to-r from-amber-500/20 via-brand-orange-bright/50 to-amber-500/20 sm:block"

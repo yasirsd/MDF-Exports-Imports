@@ -106,8 +106,8 @@ function VarietyPanel({ eyebrow, name, body, accent = "rose" }) {
 }
 
 /**
- * Product landing — Indian Pomegranate export (crawlable static route).
- * Chapter DNA: Bhagwa/Ganesh panels + 5–7°C cold chain — no GSAP / R3F.
+ * Product landing. Indian Pomegranate export (crawlable static route).
+ * Chapter DNA: Bhagwa/Ganesh panels + 5–7°C cold chain. No GSAP / R3F.
  */
 export function IndianPomegranate() {
   const enquireHref = whatsappUrl(
@@ -127,7 +127,7 @@ export function IndianPomegranate() {
         titleAccent="Indian Pomegranates"
         titleAccentClass="text-gradient-red"
         title=" for Export"
-        lead="MDF Exports & Imports supplies fresh Indian pomegranates for international buyers who need clear origin, consistent grading and a cold-chain path they can trust. Share your preferred variety (Bhagwa or Ganesh), size profile, destination market and packing format — we confirm what we can source and how it can ship."
+        lead="MDF Exports & Imports supplies fresh Indian pomegranates for international buyers who need clear origin, consistent grading and a cold-chain path they can trust. Share your preferred variety (Bhagwa or Ganesh), size profile, destination market and packing format. We confirm what we can source and how it can ship."
         enquireHref={enquireHref}
         secondaryHref="#cold-chain"
         secondaryLabel="View cold chain"
@@ -151,8 +151,8 @@ export function IndianPomegranate() {
         </h2>
         <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
           Pomegranates of commercial export quality are not grown in Andhra Pradesh. We source from
-          Maharashtra — India&apos;s dominant pomegranate export region, including the Solapur, Nashik,
-          Ahmednagar and Pune districts — through trusted grower and packhouse partners. Our
+          Maharashtra, India&apos;s dominant pomegranate export region, including the Solapur, Nashik,
+          Ahmednagar and Pune districts, through trusted grower and packhouse partners. Our
           commercial base is in Andhra Pradesh: we act as your export counterpart for enquiry,
           documentation and programme coordination. We are not positioning Andhra as the orchard
           origin for this product.
@@ -176,7 +176,7 @@ export function IndianPomegranate() {
             eyebrow="Dominant export variety"
             name="Bhagwa"
             accent="rose"
-            body="The dominant Indian export variety. Buyers typically look for a glossy deep-red rind, dark pink arils, high sweetness and strong shelf-life performance under cold chain. Solapur Bhagwa is associated with a Geographical Indication (GI) tag; whether a specific consignment is supplied as GI-tagged Solapur fruit is confirmed lot-by-lot on enquiry — we do not treat every Maharashtra Bhagwa lot as automatically GI-certified."
+            body="The dominant Indian export variety. Buyers typically look for a glossy deep-red rind, dark pink arils, high sweetness and strong shelf-life performance under cold chain. Solapur Bhagwa is associated with a Geographical Indication (GI) tag; whether a specific consignment is supplied as GI-tagged Solapur fruit is confirmed lot-by-lot on enquiry. We do not treat every Maharashtra Bhagwa lot as automatically GI-certified."
           />
           <VarietyPanel
             eyebrow="Secondary commercial line"

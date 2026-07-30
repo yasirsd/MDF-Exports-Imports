@@ -2,8 +2,8 @@ import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/utils";
 
 /**
- * Guntur-only heat / colour / grade CSS viz — not a reefer clone.
- * Language: colour depth, heat band, clean lot — CSS loops only.
+ * Guntur-only heat / colour / grade CSS viz. Not a reefer clone.
+ * Language: colour depth, heat band, clean lot. CSS loops only.
  */
 export function ProductHeatGradeStage({
   className,

@@ -1,22 +1,18 @@
 /**
- * Image helpers — prefer first-party `/media` assets for critical scenes,
- * fall back to Unsplash for the rest of the catalogue.
+ * Content-matched image library for MDF Exports & Imports.
+ *
+ * Catalogue (only): mangoes · Indian apple · pomegranate · Guntur dry red chilli.
+ * Every `scenes` / gallery entry documents the on-screen narrative it supports.
+ * Do not reuse a photo for an unrelated step (e.g. fruit still ≠ cold store).
  */
 
-/** Self-hosted critical assets keyed by Unsplash photo id (without `photo-`). */
+/** Self-hosted assets keyed by Unsplash photo id (without `photo-`). */
 const LOCAL_MEDIA = {
-  "1523348837708-15d4a09cfac2": "farm-field",
-  "1605673349798-5580680c4dea": "farmer",
-  "1626906722163-bd4c03cb3b9b": "grower-portrait",
-  "1471193945509-9ad0617afabf": "harvest",
-  "1607349913338-fca6f7fc42d0": "packaging",
-  "1610348725531-843dff563e2c": "crates",
-  "1494412574643-ff11b0a5c1c3": "container-ship",
+  // Logistics / destination only. Produce photos stay on Unsplash until first-party shoots exist.
+  "1494412574643-ff11b0a5c1c3": "container-ship", // aerial container terminal (port loading)
+  "1605745341112-85968b19335b": "container-port", // vessel under way (shipping)
   "1512453979798-5ea266f8880c": "dubai",
-  "1488459716781-31db52582fe9": "market",
-  "1571771894821-ce9b6c11b08e": "bananas",
-  "1605745341112-85968b19335b": "container-port",
-  "1553413077-190dd305871c": "delivered",
+  "1553413077-190dd305871c": "delivered", // importer / warehouse aisle
 };
 
 function localPath(slug, size) {
@@ -28,10 +24,9 @@ function pickLocalSize(w) {
 }
 
 /**
- * Build an optimised image URL for a given photo id.
  * @param {string} id  Unsplash photo id (the part after `photo-`)
- * @param {number} [w] target width in px
- * @param {number} [q] quality 1-100 (Unsplash only)
+ * @param {number} [w]
+ * @param {number} [q]
  */
 export function unsplash(id, w = 1200, q = 80) {
   const slug = LOCAL_MEDIA[id];
@@ -40,10 +35,9 @@ export function unsplash(id, w = 1200, q = 80) {
 }
 
 /**
- * Build a responsive `srcSet` string.
- * @param {string} id  Unsplash photo id
- * @param {number[]} [widths] candidate widths in px
- * @param {number} [q] quality 1-100
+ * @param {string} id
+ * @param {number[]} [widths]
+ * @param {number} [q]
  */
 export function unsplashSrcSet(id, widths = [384, 480, 640, 768, 1080, 1440, 1920], q = 78) {
   const slug = LOCAL_MEDIA[id];
@@ -53,58 +47,146 @@ export function unsplashSrcSet(id, widths = [384, 480, 640, 768, 1080, 1440, 192
   return widths.map((w) => `${unsplash(id, w, q)} ${w}w`).join(", ");
 }
 
-/** Low-quality placeholder (blur-up) variant. */
+/** @param {string} id */
 export function unsplashLQ(id) {
   const slug = LOCAL_MEDIA[id];
   if (slug) return localPath(slug, "lq");
   return `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=32&q=20&blur=20`;
 }
 
-/** Hero + storytelling scene imagery. */
-export const scenes = {
-  farmSunrise: "1500382017468-9049fed747ef", // green fields at sunrise (hero uses first-party files)
-  farmField: "1523348837708-15d4a09cfac2",
-  farmer: "1605673349798-5580680c4dea",
-  growerPortrait: "1626906722163-bd4c03cb3b9b",
-  harvest: "1471193945509-9ad0617afabf",
-  packaging: "1607349913338-fca6f7fc42d0",
-  containerShip: "1494412574643-ff11b0a5c1c3",
-  containerPort: "1605745341112-85968b19335b",
-  dubai: "1512453979798-5ea266f8880c",
-  delivered: "1553413077-190dd305871c",
-  crates: "1610348725531-843dff563e2c",
-  market: "1488459716781-31db52582fe9",
-};
-
-/** Product catalogue imagery. */
+/**
+ * Product catalogue stills. One primary photo per live SKU.
+ * dryRedChilli must be dried pods (not spice flat-lays / fresh single peppers).
+ */
 export const productImages = {
-  bananas: "1571771894821-ce9b6c11b08e",
-  lemons: "1590502593747-42a996133562",
-  redChilli: "1583119022894-919a68a3d0e3",
-  greenChilli: "1588252303782-cb80119abd6d",
-  onions: "1518977956812-cd3dbadaaf31",
-  tomatoes: "1592924357228-91a4daadcfea",
-  mangoes: "1553279768-865429fa0078",
-  drumsticks: "1615485290382-441e4d049cb5",
-  coconut: "1580052614034-c55d20bfee3b",
-  pomegranate: "1541344999736-83eca272f6fc",
-  freshVegetables: "1540420773420-3366772f4999",
-  seasonalFruits: "1619566636858-adf3ef46400b",
-  dryRedChilli: "1596040033229-a9821ebd058d",
-  spices: "1509358271058-acd22cc93898",
-  indianApple: "1560806887-1e4cd0b6cbd6",
+  mangoes: "1755842546298-d5cb56b5afee", // multiple ripe mangoes on the farm / orchard tree
+  indianApple: "1560806887-1e4cd0b6cbd6", // red apple lot
+  pomegranate: "1541344999736-83eca272f6fc", // whole + open arils
+  dryRedChilli: "1766158554170-1e8b1899c8ae", // dense dried red chilli pile
 };
 
-/** Gallery imagery (mixed lifestyle + product). */
-export const galleryImages = [
-  "1610348725531-843dff563e2c",
-  "1567306226416-28f0efdc88ce",
-  "1524594152303-9fd13543fe6e",
-  "1470119693884-47d3a1d1f180",
-  "1416879595882-3373a0480b5b",
-  "1488459716781-31db52582fe9",
-  "1502741224143-90386d7f8c82",
-  "1518843875459-f738682238a6",
-  "1607305387299-a3d9611cd469",
-  "1600585152220-90363fe7e115",
+/**
+ * Narrative scenes. Keys describe the story beat, not a random crop.
+ * Consumers: Story chapters, Process stages, Legacy timeline, Hero helpers.
+ */
+export const scenes = {
+  /** Open farmland / sunrise. Process 01, Legacy regional */
+  farmSunrise: "1500382017468-9049fed747ef",
+
+  /** Mangoes ripening on the tree. Story Origin / Harvest, Process Farm */
+  mangoOrchard: "1755842546298-d5cb56b5afee",
+
+  /** Grower hands selecting fruit. Story People, Process Sorting */
+  growerHands: "1570913149827-d2ac84ab3f9a",
+
+  /** Graded apple lot (inspection-ready). Process Quality Check */
+  gradedApples: "1567306226416-28f0efdc88ce",
+
+  /**
+   * Apples in wooden farm crates. Harvest collected / crate packing beat.
+   * Not a grocery paper bag; not mixed tropical assortment.
+   */
+  harvestCollect: "1625238780743-d7b5b0bec6ed",
+
+  /**
+   * Mangoes packed in market crates. Process Packaging / Story Care primary.
+   * Shows fruit in crates (export-pack narrative), not retail veg shelves.
+   */
+  mangoCrates: "1587009048714-98d52b7c668d",
+
+  /** Dried chilli market bowl. Gallery lots */
+  chilliLots: "1763994685403-88aaa750af61",
+
+  /** Sun-dried chilli close pile (India drying context) */
+  chilliDried: "1526576935508-6bccc1e07580",
+
+  /** Storage / distribution bay. Process Cold Storage & Customer handoff */
+  warehouse: "1553413077-190dd305871c",
+
+  /**
+   * Port container terminal (local file slug container-ship).
+   * Use for loading AND destination port. Not for “ship at sea”.
+   */
+  portTerminal: "1494412574643-ff11b0a5c1c3",
+
+  /**
+   * Vessel under way (local file slug container-port).
+   * Use for shipping / voyage. Not for dock loading.
+   */
+  vesselAtSea: "1605745341112-85968b19335b",
+
+  /** Gulf destination skyline. Story Arrival / Legacy Today (markets), not “port” */
+  dubai: "1512453979798-5ea266f8880c",
+
+  // --- Back-compat aliases used across Story / Process / Legacy ---
+  farmField: "1755842546298-d5cb56b5afee", // orchard, not nursery pots
+  farmer: "1570913149827-d2ac84ab3f9a", // grower hands with fruit
+  growerPortrait: "1570913149827-d2ac84ab3f9a",
+  harvest: "1755842546298-d5cb56b5afee", // peak ripeness on the tree
+  packaging: "1587009048714-98d52b7c668d", // mangoes in crates
+  crates: "1625238780743-d7b5b0bec6ed", // apple crates ready for the journey
+  market: "1587009048714-98d52b7c668d", // founding fruit trade. Mango crates
+  containerShip: "1605745341112-85968b19335b", // voyage (was mislabeled)
+  containerPort: "1494412574643-ff11b0a5c1c3", // terminal loading (was mislabeled)
+  delivered: "1553413077-190dd305871c",
+};
+
+/**
+ * Gallery. Ordered journey; caption is written for the photo, not the other way around.
+ * @type {{ id: string, caption: string, alt: string }[]}
+ */
+export const galleryItems = [
+  {
+    id: scenes.mangoOrchard,
+    caption: "Mangoes ripening on the tree",
+    alt: "Ripe mangoes hanging from orchard branches",
+  },
+  {
+    id: productImages.mangoes,
+    caption: "Export-grade mangoes",
+    alt: "Ripe mangoes hanging from orchard branches on the farm",
+  },
+  {
+    id: productImages.indianApple,
+    caption: "Indian apple. Graded lots",
+    alt: "Lot of red apples graded for export",
+  },
+  {
+    id: scenes.growerHands,
+    caption: "Selected by hand",
+    alt: "Hand selecting a ripe apple in the orchard",
+  },
+  {
+    id: productImages.pomegranate,
+    caption: "Pomegranate. Deep colour",
+    alt: "Fresh pomegranates with deep red arils",
+  },
+  {
+    id: productImages.dryRedChilli,
+    caption: "Guntur dry red chilli",
+    alt: "Close-up pile of dried red chillies",
+  },
+  {
+    id: scenes.chilliLots,
+    caption: "Andhra chilli lots",
+    alt: "Bowl of dried red chillies ready for spice programmes",
+  },
+  {
+    id: scenes.mangoCrates,
+    caption: "Packed in export crates",
+    alt: "Mangoes packed tightly in wooden market crates",
+  },
+  {
+    id: scenes.portTerminal,
+    caption: "Loaded at origin port",
+    alt: "Container terminal at the origin port",
+  },
+  {
+    id: scenes.vesselAtSea,
+    caption: "Bound for Gulf markets",
+    alt: "Container ship under way toward destination markets",
+  },
 ];
+
+/** @deprecated Prefer galleryItems. Kept so older imports do not crash during HMR. */
+export const galleryImages = galleryItems.map((g) => g.id);

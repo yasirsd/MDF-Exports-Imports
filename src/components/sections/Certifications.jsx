@@ -21,7 +21,7 @@ export function Certifications() {
           annotate
           eyebrow="Compliance & Trust"
           title="Built for export compliance."
-          description="We work within recognised Indian food-safety and export frameworks — ask our desk for market-specific documentation. More certifications are on our roadmap."
+          description="We work within recognised Indian food-safety and export frameworks. Ask our desk for market-specific documentation. More certifications are on our roadmap."
         />
 
         <motion.div

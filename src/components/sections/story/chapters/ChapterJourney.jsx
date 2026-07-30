@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const STAT_ICONS = { Snowflake, Ship, Clock };
 
 /**
- * Chapter 05 — Logistics visualization.
+ * Chapter 05. Logistics visualization.
  * SVG-first cold chain (never an empty image box) + timeline + icon stats.
  * Navy / icy atmosphere owned by the parent shell.
  */
@@ -27,7 +27,7 @@ export function ChapterJourney({ chapter, active }) {
       )}
     >
       <div className="mx-auto grid w-full max-w-[90rem] items-center gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 xl:gap-12">
-        {/* Viz column — always complete without Unsplash */}
+        {/* Viz column. Always complete without Unsplash */}
         <div className="min-w-0">
           <ColdChainViz active={active} />
 
@@ -66,7 +66,7 @@ export function ChapterJourney({ chapter, active }) {
             {chapter.copy}
           </p>
 
-          {/* Always 3-up from sm — never a tall empty stack on desktop */}
+          {/* Always 3-up from sm. Never a tall empty stack on desktop */}
           <div className="mt-7 grid grid-cols-1 gap-2.5 sm:grid-cols-3 sm:gap-3">
             {stats.map((s, i) => {
               const IconCmp = STAT_ICONS[s.icon] || Snowflake;

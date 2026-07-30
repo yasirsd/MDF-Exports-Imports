@@ -79,8 +79,8 @@ const compliance = [
 ];
 
 /**
- * Product landing — Guntur Red Chilli export (crawlable static route).
- * Chapter DNA: atmospheres, pills, heat/grade stage — no GSAP / R3F.
+ * Product landing. Guntur Red Chilli export (crawlable static route).
+ * Chapter DNA: atmospheres, pills, heat/grade stage. No GSAP / R3F.
  */
 export function GunturRedChilli() {
   const enquireHref = whatsappUrl(
@@ -99,7 +99,7 @@ export function GunturRedChilli() {
         pill="Andhra Pradesh · Dried · Export grade"
         titleAccent="Guntur Red Chilli"
         title=" for Export"
-        lead="MDF Exports & Imports supplies dried Guntur red chilli from Andhra Pradesh for international buyers who need consistent colour, heat character and documentation-ready lots. Tell us your grade preference, destination market and packing format — we respond with what we can ship and on what timeline."
+        lead="MDF Exports & Imports supplies dried Guntur red chilli from Andhra Pradesh for international buyers who need consistent colour, heat character and documentation-ready lots. Tell us your grade preference, destination market and packing format. We respond with what we can ship and on what timeline."
         enquireHref={enquireHref}
         secondaryHref="#specs"
         secondaryLabel="View export specs"
@@ -129,7 +129,7 @@ export function GunturRedChilli() {
             <p className="mt-5 text-[1.05rem] leading-relaxed text-white/60">
               Guntur is one of India&apos;s best-known chilli growing belts. Buyers typically look to
               this origin for dried red chilli with strong colour and a heat profile suited to spice
-              blends, masalas, sauces and food manufacturing — distinct from generic &quot;red
+              blends, masalas, sauces and food manufacturing, distinct from generic &quot;red
               chilli&quot; sourced without a clear regional identity. Exact variety names, colour values
               and heat levels vary by season and lot. We align each enquiry to the grade and moisture
               / cleanliness standards your market requires, rather than treating all chilli as
@@ -149,11 +149,11 @@ export function GunturRedChilli() {
           Export specifications &amp; packing
         </h2>
         <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
-          We prepare consignments for export programmes — not retail sachets for walk-in trade.
+          We prepare consignments for export programmes, not retail sachets for walk-in trade.
           Available grades include Guntur Sannam S4 (334) for balanced heat and color, and Teja /
           S17 and Teja Deluxe for buyers needing higher pungency, each available in Deluxe, Best, and
           Medium Best quality tiers. Typical lot parameters: moisture 10–14% max, foreign matter 1%
-          max, broken chillies and pods with stalks 2–3% max — exact figures confirmed lot-by-lot
+          max, broken chillies and pods with stalks 2–3% max. Exact figures confirmed lot-by-lot
           before booking, matched to your destination market&apos;s requirements. Available whole,
           with stem or stemless; powder on request. Packing in 5–50kg jute, PP, or carton formats.
           Private label marking available on request. Minimum order: on enquiry · Commercial basis:
@@ -198,7 +198,7 @@ export function GunturRedChilli() {
         </h2>
         <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
           This page is for spice importers, wholesalers, grinders and food processors who buy dried
-          chilli in commercial volumes — including buyers serving Gulf and other import markets. If
+          chilli in commercial volumes, including buyers serving Gulf and other import markets. If
           you need sample photos, a recent lot description or packing photos, say so in your first
           message.
         </p>

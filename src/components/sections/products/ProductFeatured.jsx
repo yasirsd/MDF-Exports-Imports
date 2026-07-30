@@ -1,16 +1,25 @@
 import { motion } from "motion/react";
-import { MessageCircle, FileText } from "lucide-react";
-import { LazyImage } from "@/components/shared/LazyImage";
+import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { MagneticButton } from "@/components/shared/MagneticButton";
 import { Button } from "@/components/ui/button";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { brandHello, site } from "@/lib/config";
-import { unsplash, unsplashLQ, unsplashSrcSet } from "@/lib/images";
-import { whatsappUrl } from "@/lib/utils";
+import { easePremium } from "@/lib/motion";
+import { cn, whatsappUrl } from "@/lib/utils";
 
 /**
- * Signature featured product stage — editorial portrait + commercial CTAs.
+ * Editorial overlay copy for the full-bleed showcase.
+ * Always mounted; visibility toggled via CSS / aria (never unmount for SEO).
+ * Below lg: condensed (blurb + CTAs). lg+: full editorial (copy, highlights, season/pack).
  */
-export function ProductFeatured({ product, onViewSpecs }) {
+export function ProductFeatured({
+  product,
+  onViewSpecs,
+  active = true,
+  id,
+  labelledBy,
+  className,
+}) {
   const reduced = usePrefersReducedMotion();
   if (!product) return null;
 
@@ -19,106 +28,127 @@ export function ProductFeatured({ product, onViewSpecs }) {
     brandHello(`I'd like to enquire about ${product.name} for import.`)
   );
 
+  const duration = reduced ? 0 : 0.55;
+  const guideLabel = product.featuredLandingLabel || product.landingLabel || "Export guide";
+  const longCopy = product.copy || product.blurb;
+
   return (
     <motion.div
-      key={product.id}
-      initial={reduced ? false : { opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-      className="grid items-center gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12"
+      id={id}
+      role="tabpanel"
+      aria-labelledby={labelledBy}
+      aria-hidden={!active}
+      initial={false}
+      animate={{
+        opacity: active ? 1 : 0,
+        y: active || reduced ? 0 : 14,
+      }}
+      transition={{ duration, ease: easePremium }}
+      className={cn(
+        "max-w-[34rem]",
+        // Mobile: frosted plate so type doesn't compete with the photo
+        "rounded-2xl border border-white/15 bg-[#0a0806]/78 p-3.5 shadow-[0_12px_40px_rgba(0,0,0,0.45)] backdrop-blur-md sm:p-4",
+        "lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-none",
+        active ? "relative z-[1] pointer-events-auto" : "pointer-events-none absolute inset-0 z-0",
+        className
+      )}
     >
-      <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-        <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] border border-border/80 bg-[#140e0a] shadow-[0_28px_70px_rgba(20,14,10,0.18)] sm:rounded-[2rem]">
-          <LazyImage
-            src={unsplash(product.image, 1100, 88)}
-            srcSet={unsplashSrcSet(product.image, [480, 640, 768, 960, 1200], 88)}
-            sizes="(min-width:1024px) 38vw, 90vw"
-            lqip={unsplashLQ(product.image)}
-            alt={`${product.name} — export quality`}
-            fallbackLabel={product.name}
-            eager
-            className="absolute inset-0 h-full w-full"
-            imgClassName="object-cover object-center"
-          />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#140e0a]/75 via-transparent to-transparent" />
-          <div className="absolute left-4 top-4 sm:left-5 sm:top-5">
-            <span className="inline-flex rounded-full border border-white/20 bg-black/70 px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white">
-              {product.category}
-            </span>
-          </div>
-          {product.featured ? (
-            <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5">
-              <span className="inline-flex rounded-full border border-brand-orange-bright/50 bg-[#1a0e06]/85 px-3 py-1.5 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-brand-orange-bright">
-                Flagship line
-              </span>
-            </div>
-          ) : null}
+      <p className="inline-flex items-center gap-2.5 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-white/80 sm:text-[0.7rem] lg:text-white/70">
+        <span className="h-px w-7 bg-brand-orange-bright/80" aria-hidden="true" />
+        Featured export
+        <span className="text-white/35">·</span>
+        <span className="tracking-[0.16em] text-brand-orange-bright/90">{product.category}</span>
+      </p>
+
+      <h3 className="mt-3 text-[clamp(1.75rem,7vw,2.35rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-white sm:mt-4 lg:text-[clamp(2rem,4vw,3.35rem)]">
+        {product.name}
+      </h3>
+
+      {/* Mobile blurb + desktop long copy — both stay in DOM for SEO/prerender */}
+      {product.blurb ? (
+        <p className="mt-3 max-w-[30rem] text-[0.95rem] font-normal leading-[1.55] text-white/88 sm:mt-4 lg:hidden">
+          {product.blurb}
+        </p>
+      ) : null}
+      <p
+        className={cn(
+          "mt-3 max-w-[30rem] text-[clamp(0.95rem,1.05vw,1.125rem)] font-normal leading-[1.65] text-white/72 sm:mt-4",
+          product.blurb ? "hidden lg:block" : "block"
+        )}
+      >
+        {longCopy}
+      </p>
+
+      {product.highlights?.length ? (
+        <ul className="mt-5 hidden flex-wrap items-center gap-x-3 gap-y-1.5 text-[0.8rem] font-medium tracking-wide text-white/55 lg:flex">
+          {product.highlights.map((h, i) => (
+            <li key={h} className="inline-flex items-center gap-3">
+              {i > 0 ? <span className="h-3 w-px bg-white/25" aria-hidden="true" /> : null}
+              <span>{h}</span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
+      <dl className="mt-5 hidden max-w-md grid-cols-2 gap-x-8 border-t border-white/15 pt-4 lg:grid">
+        <div>
+          <dt className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-white/40">
+            Season
+          </dt>
+          <dd className="mt-1.5 text-[0.9rem] font-medium leading-snug text-white/88">
+            {product.season}
+          </dd>
         </div>
-      </div>
+        <div>
+          <dt className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-white/40">
+            Pack
+          </dt>
+          <dd className="mt-1.5 text-[0.9rem] font-medium leading-snug text-white/88">
+            {product.pack}
+          </dd>
+        </div>
+      </dl>
 
-      <div className="min-w-0">
-        <p className="text-[0.7rem] font-bold uppercase tracking-[0.2em] text-brand-orange-bright">
-          Featured export
-        </p>
-        <h3 className="mt-3 text-[clamp(2rem,4vw,3.25rem)] font-extrabold leading-[1.05] tracking-[-0.03em] text-foreground">
-          {product.name}
-        </h3>
-        <p className="mt-4 max-w-lg text-[clamp(0.95rem,1.1vw,1.1rem)] leading-relaxed text-muted-foreground">
-          {product.copy || product.blurb}
-        </p>
+      <div className="mt-4 flex flex-wrap items-center gap-2 sm:mt-6 sm:gap-3">
+        <MagneticButton
+          type="button"
+          variant="primary"
+          size="md"
+          tabIndex={active ? undefined : -1}
+          className="h-10 px-5 text-sm lg:h-14 lg:px-8 lg:text-base"
+          onClick={() => onViewSpecs?.(product)}
+        >
+          View specs
+          <ArrowUpRight className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
+        </MagneticButton>
 
-        {product.highlights?.length ? (
-          <ul className="mt-5 flex flex-wrap gap-2">
-            {product.highlights.map((h) => (
-              <li
-                key={h}
-                className="rounded-full border border-brand-orange-bright/25 bg-brand-orange-bright/[0.06] px-3 py-1.5 text-xs font-semibold text-foreground/80"
-              >
-                {h}
-              </li>
-            ))}
-          </ul>
-        ) : null}
-
-        <dl className="mt-6 grid grid-cols-2 gap-3 sm:max-w-md">
-          <div className="rounded-2xl border border-border bg-surface px-3.5 py-3">
-            <dt className="text-[0.55rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-              Season
-            </dt>
-            <dd className="mt-1 text-sm font-semibold text-foreground">{product.season}</dd>
-          </div>
-          <div className="rounded-2xl border border-border bg-surface px-3.5 py-3">
-            <dt className="text-[0.55rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-              Pack
-            </dt>
-            <dd className="mt-1 text-sm font-semibold text-foreground">{product.pack}</dd>
-          </div>
-        </dl>
-
-        <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <Button
-            type="button"
-            size="lg"
-            className="bg-brand-orange-bright text-[#1a0e06] shadow-[0_10px_32px_rgba(255,122,26,0.3)] hover:bg-[#ff8a2a] hover:brightness-100"
-            onClick={() => onViewSpecs?.(product)}
+        <Button
+          asChild
+          variant="glass"
+          size="md"
+          className="h-10 border border-white/20 !bg-white/10 px-5 text-sm text-white hover:!bg-white/18 lg:h-14 lg:px-8 lg:text-base"
+        >
+          <a
+            href={enquireHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            tabIndex={active ? undefined : -1}
           >
-            <FileText className="h-5 w-5" />
-            View specs
-          </Button>
-          <Button asChild variant="outline" size="lg">
-            <a href={enquireHref} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="h-5 w-5" />
-              Enquire
-            </a>
-          </Button>
-          {product.landingHref ? (
-            <Button asChild variant="outline" size="lg">
-              <a href={product.landingHref}>
-                {product.featuredLandingLabel || product.landingLabel || "Export guide"}
-              </a>
-            </Button>
-          ) : null}
-        </div>
+            <MessageCircle className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
+            Enquire
+          </a>
+        </Button>
+
+        {product.landingHref ? (
+          <a
+            href={product.landingHref}
+            tabIndex={active ? undefined : -1}
+            className="inline-flex h-10 items-center gap-1.5 px-1.5 text-[0.8125rem] font-semibold text-white/75 underline-offset-4 transition-colors hover:text-white hover:underline sm:px-2 sm:text-sm lg:h-14"
+          >
+            {guideLabel}
+            <ArrowUpRight className="h-3.5 w-3.5 opacity-70" />
+          </a>
+        ) : null}
       </div>
     </motion.div>
   );

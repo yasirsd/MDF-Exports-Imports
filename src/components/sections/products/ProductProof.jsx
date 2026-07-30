@@ -8,20 +8,22 @@ const PROOFS = [
 ];
 
 /**
- * Compact export-proof strip — purposeful, not filler marquee.
+ * Export-proof strip — continuous with page background after showcase feather.
  */
 export function ProductProof() {
   return (
-    <div className="mt-14 border-y border-border/70 bg-surface/50 py-5 md:mt-20 md:py-6">
-      <ul className="mx-auto flex max-w-[90rem] flex-wrap items-center justify-center gap-x-8 gap-y-3 px-5 sm:px-8 lg:justify-between lg:px-10">
+    <div className="-mt-6 bg-background pb-8 pt-2 md:-mt-8 md:pb-10 md:pt-3">
+      <ul className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-10 gap-y-3 border-b border-border/60 px-[clamp(1.25rem,4vw,2.5rem)] pb-7 3xl:max-w-[88rem] lg:justify-between md:pb-8">
         {PROOFS.map(({ icon: Icon, label }) => (
           <li
             key={label}
-            className="inline-flex items-center gap-2.5 text-sm font-semibold text-muted-foreground"
+            className="inline-flex items-center gap-2.5 text-[0.8rem] font-medium tracking-wide text-muted-foreground"
           >
-            <span className="grid h-8 w-8 place-items-center rounded-full border border-brand-orange-bright/25 bg-brand-orange-bright/[0.07] text-brand-orange-bright">
-              <Icon className="h-4 w-4" aria-hidden="true" />
-            </span>
+            <Icon
+              className="h-3.5 w-3.5 shrink-0 text-brand-orange-bright/75"
+              strokeWidth={1.75}
+              aria-hidden="true"
+            />
             {label}
           </li>
         ))}

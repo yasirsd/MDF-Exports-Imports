@@ -13,7 +13,7 @@ function isMobile() {
   return window.matchMedia("(max-width: 768px), (pointer: coarse)").matches;
 }
 
-/** Earth — soft blue atmosphere only (no red halo / circular frame). */
+/** Earth. Soft blue atmosphere only (no red halo / circular frame). */
 function GlobeBody({ segments = 64 }) {
   const [colorMap, bumpMap] = useTexture([
     "/textures/earth-blue-marble.jpg",
@@ -153,7 +153,7 @@ function Scene({ mobile, playing }) {
     []
   );
 
-  // Single invalidate owner — only while playing + tab visible.
+  // Single invalidate owner. Only while playing + tab visible.
   useFrame((_, delta) => {
     if (!playing) return;
     if (typeof document !== "undefined" && document.visibilityState !== "visible") {

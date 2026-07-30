@@ -1,7 +1,7 @@
 import { motionValue } from "motion/react";
 
 /**
- * Shared document scroll MotionValues — single source of truth.
+ * Shared document scroll MotionValues. Single source of truth.
  * Fed by Lenis when active, otherwise by the native scroll listener
  * (reduced-motion and the pre-Lenis idle window).
  */

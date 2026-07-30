@@ -1,9 +1,47 @@
 /**
- * Per-product cinematic atmospheres — Export Journey chapter DNA.
+ * Per-product cinematic atmospheres. Export Journey chapter DNA.
  * Near-black bases + dual radial glows; not flat surface-2 bands.
  */
 
 export const PRODUCT_ATMOSPHERES = {
+  mango: {
+    hero: {
+      base: "#141008",
+      glow: "radial-gradient(ellipse at 18% 22%, rgba(253,197,0,0.2), transparent 48%), radial-gradient(ellipse at 82% 65%, rgba(255,140,40,0.14), transparent 55%), radial-gradient(ellipse at 50% 100%, rgba(70,40,10,0.45), transparent 50%)",
+      accent: "brand-gold",
+    },
+    origin: {
+      base: "#12140c",
+      glow: "radial-gradient(ellipse at 28% 35%, rgba(120,160,60,0.14), transparent 50%), radial-gradient(ellipse at 75% 70%, rgba(200,140,40,0.18), transparent 55%)",
+      accent: "brand-gold",
+    },
+    varieties: {
+      base: "#160f08",
+      glow: "radial-gradient(ellipse at 35% 30%, rgba(253,197,0,0.12), transparent 48%), radial-gradient(ellipse at 70% 80%, rgba(180,90,20,0.22), transparent 50%)",
+      accent: "brand-gold",
+    },
+    specs: {
+      base: "#0a0e14",
+      glow: "radial-gradient(ellipse at 25% 30%, rgba(56,160,220,0.14), transparent 48%), radial-gradient(ellipse at 75% 65%, rgba(253,197,0,0.1), transparent 50%), radial-gradient(ellipse at 50% 100%, rgba(20,30,50,0.5), transparent 50%)",
+      accent: "sky",
+    },
+    compliance: {
+      base: "#0e0e10",
+      glow: "radial-gradient(ellipse at 30% 35%, rgba(253,197,0,0.06), transparent 48%), radial-gradient(ellipse at 70% 80%, rgba(50,50,60,0.4), transparent 50%)",
+      accent: "white",
+    },
+    enquire: {
+      base: "#0c0906",
+      glow: "radial-gradient(ellipse at 70% 35%, rgba(255,130,30,0.2), transparent 48%), radial-gradient(ellipse at 20% 75%, rgba(180,90,20,0.22), transparent 50%)",
+      accent: "brand-orange",
+    },
+    faq: {
+      base: "#0a0a0c",
+      glow: "radial-gradient(ellipse at 50% 0%, rgba(40,40,50,0.35), transparent 55%)",
+      accent: "white",
+    },
+  },
+
   guntur: {
     hero: {
       base: "#140e0a",

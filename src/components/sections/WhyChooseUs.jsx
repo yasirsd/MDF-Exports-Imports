@@ -30,7 +30,7 @@ export function WhyChooseUs() {
           annotate
           eyebrow="Why MDF"
           title="Built for importers who expect more."
-          description="Every consignment is backed by four decades of discipline — from farm to destination port."
+          description="Every consignment is backed by four decades of discipline. From farm to destination port."
         />
 
         <motion.div

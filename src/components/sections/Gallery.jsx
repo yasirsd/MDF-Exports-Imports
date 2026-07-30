@@ -2,24 +2,11 @@ import { motion } from "motion/react";
 import { Container } from "@/components/shared/Container";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import { LazyImage } from "@/components/shared/LazyImage";
-import { galleryImages, unsplash, unsplashLQ, unsplashSrcSet } from "@/lib/images";
+import { galleryItems, unsplash, unsplashLQ, unsplashSrcSet } from "@/lib/images";
 import { viewportOnce } from "@/lib/motion";
 
-const captions = [
-  "Export-grade crates",
-  "Peak-season harvest",
-  "Sorting & grading",
-  "Orchard to origin",
-  "Field freshness",
-  "Market quality",
-  "Selected by hand",
-  "Cold-chain ready",
-  "Loaded for export",
-  "Delivered fresh",
-];
-
-// Masonry spans for an editorial, Apple-style layout. Prefixed so mobile
-// stays a clean, uniform grid and the asymmetric bento only kicks in at md+.
+// Masonry spans for an editorial layout. Prefixed so mobile stays a clean
+// uniform grid and the asymmetric bento only kicks in at md+.
 const spans = [
   "md:row-span-2",
   "",
@@ -51,7 +38,7 @@ export function Gallery() {
           contained={false}
           eyebrow="In the Field"
           title="A closer look at the craft."
-          description="From orchard to origin port — the moments that make the difference."
+          description="From orchard to origin port. The moments that make the difference."
         />
 
         <motion.div
@@ -60,26 +47,29 @@ export function Gallery() {
           viewport={viewportOnce}
           className="mt-12 grid auto-rows-[180px] grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 md:auto-rows-[220px]"
         >
-          {galleryImages.map((img, i) => (
+          {galleryItems.map((g, i) => (
             <motion.figure
-              key={img}
+              key={g.id + g.caption}
               custom={i}
               variants={item}
               className={`group relative overflow-hidden rounded-3xl ${spans[i] || ""}`}
             >
               <LazyImage
-                src={unsplash(img, 900)}
-                srcSet={unsplashSrcSet(img, [384, 480, 640, 768, 960], 80)}
+                src={unsplash(g.id, 900)}
+                srcSet={unsplashSrcSet(g.id, [384, 480, 640, 768, 960], 80)}
                 sizes="(min-width:768px) 25vw, 50vw"
-                lqip={unsplashLQ(img)}
-                alt={captions[i] || "MDF Exports & Imports export gallery"}
-                fallbackLabel={captions[i]}
+                lqip={unsplashLQ(g.id)}
+                alt={g.alt}
+                fallbackLabel={g.caption}
                 className="h-full w-full"
                 imgClassName="transition-transform duration-1200 ease-premium group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true" />
+              <div
+                className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                aria-hidden="true"
+              />
               <figcaption className="absolute bottom-4 left-4 translate-y-3 text-sm font-semibold text-white opacity-0 transition-all duration-500 ease-premium group-hover:translate-y-0 group-hover:opacity-100">
-                {captions[i]}
+                {g.caption}
               </figcaption>
             </motion.figure>
           ))}
