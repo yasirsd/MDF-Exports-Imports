@@ -16,7 +16,7 @@ const FAQ_MESSAGE = brandHello("I have a question about exporting.");
 
 export function FAQ() {
   return (
-    <section className="section-py bg-surface-2" aria-label="Frequently asked questions">
+    <section id="faq" className="section-py bg-surface-2" aria-label="Frequently asked questions">
       <Container className="max-w-4xl">
         <SectionHeading
           contained={false}
@@ -44,7 +44,7 @@ export function FAQ() {
           <EnquireActions
             label="Ask a question"
             whatsappMessage={FAQ_MESSAGE}
-            emailSubject="Export Question — MDF"
+            emailSubject="Export Question - MDF"
             emailBody={FAQ_MESSAGE}
             className="items-center"
           />
