@@ -4,16 +4,18 @@ import {
   ProductStage,
   ProductPill,
   ProductTimeline,
-  ProductFeatureGrid,
+  ProductStatStrip,
+  ProductChipRow,
   ProductHeatGradeStage,
   ProductEnquire,
   ProductFaq,
   PRODUCT_ATMOSPHERES,
 } from "@/components/sections/productPage";
-import { brandHello, site } from "@/lib/config";
+import { RoughSketch } from "@/components/shared/RoughSketch";
+import { brandHello } from "@/lib/config";
 import { unsplash, unsplashLQ, unsplashSrcSet, productImages } from "@/lib/images";
 import { gunturFaqs } from "@/lib/gunturChilliPage";
-import { whatsappUrl } from "@/lib/utils";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 export { GUNTUR_CHILLI_PATH, GUNTUR_CHILLI_META, gunturFaqs } from "@/lib/gunturChilliPage";
 
@@ -36,60 +38,41 @@ const grades = [
 
 const tiers = ["Deluxe", "Best", "Medium Best"];
 
-const lotParams = [
-  { label: "Moisture", value: "10–14% max" },
-  { label: "Foreign matter", value: "1% max" },
-  { label: "Broken / stalks", value: "2–3% max" },
+const formChips = ["Whole", "With stem", "Stemless", "Powder on request"];
+
+const packingChips = ["Jute 5–50kg", "PP bags", "Cartons", "Private label"];
+
+const audienceChips = [
+  "Spice importers",
+  "Wholesalers",
+  "Grinders",
+  "Food processors",
+  "Gulf markets",
 ];
 
-const forms = [
-  { label: "Whole", value: "Dried pods" },
-  { label: "With stem", value: "Available" },
-  { label: "Stemless", value: "Available" },
-  { label: "Powder", value: "On request" },
-];
+const certChips = ["APEDA", "FSSAI", "IEC", "Phytosanitary"];
 
-const packing = [
-  { label: "Jute bags", value: "5–50kg" },
-  { label: "PP bags", value: "Export ready" },
-  { label: "Carton formats", value: "On enquiry" },
-  { label: "Private label", value: "On request" },
-];
-
-const commercial = [
-  { label: "Minimum order", value: "On enquiry" },
-  { label: "Commercial basis", value: "On enquiry" },
-  { label: "Pricing", value: "On enquiry" },
-  { label: "Lead time", value: "On enquiry" },
-];
-
-const audiences = [
-  { label: "Spice importers", value: "Commercial volumes" },
-  { label: "Wholesalers", value: "Programme supply" },
-  { label: "Grinders", value: "Heat & colour" },
-  { label: "Food processors", value: "Masalas & sauces" },
-  { label: "Gulf & import markets", value: "Export lots" },
-];
-
-const compliance = [
-  { label: "APEDA", value: "In use", note: "Agricultural export alignment" },
-  { label: "FSSAI", value: "In use", note: "Food safety framework" },
-  { label: "IEC", value: "Available", note: "As required for consignment" },
-  { label: "Phytosanitary", value: "As required", note: "Destination-driven docs" },
+const heatSketchOps = [
+  { t: "l", x1: 18, y1: 48, x2: 55, y2: 22 },
+  { t: "l", x1: 55, y1: 22, x2: 95, y2: 40 },
+  { t: "l", x1: 95, y1: 40, x2: 140, y2: 16 },
+  { t: "l", x1: 140, y1: 16, x2: 185, y2: 34 },
+  { t: "c", x: 18, y: 48, d: 9, fill: "rgba(255,122,26,0.35)" },
+  { t: "c", x: 55, y: 22, d: 9, fill: "rgba(255,122,26,0.35)" },
+  { t: "c", x: 95, y: 40, d: 9, fill: "rgba(239,35,60,0.32)" },
+  { t: "c", x: 140, y: 16, d: 9, fill: "rgba(239,35,60,0.32)" },
+  { t: "c", x: 185, y: 34, d: 9, fill: "rgba(253,197,0,0.3)" },
 ];
 
 /**
  * Product landing. Guntur Red Chilli export (crawlable static route).
- * Chapter DNA: atmospheres, pills, heat/grade stage. No GSAP / R3F.
  */
 export function GunturRedChilli() {
-  const enquireHref = whatsappUrl(
-    site.whatsapp,
-    brandHello(
-      "I'd like export specs and pricing for Guntur red chilli. Destination: [country/port]. Form: [whole/other]. Volume: [approx]. Packing: [preferred]."
-    )
+  const reduced = usePrefersReducedMotion();
+  const enquireMessage = brandHello(
+    "I'd like export specs and pricing for Guntur red chilli. Destination: [country/port]. Form: [whole/other]. Volume: [approx]. Packing: [preferred]."
   );
-
+  const emailSubject = "Export Enquiry — Guntur Red Chilli";
   const heroImg = productImages.dryRedChilli;
 
   return (
@@ -99,8 +82,9 @@ export function GunturRedChilli() {
         pill="Andhra Pradesh · Dried · Export grade"
         titleAccent="Guntur Red Chilli"
         title=" for Export"
-        lead="MDF Exports & Imports supplies dried Guntur red chilli from Andhra Pradesh for international buyers who need consistent colour, heat character and documentation-ready lots. Tell us your grade preference, destination market and packing format. We respond with what we can ship and on what timeline."
-        enquireHref={enquireHref}
+        lead="Dried Guntur red chilli with clear regional identity — colour, heat character and documentation-ready lots. Share grade, destination and packing; we confirm what we can ship."
+        enquireMessage={enquireMessage}
+        emailSubject={emailSubject}
         secondaryHref="#specs"
         secondaryLabel="View export specs"
         image={{
@@ -116,7 +100,6 @@ export function GunturRedChilli() {
         }}
       />
 
-      {/* Why Guntur */}
       <ProductStage atmosphere={atm.origin} step="01 · Origin">
         <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
           <div>
@@ -127,20 +110,16 @@ export function GunturRedChilli() {
               Why Guntur red chilli stands apart
             </h2>
             <p className="mt-5 text-[1.05rem] leading-relaxed text-white/60">
-              Guntur is one of India&apos;s best-known chilli growing belts. Buyers typically look to
-              this origin for dried red chilli with strong colour and a heat profile suited to spice
-              blends, masalas, sauces and food manufacturing, distinct from generic &quot;red
-              chilli&quot; sourced without a clear regional identity. Exact variety names, colour values
-              and heat levels vary by season and lot. We align each enquiry to the grade and moisture
-              / cleanliness standards your market requires, rather than treating all chilli as
-              interchangeable.
+              One of India&apos;s best-known chilli belts — strong colour and a heat profile for
+              spice blends, masalas and food manufacturing. Variety, colour and heat vary by season
+              and lot; we align each enquiry to your market&apos;s standards.
             </p>
+            <ProductChipRow className="mt-6" items={audienceChips} />
           </div>
           <ProductTimeline items={grades} accent="brand-orange" />
         </div>
       </ProductStage>
 
-      {/* Specs + heat stage */}
       <ProductStage atmosphere={atm.specs} step="02 · Specs" id="specs">
         <ProductPill className="border-brand-orange/35 text-brand-orange-bright">
           Export programme
@@ -148,70 +127,62 @@ export function GunturRedChilli() {
         <h2 className="mt-5 max-w-3xl text-[clamp(1.75rem,4vw,2.75rem)] font-extrabold tracking-[-0.03em] text-white">
           Export specifications &amp; packing
         </h2>
-        <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
-          We prepare consignments for export programmes, not retail sachets for walk-in trade.
-          Available grades include Guntur Sannam S4 (334) for balanced heat and color, and Teja /
-          S17 and Teja Deluxe for buyers needing higher pungency, each available in Deluxe, Best, and
-          Medium Best quality tiers. Typical lot parameters: moisture 10–14% max, foreign matter 1%
-          max, broken chillies and pods with stalks 2–3% max. Exact figures confirmed lot-by-lot
-          before booking, matched to your destination market&apos;s requirements. Available whole,
-          with stem or stemless; powder on request. Packing in 5–50kg jute, PP, or carton formats.
-          Private label marking available on request. Minimum order: on enquiry · Commercial basis:
-          on enquiry · Pricing on enquiry · Lead time: on enquiry
+        <p className="mt-5 max-w-2xl text-[1.05rem] leading-relaxed text-white/60">
+          Sannam S4 and Teja lines in Deluxe / Best / Medium Best tiers. Moisture, foreign matter and
+          broken limits confirmed lot-by-lot. Whole, stem or stemless — powder and private label on
+          request.
         </p>
 
-        <div className="mt-10 grid items-start gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12">
+        <ProductStatStrip
+          className="mt-8"
+          accentClass="text-brand-orange-bright"
+          stats={[
+            { value: 14, prefix: "10–", suffix: "%", label: "Moisture max" },
+            { value: 1, suffix: "%", label: "Foreign matter" },
+            { value: 3, prefix: "2–", suffix: "%", label: "Broken / stalks" },
+            { value: 50, prefix: "5–", suffix: "kg", label: "Jute pack range" },
+          ]}
+        />
+
+        <ProductChipRow className="mt-6" items={formChips} />
+        <ProductChipRow className="mt-3" items={packingChips} />
+
+        <div className="relative mt-10">
           <ProductHeatGradeStage tiers={tiers} />
-          <div className="flex flex-col gap-6">
-            <ProductFeatureGrid items={lotParams} accent="brand-orange" columns={3} />
-            <ProductFeatureGrid items={forms} accent="brand-orange" columns={4} />
-            <ProductFeatureGrid items={packing} accent="brand-gold" columns={4} />
-            <ProductFeatureGrid items={commercial} accent="white" columns={4} />
+          <div className="pointer-events-none absolute -right-1 top-2 w-[min(100%,14rem)] text-brand-orange-bright/80 sm:-right-3">
+            <RoughSketch
+              viewBox="0 0 200 60"
+              ops={heatSketchOps}
+              className="h-14 w-full"
+              strokeWidth={1.4}
+              reduced={reduced}
+              draw={!reduced}
+            />
+            <p className="mt-1 text-right text-[0.55rem] font-bold uppercase tracking-[0.14em] text-white/40">
+              Heat · colour · tier
+            </p>
           </div>
         </div>
       </ProductStage>
 
-      {/* Compliance */}
       <ProductStage atmosphere={atm.compliance} step="03 · Compliance">
         <ProductPill>Documentation</ProductPill>
         <h2 className="mt-5 max-w-3xl text-[clamp(1.75rem,4vw,2.75rem)] font-extrabold tracking-[-0.03em] text-white">
-          Compliance documentation we work with
+          Compliance we work with
         </h2>
-        <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
-          Shipments are prepared within recognised Indian export and food-safety frameworks. In
-          practice we work with APEDA (agricultural export alignment, in use), FSSAI (food safety
-          framework, in use), and IEC and phytosanitary documentation as required for the
-          consignment. We do not claim Global G.A.P., ISO 22000 or other certificates unless they are
-          in place for a specific lot. Ask our desk for the documents your destination requires
-          before you book.
+        <p className="mt-5 max-w-2xl text-[1.05rem] leading-relaxed text-white/60">
+          APEDA, FSSAI, IEC and phytosanitary documentation as required. Extra certificates only when
+          they are in place for a specific lot — ask for your destination path before booking.
         </p>
-        <div className="mt-8">
-          <ProductFeatureGrid items={compliance} accent="white" columns={4} />
-        </div>
-      </ProductStage>
-
-      {/* Audience */}
-      <ProductStage atmosphere={atm.compliance} step="04 · Buyers">
-        <ProductPill className="border-brand-gold/35 text-brand-gold">Audience</ProductPill>
-        <h2 className="mt-5 max-w-3xl text-[clamp(1.75rem,4vw,2.75rem)] font-extrabold tracking-[-0.03em] text-white">
-          Who this supply is for
-        </h2>
-        <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
-          This page is for spice importers, wholesalers, grinders and food processors who buy dried
-          chilli in commercial volumes, including buyers serving Gulf and other import markets. If
-          you need sample photos, a recent lot description or packing photos, say so in your first
-          message.
-        </p>
-        <div className="mt-8">
-          <ProductFeatureGrid items={audiences} accent="brand-gold" columns={3} />
-        </div>
+        <ProductChipRow className="mt-6" items={certChips} />
       </ProductStage>
 
       <ProductEnquire
         atmosphere={atm.enquire}
         title="Request a quote on WhatsApp"
-        lead="The fastest way to start is WhatsApp to our export desk. Include: destination country / port, preferred form (whole / other) and approximate volume, any grade or lab parameters your buyers require, preferred packing. We will confirm availability, documentation path and commercial terms. No obligation until you place an order."
-        enquireHref={enquireHref}
+        lead="Include destination, form, volume, grade or lab parameters and packing. We confirm availability, docs and commercial terms."
+        enquireMessage={enquireMessage}
+        emailSubject={emailSubject}
         checklist={[
           "Destination country / port",
           "Form & approximate volume",

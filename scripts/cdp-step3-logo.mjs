@@ -95,7 +95,7 @@ try {
     returnByValue: true,
     expression: `(() => {
       const logos = performance.getEntriesByType("resource")
-        .filter((r) => /logo-(light|dark)/.test(r.name))
+        .filter((r) => /LightPNG|DarkPNG|logo-(light|dark)/i.test(r.name))
         .map((r) => ({
           name: r.name.split("/").pop(),
           kb: +(r.transferSize / 1024).toFixed(1),
@@ -134,7 +134,7 @@ try {
     returnByValue: true,
     expression: `(() => {
       const logos = performance.getEntriesByType("resource")
-        .filter((r) => /logo-(light|dark)/.test(r.name))
+        .filter((r) => /LightPNG|DarkPNG|logo-(light|dark)/i.test(r.name))
         .map((r) => ({
           name: r.name.split("/").pop(),
           kb: +(r.transferSize / 1024).toFixed(1),

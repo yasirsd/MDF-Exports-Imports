@@ -1,19 +1,20 @@
-import { MessageCircle, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { motion } from "motion/react";
-import { Button } from "@/components/ui/button";
+import { EnquireActions } from "@/components/shared/EnquireActions";
 import { ProductPill } from "./ProductPill";
 import { ProductStage } from "./ProductStage";
 import { useInViewMotion } from "./useInViewMotion";
 import { cn } from "@/lib/utils";
 
 /**
- * Warm Arrival-style CTA stage + WhatsApp + checklist.
+ * Warm Arrival-style CTA stage + WhatsApp/email + checklist.
  */
 export function ProductEnquire({
   atmosphere,
   title = "Enquire for this programme",
   lead,
-  enquireHref,
+  enquireMessage,
+  emailSubject = "Export Enquiry — MDF",
   checklist = [],
   step = "Enquire",
 }) {
@@ -21,10 +22,7 @@ export function ProductEnquire({
 
   return (
     <ProductStage atmosphere={atmosphere} step={step} id="enquire">
-      <motion.div
-        className="mx-auto max-w-3xl text-center"
-        {...container}
-      >
+      <motion.div className="mx-auto max-w-3xl text-center" {...container}>
         <ProductPill className="border-brand-orange/40 text-brand-orange-bright">
           Ready when you are
         </ProductPill>
@@ -43,13 +41,17 @@ export function ProductEnquire({
           </motion.p>
         ) : null}
 
-        <motion.div className="mt-8" {...item}>
-          <Button asChild size="lg" className="shadow-glow">
-            <a href={enquireHref} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="h-5 w-5" />
-              WhatsApp enquiry
-            </a>
-          </Button>
+        <motion.div className="mt-8 flex justify-center" {...item}>
+          <EnquireActions
+            tone="dark"
+            magnetic
+            label="Enquire now"
+            whatsappMessage={enquireMessage}
+            emailSubject={emailSubject}
+            emailBody={enquireMessage}
+            whatsappClassName="shadow-glow"
+            className="items-center"
+          />
         </motion.div>
 
         {checklist.length > 0 ? (
@@ -66,6 +68,7 @@ export function ProductEnquire({
               >
                 <Check
                   className="mt-0.5 h-4 w-4 shrink-0 text-brand-orange-bright"
+                  strokeWidth={1.75}
                   aria-hidden="true"
                 />
                 <span className="text-sm text-white/70">{c}</span>

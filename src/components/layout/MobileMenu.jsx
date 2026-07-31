@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { motion } from "motion/react";
-import { Phone, MessageCircle } from "lucide-react";
+import { Phone } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -8,13 +8,16 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { EnquireActions } from "@/components/shared/EnquireActions";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { navLinks } from "@/lib/constants";
 import { premiumProducts } from "@/lib/premiumProducts";
 import { brandHello, site } from "@/lib/config";
-import { whatsappUrl } from "@/lib/utils";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { easePremium } from "@/lib/motion";
+import { telUrl } from "@/lib/utils";
+
+const START_IMPORTING = brandHello("I'd like to start importing.");
 
 const listVariants = {
   hidden: {},
@@ -129,18 +132,22 @@ export function MobileMenu({ open, onOpenChange, onNavigate }) {
             <span className="text-sm font-medium text-muted-foreground">Appearance</span>
             <ThemeToggle />
           </div>
-          <Button asChild variant="primary" size="lg" className="w-full">
-            <a
-              href={whatsappUrl(site.whatsapp, brandHello("I'd like to start importing."))}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <MessageCircle className="h-5 w-5" />
-              Start Importing
-            </a>
-          </Button>
+          <EnquireActions
+            density="stack"
+            label="Start Importing"
+            whatsappMessage={START_IMPORTING}
+            emailSubject="Export Enquiry — MDF"
+            emailBody={START_IMPORTING}
+          />
           <Button asChild variant="secondary" size="lg" className="w-full">
-            <a href={`tel:${site.phone}`}>
+            <a
+              href={telUrl(site.phone)}
+              aria-label={`Call ${site.phone}`}
+              onClick={(e) => {
+                e.preventDefault();
+                window.location.assign(telUrl(site.phone));
+              }}
+            >
               <Phone className="h-5 w-5" />
               Call Us
             </a>

@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { motion, useMotionValueEvent } from "motion/react";
-import { MessageCircle, ArrowUp } from "lucide-react";
-import { brandHello, site } from "@/lib/config";
-import { whatsappUrl } from "@/lib/utils";
+import { ArrowUp } from "lucide-react";
+import { EnquireActions } from "@/components/shared/EnquireActions";
+import { brandHello } from "@/lib/config";
 import { useScrollTo } from "@/providers/SmoothScrollProvider";
 import { useDocumentScroll } from "@/hooks/useDocumentScroll";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { easePremium } from "@/lib/motion";
 
-/** Floating WhatsApp + back-to-top actions. */
+const FLOAT_MESSAGE = brandHello("I have an export enquiry.");
+
+/** Floating enquire (expandable WA + email) + back-to-top. */
 export function FloatingActions() {
   const [visible, setVisible] = useState(false);
   const { scrollY } = useDocumentScroll();
@@ -40,24 +42,18 @@ export function FloatingActions() {
         <ArrowUp className="h-5 w-5" />
       </motion.button>
 
-      <motion.a
-        href={whatsappUrl(site.whatsapp, brandHello("I have an export enquiry."))}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp"
+      <motion.div
         initial={reduced ? false : { scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: reduced ? 0 : 1, duration: 0.5, ease: easePremium }}
-        className="group relative grid h-14 w-14 place-items-center rounded-full bg-success text-white shadow-soft-lg transition-transform hover:scale-105"
       >
-        {!reduced ? (
-          <span
-            className="absolute inset-0 animate-ping rounded-full bg-success/40 [animation-duration:2.5s]"
-            aria-hidden="true"
-          />
-        ) : null}
-        <MessageCircle className="relative h-6 w-6" />
-      </motion.a>
+        <EnquireActions
+          density="fab"
+          whatsappMessage={FLOAT_MESSAGE}
+          emailSubject="Export Enquiry — MDF"
+          emailBody={FLOAT_MESSAGE}
+        />
+      </motion.div>
     </div>
   );
 }

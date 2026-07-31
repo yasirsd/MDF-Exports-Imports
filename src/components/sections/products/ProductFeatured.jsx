@@ -1,11 +1,11 @@
 import { motion } from "motion/react";
-import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { EnquireActions } from "@/components/shared/EnquireActions";
 import { MagneticButton } from "@/components/shared/MagneticButton";
-import { Button } from "@/components/ui/button";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { brandHello, site } from "@/lib/config";
+import { brandHello } from "@/lib/config";
 import { easePremium } from "@/lib/motion";
-import { cn, whatsappUrl } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 /**
  * Editorial overlay copy for the full-bleed showcase.
@@ -23,9 +23,8 @@ export function ProductFeatured({
   const reduced = usePrefersReducedMotion();
   if (!product) return null;
 
-  const enquireHref = whatsappUrl(
-    site.whatsapp,
-    brandHello(`I'd like to enquire about ${product.name} for import.`)
+  const enquireMessage = brandHello(
+    `I'd like to enquire about ${product.name} for import.`
   );
 
   const duration = reduced ? 0 : 0.55;
@@ -122,22 +121,17 @@ export function ProductFeatured({
           <ArrowUpRight className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
         </MagneticButton>
 
-        <Button
-          asChild
-          variant="glass"
+        <EnquireActions
+          label="Enquire"
           size="md"
-          className="h-10 border border-white/20 !bg-white/10 px-5 text-sm text-white hover:!bg-white/18 lg:h-14 lg:px-8 lg:text-base"
-        >
-          <a
-            href={enquireHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            tabIndex={active ? undefined : -1}
-          >
-            <MessageCircle className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
-            Enquire
-          </a>
-        </Button>
+          tone="dark"
+          whatsappVariant="glass"
+          interactive={active}
+          whatsappMessage={enquireMessage}
+          emailSubject={`Export Enquiry — ${product.name}`}
+          emailBody={enquireMessage}
+          whatsappClassName="h-10 border border-white/20 !bg-white/10 px-5 text-sm text-white hover:!bg-white/18 lg:h-14 lg:px-8 lg:text-base"
+        />
 
         {product.landingHref ? (
           <a

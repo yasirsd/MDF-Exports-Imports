@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { MessageCircle, Snowflake, Package, CalendarDays, MapPinned } from "lucide-react";
+import { Snowflake, Package, CalendarDays, MapPinned } from "lucide-react";
+import { EnquireActions } from "@/components/shared/EnquireActions";
 import { LazyImage } from "@/components/shared/LazyImage";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,10 +9,9 @@ import {
   SheetDescription,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { brandHello, site } from "@/lib/config";
+import { brandHello } from "@/lib/config";
 import { unsplash, unsplashLQ, unsplashSrcSet } from "@/lib/images";
 import { useLenis } from "@/providers/SmoothScrollProvider";
-import { whatsappUrl } from "@/lib/utils";
 
 /**
  * Product spec drawer. Scrollable body + sticky enquire.
@@ -32,9 +32,8 @@ export function ProductDrawer({ product, open, onOpenChange }) {
 
   if (!product) return null;
 
-  const enquireHref = whatsappUrl(
-    site.whatsapp,
-    brandHello(`I'd like export specs and pricing for ${product.name}.`)
+  const enquireMessage = brandHello(
+    `I'd like export specs and pricing for ${product.name}.`
   );
 
   return (
@@ -132,16 +131,14 @@ export function ProductDrawer({ product, open, onOpenChange }) {
 
         <div className="shrink-0 border-t border-border bg-surface px-5 py-4 sm:px-6">
           <div className="flex flex-col gap-2.5">
-            <Button
-              asChild
-              size="lg"
-              className="w-full bg-brand-orange-bright text-[#1a0e06] hover:bg-[#ff8a2a] hover:brightness-100"
-            >
-              <a href={enquireHref} target="_blank" rel="noopener noreferrer">
-                <MessageCircle className="h-5 w-5" />
-                Enquire on WhatsApp
-              </a>
-            </Button>
+            <EnquireActions
+              density="stack"
+              label="Enquire on WhatsApp"
+              whatsappMessage={enquireMessage}
+              emailSubject={`Export Enquiry — ${product.name}`}
+              emailBody={enquireMessage}
+              whatsappClassName="bg-brand-orange-bright text-[#1a0e06] hover:bg-[#ff8a2a] hover:brightness-100"
+            />
             {product.landingHref ? (
               <Button asChild variant="outline" size="lg" className="w-full">
                 <a href={product.landingHref}>

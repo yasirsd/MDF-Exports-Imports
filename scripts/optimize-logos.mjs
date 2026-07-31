@@ -1,6 +1,7 @@
 /**
- * Resize brand marks via headless Chrome canvas → WebP.
- * Outputs density variants under public/brand/.
+ * Resize brand marks via headless Chrome canvas → PNG.
+ * Optional helper: the site imports src/images/*PNG.png directly.
+ * Outputs density variants under public/brand/ if you need static URLs.
  */
 import { spawn } from "node:child_process";
 import http from "node:http";
@@ -30,8 +31,8 @@ function getJson(path) {
 }
 
 const JOBS = [
-  { src: "src/images/LightPNG.webp", out: "logo-light", widths: [220, 440, 880] },
-  { src: "src/images/DarkPNG.webp", out: "logo-dark", widths: [220, 440, 880] },
+  { src: "src/images/LightPNG.png", out: "logo-light", widths: [220, 440, 880] },
+  { src: "src/images/DarkPNG.png", out: "logo-dark", widths: [220, 440, 880] },
 ];
 
 async function main() {
@@ -96,7 +97,7 @@ async function main() {
     for (const job of JOBS) {
       const abs = resolve(root, job.src);
       const buf = readFileSync(abs);
-      const dataUrl = `data:image/webp;base64,${buf.toString("base64")}`;
+      const dataUrl = `data:image/png;base64,${buf.toString("base64")}`;
 
       for (const width of job.widths) {
         const result = await send("Runtime.evaluate", {
@@ -119,7 +120,7 @@ async function main() {
             ctx.clearRect(0, 0, w, h);
             ctx.drawImage(img, 0, 0, w, h);
             const blob = await new Promise((res) =>
-              canvas.toBlob(res, "image/webp", 0.82)
+              canvas.toBlob(res, "image/png")
             );
             if (!blob) throw new Error("toBlob failed");
             const ab = await blob.arrayBuffer();
@@ -131,7 +132,7 @@ async function main() {
         });
 
         const { b64, w, h, bytes } = result.result.value;
-        const outName = `${job.out}-${width}w.webp`;
+        const outName = `${job.out}-${width}w.png`;
         const outPath = resolve(root, "public/brand", outName);
         writeFileSync(outPath, Buffer.from(b64, "base64"));
         console.log(

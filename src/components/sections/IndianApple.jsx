@@ -4,15 +4,19 @@ import {
   ProductStage,
   ProductPill,
   ProductFeatureGrid,
+  ProductMediaFrame,
+  ProductStatStrip,
+  ProductChipRow,
   ProductColdChainStage,
   ProductEnquire,
   ProductFaq,
   PRODUCT_ATMOSPHERES,
 } from "@/components/sections/productPage";
-import { brandHello, site } from "@/lib/config";
+import { RoughSketch } from "@/components/shared/RoughSketch";
+import { brandHello } from "@/lib/config";
 import { unsplash, unsplashLQ, unsplashSrcSet, productImages } from "@/lib/images";
 import { indianAppleFaqs } from "@/lib/indianApplePage";
-import { whatsappUrl } from "@/lib/utils";
+import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 
 export { INDIAN_APPLE_PATH, INDIAN_APPLE_META, indianAppleFaqs } from "@/lib/indianApplePage";
 
@@ -31,34 +35,15 @@ const origins = [
   },
 ];
 
-const varieties = [
-  {
-    label: "Shimla",
-    value: "Himachal belt",
-    note: "Trusted regional line from premium growing districts.",
-  },
-  {
-    label: "Kinnaur",
-    value: "Himachal belt",
-    note: "High-altitude orchards known for colour and firmness.",
-  },
-  {
-    label: "Richared",
-    value: "Delicious family",
-    note: "Mid-season variety across Himachal Pradesh and Jammu & Kashmir.",
-  },
-];
+const varietyChips = ["Shimla", "Kinnaur", "Richared"];
 
-const discussionPoints = [
-  { label: "Grade / class", value: "On enquiry" },
-  { label: "Size / count", value: "On enquiry" },
-  { label: "Packing", value: "On enquiry" },
-  { label: "Private label", value: "On request" },
-  { label: "Minimum order", value: "On enquiry" },
-  { label: "Commercial basis", value: "On enquiry" },
-  { label: "Pricing", value: "On enquiry" },
-  { label: "Lead time", value: "On enquiry" },
-  { label: "Harvest window", value: "On enquiry" },
+const discussChips = [
+  "Grade / class",
+  "Size / count",
+  "Packing",
+  "Private label",
+  "MOQ",
+  "Lead time",
 ];
 
 const chainSteps = [
@@ -68,32 +53,30 @@ const chainSteps = [
   { n: "04", title: "Arrival", desc: "Buyer handoff" },
 ];
 
-const chainHighlights = [
-  { label: "Pre-cooling", value: "Before load" },
-  { label: "Shipping", value: "Reefer by sea" },
-  { label: "Transit", value: "Temp held" },
-];
+const certChips = ["APEDA", "FSSAI", "IEC", "Phytosanitary"];
 
-const compliance = [
-  { label: "APEDA", value: "In use", note: "Agricultural export alignment" },
-  { label: "FSSAI", value: "In use", note: "Food safety framework" },
-  { label: "IEC", value: "Available", note: "As required for consignment" },
-  { label: "Phytosanitary", value: "As required", note: "Destination-driven docs" },
+const chainSketchOps = [
+  { t: "l", x1: 20, y1: 38, x2: 80, y2: 28 },
+  { t: "l", x1: 80, y1: 28, x2: 145, y2: 40 },
+  { t: "l", x1: 145, y1: 40, x2: 210, y2: 26 },
+  { t: "c", x: 20, y: 38, d: 10, fill: "rgba(56,160,220,0.3)" },
+  { t: "c", x: 80, y: 28, d: 10, fill: "rgba(56,160,220,0.3)" },
+  { t: "c", x: 145, y: 40, d: 10, fill: "rgba(56,160,220,0.3)" },
+  { t: "c", x: 210, y: 26, d: 10, fill: "rgba(56,160,220,0.3)" },
 ];
 
 /**
  * Product landing. Premium Indian Apple export (crawlable static route).
- * Chapter DNA: hill origin + shared cold-chain stage. No GSAP / R3F.
  */
 export function IndianApple() {
-  const enquireHref = whatsappUrl(
-    site.whatsapp,
-    brandHello(
-      "I'd like export specs and pricing for premium Indian apples. Destination: [country/port]. Varieties: [Kinnaur/Shimla/other]. Volume: [approx]. Size/grade & packing: [preferred]. Shipping: reefer sea / other."
-    )
+  const reduced = usePrefersReducedMotion();
+  const enquireMessage = brandHello(
+    "I'd like export specs and pricing for premium Indian apples. Destination: [country/port]. Varieties: [Kinnaur/Shimla/other]. Volume: [approx]. Size/grade & packing: [preferred]. Shipping: reefer sea / other."
   );
-
+  const emailSubject = "Export Enquiry — Indian Apple";
   const heroImg = productImages.indianApple;
+  const detailImg = productImages.indianAppleDetail;
+  const coldImg = productImages.appleColdStorage;
 
   return (
     <ProductPageShell>
@@ -102,8 +85,9 @@ export function IndianApple() {
         pill="Himachal & J&K · Fresh · Cold chain"
         titleAccent="Premium Indian Apples"
         title=" for Export"
-        lead="MDF Exports & Imports supplies premium fresh Indian apples for international buyers who need clear origin, consistent grading and a cold-chain story they can trust. Share your preferred varieties, size profile, destination market and packing format. We confirm what we can source and how it can ship."
-        enquireHref={enquireHref}
+        lead="Clear hill origin, consistent grading and a cold-chain story buyers can trust. Share varieties, size profile, destination and packing — we confirm what we can source."
+        enquireMessage={enquireMessage}
+        emailSubject={emailSubject}
         secondaryHref="#cold-chain"
         secondaryLabel="View cold chain"
         image={{
@@ -111,10 +95,10 @@ export function IndianApple() {
           srcSet: unsplashSrcSet(heroImg, [480, 640, 768, 960, 1200], 88),
           lqip: unsplashLQ(heroImg),
         }}
-        imageAlt="Premium export-grade Indian apples"
+        imageAlt="Premium Kinnaur Indian apples packed for export"
         imageFallback="Indian apples"
         imageCaption={{
-          kicker: "Hill orchards · Reefer ready",
+          kicker: "Kinnaur · Graded close-up",
           title: "Origin clarity · Graded lots · Cold chain",
         }}
       />
@@ -124,11 +108,10 @@ export function IndianApple() {
         <h2 className="mt-5 max-w-3xl text-[clamp(1.75rem,4vw,2.75rem)] font-extrabold tracking-[-0.03em] text-white">
           Where our apples come from
         </h2>
-        <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
-          Apples are not grown in Andhra Pradesh. We source from India&apos;s recognised apple-growing
-          regions in Himachal Pradesh (including the Shimla and Kinnaur belts) and Jammu &amp; Kashmir,
-          through trusted grower and packhouse partners. Our commercial base is in Andhra Pradesh:
-          we act as your export counterpart for enquiry, documentation and programme coordination.
+        <p className="mt-5 max-w-2xl text-[1.05rem] leading-relaxed text-white/60">
+          Sourced from Himachal Pradesh (Shimla &amp; Kinnaur) and Jammu &amp; Kashmir through
+          trusted packhouse partners. Our export desk in Andhra Pradesh coordinates enquiry, docs
+          and programme delivery.
         </p>
         <div className="mt-8">
           <ProductFeatureGrid items={origins} accent="sky" columns={2} />
@@ -136,78 +119,102 @@ export function IndianApple() {
       </ProductStage>
 
       <ProductStage atmosphere={atm.varieties} step="02 · Varieties">
-        <ProductPill className="border-brand-gold/35 text-brand-gold">Season &amp; lot</ProductPill>
-        <h2 className="mt-5 max-w-3xl text-[clamp(1.75rem,4vw,2.75rem)] font-extrabold tracking-[-0.03em] text-white">
-          Varieties we can supply
-        </h2>
-        <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
-          Variety availability follows season and lot. We supply Shimla and Kinnaur apples, trusted
-          regional lines from Himachal Pradesh&apos;s premium growing belts, along with Richared, a
-          mid-season Delicious-family variety grown across Himachal Pradesh and Jammu &amp; Kashmir.
-          We do not treat &quot;Indian apple&quot; as one interchangeable SKU. Tell us the variety mix,
-          colour preference and size grades your buyers expect, and we will match available lots or
-          say clearly when we cannot.
-        </p>
-        <div className="mt-8">
-          <ProductFeatureGrid items={varieties} accent="brand-gold" columns={3} />
+        <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+          <div>
+            <ProductPill className="border-brand-gold/35 text-brand-gold">Season &amp; lot</ProductPill>
+            <h2 className="mt-5 text-[clamp(1.75rem,4vw,2.75rem)] font-extrabold tracking-[-0.03em] text-white">
+              Varieties we can supply
+            </h2>
+            <p className="mt-5 text-[1.05rem] leading-relaxed text-white/60">
+              Shimla, Kinnaur and Richared — matched to season and lot, not treated as one
+              interchangeable SKU. Tell us colour and size grades; we match available fruit or say
+              clearly when we cannot.
+            </p>
+            <ProductChipRow className="mt-6" items={varietyChips} />
+          </div>
+          <ProductMediaFrame
+            src={unsplash(detailImg, 900, 86)}
+            srcSet={unsplashSrcSet(detailImg, [480, 640, 800, 1000], 86)}
+            lqip={unsplashLQ(detailImg)}
+            alt="Close-up of export-grade Kinnaur red apples"
+            fallbackLabel="Kinnaur detail"
+            caption={{ kicker: "Lot detail", title: "Colour · firmness · grade on enquiry" }}
+          />
         </div>
       </ProductStage>
 
       <ProductStage atmosphere={atm.specs} step="03 · Cold chain" id="cold-chain">
-        <ProductPill className="border-sky-400/35 text-sky-300">
-          Fresh produce logistics
-        </ProductPill>
+        <ProductPill className="border-sky-400/35 text-sky-300">Fresh produce logistics</ProductPill>
         <h2 className="mt-5 max-w-3xl text-[clamp(1.75rem,4vw,2.75rem)] font-extrabold tracking-[-0.03em] text-white">
           Grades, packing &amp; cold chain
         </h2>
-        <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
-          Apples are fresh produce. Export programmes depend on grade, sizing, packing discipline and
-          unbroken temperature control, not shelf-stable dry packing. Shipping is arranged via
-          reefer container by sea freight, with temperature control maintained from pre-cooling
-          through transit. Typical discussion points: grade/class on enquiry, size/count on enquiry,
-          packing on enquiry, private label marking on request, minimum order on enquiry, commercial
-          basis on enquiry (pricing on enquiry), lead time on enquiry, harvest/availability window on
-          enquiry. Lot parameters (firmness, colour, defects) are confirmed before booking against
-          your destination&apos;s requirements.
+        <p className="mt-5 max-w-2xl text-[1.05rem] leading-relaxed text-white/60">
+          Pre-cool, grade and ship unbroken in reefer sea freight. Size, packing and commercial
+          terms are set per programme — not a single published SKU sheet.
         </p>
 
-        <div className="mt-10 grid items-start gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
-          <div className="flex flex-col gap-4">
-            <ProductFeatureGrid items={chainHighlights} accent="sky" columns={3} />
-            <ProductFeatureGrid items={discussionPoints} accent="sky" columns={3} />
-          </div>
-          <ProductColdChainStage
-            accent="sky"
-            tempLabel="Held"
-            title="Reefer sea freight · cold chain"
-            steps={chainSteps}
+        <ProductStatStrip
+          className="mt-8"
+          accentClass="text-sky-300"
+          stats={[
+            { value: 4, label: "Cold-chain steps" },
+            { value: 6, suffix: "+", label: "GCC markets" },
+            { value: 40, suffix: "+", label: "Years network" },
+            { value: 100, suffix: "%", label: "Lot checks" },
+          ]}
+        />
+
+        <ProductChipRow className="mt-6" items={discussChips} />
+
+        <div className="relative mt-10 grid items-start gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12">
+          <ProductMediaFrame
+            src={unsplash(coldImg, 900, 86)}
+            srcSet={unsplashSrcSet(coldImg, [480, 640, 800, 1000], 86)}
+            lqip={unsplashLQ(coldImg)}
+            alt="Apples in wooden crates inside cold storage"
+            fallbackLabel="Cold storage"
+            aspect="aspect-[4/3] lg:aspect-[4/5]"
+            caption={{ kicker: "Cold storage", title: "Held from packhouse to port" }}
           />
+          <div className="relative">
+            <ProductColdChainStage
+              accent="sky"
+              tempLabel="Held"
+              title="Reefer sea freight · cold chain"
+              steps={chainSteps}
+            />
+            <div className="pointer-events-none absolute -left-1 -top-3 w-[min(100%,14rem)] text-sky-300/80 sm:-left-3">
+              <RoughSketch
+                viewBox="0 0 230 65"
+                ops={chainSketchOps}
+                className="h-14 w-full"
+                strokeWidth={1.4}
+                reduced={reduced}
+                draw={!reduced}
+              />
+            </div>
+          </div>
         </div>
       </ProductStage>
 
       <ProductStage atmosphere={atm.compliance} step="04 · Compliance">
         <ProductPill>Documentation</ProductPill>
         <h2 className="mt-5 max-w-3xl text-[clamp(1.75rem,4vw,2.75rem)] font-extrabold tracking-[-0.03em] text-white">
-          Compliance documentation we work with
+          Compliance we work with
         </h2>
-        <p className="mt-5 max-w-3xl text-[1.05rem] leading-relaxed text-white/60">
-          Shipments are prepared within recognised Indian export and food-safety frameworks. In
-          practice we work with APEDA (agricultural export alignment, in use), FSSAI (food safety
-          framework, in use), and IEC and phytosanitary documentation as required for the
-          consignment. We do not claim Global G.A.P., ISO 22000 or other certificates unless they are
-          in place for a specific lot or grower. Ask our desk for the documents your destination
-          requires before you book.
+        <p className="mt-5 max-w-2xl text-[1.05rem] leading-relaxed text-white/60">
+          APEDA, FSSAI, IEC and phytosanitary documentation as required. Extra certificates only when
+          they are in place for a specific lot — ask for your destination path before booking.
         </p>
-        <div className="mt-8">
-          <ProductFeatureGrid items={compliance} accent="white" columns={4} />
-        </div>
+        <ProductChipRow className="mt-6" items={certChips} />
       </ProductStage>
 
       <ProductEnquire
         atmosphere={atm.enquire}
         title="Request a quote on WhatsApp"
-        lead="The fastest way to start is WhatsApp to our export desk. Include: destination country / port, varieties and approximate volume, preferred size / grade and packing, preferred shipping mode. We will confirm sourcing availability, cold-chain path and commercial terms. No obligation until you place an order."
-        enquireHref={enquireHref}
+        lead="Include destination, varieties, volume, size/grade and packing. We confirm sourcing, cold-chain path and commercial terms."
+        enquireMessage={enquireMessage}
+        emailSubject={emailSubject}
         checklist={[
           "Destination country / port",
           "Varieties and approximate volume",

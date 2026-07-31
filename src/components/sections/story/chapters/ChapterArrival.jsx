@@ -1,11 +1,12 @@
 import { motion } from "motion/react";
-import { MessageCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { EnquireActions } from "@/components/shared/EnquireActions";
 import { ChapterPill } from "@/components/sections/story/StoryChrome";
 import { ArrivalViz } from "@/components/sections/story/ArrivalViz";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { brandHello, site } from "@/lib/config";
-import { cn, whatsappUrl } from "@/lib/utils";
+import { brandHello } from "@/lib/config";
+import { cn } from "@/lib/utils";
+
+const START_IMPORTING = brandHello("I'd like to start importing.");
 
 const MARKETS = [
   { city: "Dubai", status: "active" },
@@ -104,23 +105,14 @@ export function ChapterArrival({ chapter, active }) {
             }
             transition={{ delay: 0.3, duration: 0.45 }}
           >
-            <Button
-              asChild
-              size="lg"
-              className="w-full bg-brand-orange-bright text-[#1a0e06] shadow-[0_10px_40px_rgba(255,122,26,0.35)] hover:bg-[#ff8a2a] hover:brightness-100 sm:w-auto"
-            >
-              <a
-                href={whatsappUrl(
-                  site.whatsapp,
-                  brandHello("I'd like to start importing.")
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <MessageCircle className="h-5 w-5" />
-                Start Importing
-              </a>
-            </Button>
+            <EnquireActions
+              tone="dark"
+              label="Start Importing"
+              whatsappMessage={START_IMPORTING}
+              emailSubject="Export Enquiry — MDF"
+              emailBody={START_IMPORTING}
+              whatsappClassName="w-full bg-brand-orange-bright text-[#1a0e06] shadow-[0_10px_40px_rgba(255,122,26,0.35)] hover:bg-[#ff8a2a] hover:brightness-100 sm:w-auto"
+            />
             <p className="mt-3 text-[0.65rem] font-medium text-white/35">
               From Andhra Pradesh to your port. Same care, every mile.
             </p>

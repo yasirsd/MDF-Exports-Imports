@@ -63,9 +63,16 @@ export function PrivacyPolicy() {
               <h2 className="text-xl font-bold tracking-tight">Who we are</h2>
               <p className="mt-3 text-muted-foreground">
                 {site.name} (“we”, “us”) is an agricultural export business based in{" "}
-                {site.location}. Contact:{" "}
+                {site.location}. General contact:{" "}
                 <a className="font-medium text-brand-red hover:underline" href={`mailto:${site.email}`}>
                   {site.email}
+                </a>
+                . For privacy, data-access, or support inquiries:{" "}
+                <a
+                  className="font-medium text-brand-red hover:underline"
+                  href="mailto:support@mdfexport.com"
+                >
+                  support@mdfexport.com
                 </a>
                 .
               </p>
@@ -99,8 +106,10 @@ export function PrivacyPolicy() {
             <section>
               <h2 className="text-xl font-bold tracking-tight">WhatsApp and third parties</h2>
               <p className="mt-3 text-muted-foreground">
-                Choosing “Send via WhatsApp” opens WhatsApp (Meta Platforms) with a pre-filled
-                message. That interaction is governed by WhatsApp’s own terms and privacy policy.
+                Choosing WhatsApp from an enquire or send control opens WhatsApp (Meta Platforms)
+                with a pre-filled message. That interaction is governed by WhatsApp’s own terms and
+                privacy policy. Choosing Email opens Gmail (Google) — the Gmail website on desktop,
+                or the Gmail app when available on mobile — with a pre-filled message to us.
                 Embedded maps are provided by Google and are subject to Google’s privacy terms.
                 Some product imagery may be delivered from third-party CDNs when not self-hosted.
               </p>
@@ -118,8 +127,15 @@ export function PrivacyPolicy() {
             <section>
               <h2 className="text-xl font-bold tracking-tight">Your choices</h2>
               <p className="mt-3 text-muted-foreground">
-                You may email us to request access, correction, or deletion of enquiry records we
-                hold, subject to legitimate business and legal retention needs.
+                You may email{" "}
+                <a
+                  className="font-medium text-brand-red hover:underline"
+                  href="mailto:support@mdfexport.com"
+                >
+                  support@mdfexport.com
+                </a>{" "}
+                to request access, correction, or deletion of enquiry records we hold, subject to
+                legitimate business and legal retention needs.
               </p>
             </section>
 

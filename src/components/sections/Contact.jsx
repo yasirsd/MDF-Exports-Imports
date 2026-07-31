@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from "lucide-react";
+import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Container } from "@/components/shared/Container";
+import { EnquireActions } from "@/components/shared/EnquireActions";
 import { SectionHeading } from "@/components/shared/SectionHeading";
-import { Button } from "@/components/ui/button";
 import { brandHello, site } from "@/lib/config";
-import { whatsappUrl } from "@/lib/utils";
+import { gmailComposeUrl, openEmailCompose, telUrl, cn } from "@/lib/utils";
 import { products } from "@/lib/constants";
 import { fadeUp, fadeUpReduced, motionSafe, viewportOnce } from "@/lib/motion";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import { cn } from "@/lib/utils";
+
+const START_IMPORTING = brandHello("I'd like to start importing.");
 
 const inputCls =
   "w-full min-h-[3rem] rounded-2xl border border-border bg-surface px-4 py-3 text-foreground placeholder:text-muted-foreground/70 transition-colors focus:border-brand-red focus:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -29,7 +30,23 @@ function ContactRow({ icon: Icon, label, value, href }) {
     </div>
   );
   return href ? (
-    <a href={href} className="block rounded-2xl transition-colors hover:text-brand-red">
+    <a
+      href={href}
+      className="block rounded-2xl transition-colors hover:text-brand-red"
+      target={href.startsWith("https://mail.google.com") ? "_blank" : undefined}
+      rel={href.startsWith("https://mail.google.com") ? "noopener noreferrer" : undefined}
+      onClick={(e) => {
+        if (href.startsWith("https://mail.google.com") || href.startsWith("mailto:")) {
+          e.preventDefault();
+          openEmailCompose(site.email, { subject: "Export Enquiry — MDF" });
+          return;
+        }
+        if (href.startsWith("tel:")) {
+          e.preventDefault();
+          window.location.assign(href);
+        }
+      }}
+    >
       {content}
     </a>
   ) : (
@@ -103,10 +120,7 @@ export function Contact() {
     return lines.join("\n");
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const nextErrors = validateForm(form);
-    setErrors(nextErrors);
+  const markFormTouched = () => {
     setTouched({
       name: true,
       company: true,
@@ -114,12 +128,18 @@ export function Contact() {
       product: true,
       message: true,
     });
-    if (Object.keys(nextErrors).length > 0) return;
-
-    window.open(whatsappUrl(site.whatsapp, buildMessage()), "_blank", "noopener,noreferrer");
   };
 
-  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(site.mapQuery)}&z=10&output=embed`;
+  const validateBeforeSend = () => {
+    const nextErrors = validateForm(form);
+    setErrors(nextErrors);
+    markFormTouched();
+    return Object.keys(nextErrors).length === 0;
+  };
+
+  const enquiryMessage = buildMessage();
+
+  const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(site.mapQuery)}&z=16&output=embed`;
 
   return (
     <section aria-label="Contact" className="section-py bg-background">
@@ -141,27 +161,30 @@ export function Contact() {
             className="flex flex-col gap-6"
           >
             <div className="grid gap-6 rounded-3xl border border-border bg-surface p-8 shadow-soft sm:grid-cols-2">
-              <ContactRow icon={Phone} label="Call us" value={site.phone} href={`tel:${site.phone}`} />
-              <ContactRow icon={Mail} label="Email" value={site.email} href={`mailto:${site.email}`} />
+              <ContactRow icon={Phone} label="Call us" value={site.phone} href={telUrl(site.phone)} />
+              <ContactRow
+                icon={Mail}
+                label="Email"
+                value={site.email}
+                href={gmailComposeUrl(site.email, { subject: "Export Enquiry — MDF" })}
+              />
               <ContactRow icon={MapPin} label="Location" value={site.location} />
               <ContactRow icon={Clock} label="Business hours" value={site.hours} />
             </div>
 
-            <a
-              href={whatsappUrl(site.whatsapp, brandHello("I'd like to start importing."))}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group flex items-center justify-between rounded-3xl bg-success p-6 text-white shadow-soft transition-transform hover:scale-[1.01]"
-            >
-              <div className="flex items-center gap-4">
-                <MessageCircle className="h-8 w-8" />
-                <div>
-                  <p className="text-lg font-extrabold">Chat on WhatsApp</p>
-                  <p className="text-sm text-white/80">Fastest way to reach our export desk</p>
-                </div>
-              </div>
-              <Send className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </a>
+            <div className="rounded-3xl border border-border bg-surface p-6 shadow-soft sm:p-8">
+              <p className="text-lg font-extrabold">Reach the export desk</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                WhatsApp, email, or a quick call — pick what works for you.
+              </p>
+              <EnquireActions
+                className="mt-5"
+                label="Contact us"
+                whatsappMessage={START_IMPORTING}
+                emailSubject="Export Enquiry — MDF"
+                emailBody={START_IMPORTING}
+              />
+            </div>
 
             <div className="relative aspect-[16/10] overflow-hidden rounded-3xl border border-border shadow-soft">
               <iframe
@@ -176,7 +199,7 @@ export function Contact() {
           </motion.div>
 
           <motion.form
-            onSubmit={handleSubmit}
+            onSubmit={(e) => e.preventDefault()}
             noValidate
             variants={variants}
             custom={1}
@@ -309,15 +332,18 @@ export function Contact() {
               ) : null}
             </div>
 
-            <Button type="submit" variant="primary" size="lg" className="mt-2 w-full">
-              <MessageCircle className="h-5 w-5" />
-              Send via WhatsApp
-            </Button>
+            <EnquireActions
+              className="mt-2 w-full"
+              density="stack"
+              label="Send enquiry"
+              channels={["whatsapp", "email"]}
+              whatsappMessage={enquiryMessage}
+              emailSubject="Export Enquiry — MDF"
+              emailBody={enquiryMessage}
+              onBeforeChannel={validateBeforeSend}
+            />
             <p className="text-center text-xs text-muted-foreground">
-              Prefer email? Write to{" "}
-              <a href={`mailto:${site.email}`} className="font-semibold text-brand-red hover:underline">
-                {site.email}
-              </a>
+              Choose WhatsApp or email — your form details are included either way.
             </p>
           </motion.form>
         </div>

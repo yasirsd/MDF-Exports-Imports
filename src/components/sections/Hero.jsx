@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import CountUp from "react-countup";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "motion/react";
-import { ArrowRight, ArrowDown, Leaf, MapPin, Ship, ShieldCheck } from "lucide-react";
+import { ArrowDown, MapPin, Ship, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/shared/Container";
 import { LazyImage } from "@/components/shared/LazyImage";
-import { MagneticButton } from "@/components/shared/MagneticButton";
+import { EnquireActions } from "@/components/shared/EnquireActions";
 import { Button } from "@/components/ui/button";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { useDocumentScroll } from "@/hooks/useDocumentScroll";
@@ -13,8 +14,9 @@ import { HeroSketch } from "@/components/sections/hero/HeroSketch";
 import { productImages, unsplash, unsplashLQ } from "@/lib/images";
 import { certifications, exportDestinations } from "@/lib/constants";
 import { brandHello, site } from "@/lib/config";
-import { whatsappUrl } from "@/lib/utils";
 import { easePremium } from "@/lib/motion";
+
+const START_IMPORTING = brandHello("I'd like to start importing.");
 
 const certified = certifications.filter((c) => c.status === "operating");
 
@@ -198,40 +200,53 @@ export function Hero() {
       >
         <Container className="my-auto">
           <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
-            {/* Left: copy */}
+            {/* Left: copy — 40+ years + tagline as one hero lockup */}
             <div className="flex flex-col items-start">
-              <motion.span
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: easePremium }}
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/45 px-4 py-2 text-sm font-medium text-white"
-              >
-                <Leaf className="h-4 w-4 text-brand-orange" />
-                <span>{site.experience} of agricultural excellence</span>
-              </motion.span>
+              <h1 className="max-w-2xl text-white">
+                <motion.span
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: easePremium }}
+                  className="mb-5 flex flex-wrap items-baseline gap-x-3 gap-y-1"
+                >
+                  <span
+                    className="text-[clamp(2.75rem,5vw,4.25rem)] font-extrabold leading-none tracking-[-0.04em] text-gradient-gold tabular-nums"
+                    aria-label={`${site.experience} of agricultural excellence`}
+                  >
+                    {prefersReduced ? (
+                      "40+"
+                    ) : (
+                      <CountUp end={40} duration={2.2} suffix="+" />
+                    )}
+                  </span>
+                  <span className="text-[0.7rem] font-bold uppercase leading-snug tracking-[0.18em] text-white/70 sm:text-[0.75rem]">
+                    Years of agricultural excellence
+                  </span>
+                </motion.span>
 
-              <h1 className="mt-6 max-w-2xl text-[clamp(2.5rem,4.7vw,4.75rem)] font-extrabold leading-[0.98] tracking-[-0.03em] text-white">
-                {"Exporting Freshness".split(" ").map((word, i) => (
-                  <span key={word} className="inline-block overflow-hidden pb-1 align-bottom">
+                <span className="block text-[clamp(2.5rem,4.7vw,4.75rem)] font-extrabold leading-[0.98] tracking-[-0.03em]">
+                  {"Exporting Freshness".split(" ").map((word, i) => (
+                    <span key={word} className="inline-block overflow-hidden pb-1 align-bottom">
+                      <motion.span
+                        className="inline-block"
+                        initial={{ y: "110%" }}
+                        animate={{ y: "0%" }}
+                        transition={{ duration: 0.9, delay: 0.15 + i * 0.1, ease: easePremium }}
+                      >
+                        {word}&nbsp;
+                      </motion.span>
+                    </span>
+                  ))}
+                  <span className="inline-block overflow-hidden pb-1 align-bottom">
                     <motion.span
-                      className="inline-block"
+                      className="inline-block text-gradient-orange"
                       initial={{ y: "110%" }}
                       animate={{ y: "0%" }}
-                      transition={{ duration: 0.9, delay: 0.15 + i * 0.1, ease: easePremium }}
+                      transition={{ duration: 0.9, delay: 0.42, ease: easePremium }}
                     >
-                      {word}&nbsp;
+                      Beyond Borders.
                     </motion.span>
                   </span>
-                ))}
-                <span className="inline-block overflow-hidden pb-1 align-bottom">
-                  <motion.span
-                    className="inline-block text-gradient-orange"
-                    initial={{ y: "110%" }}
-                    animate={{ y: "0%" }}
-                    transition={{ duration: 0.9, delay: 0.42, ease: easePremium }}
-                  >
-                    Beyond Borders.
-                  </motion.span>
                 </span>
               </h1>
 
@@ -248,22 +263,15 @@ export function Hero() {
                 transition={{ duration: 0.9, delay: 0.75, ease: easePremium }}
                 className="mt-9 flex w-full flex-col items-stretch gap-3 xs:w-auto xs:flex-row xs:flex-wrap xs:items-center xs:gap-4"
               >
-                <MagneticButton
-                  asChild
-                  variant="primary"
-                  size="lg"
-                  className="w-full xs:w-auto"
-                  wrapperClassName="w-full xs:w-auto"
-                >
-                  <a
-                    href={whatsappUrl(site.whatsapp, brandHello("I'd like to start importing."))}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Start Importing
-                    <ArrowRight className="h-5 w-5" />
-                  </a>
-                </MagneticButton>
+                <EnquireActions
+                  magnetic
+                  tone="dark"
+                  label="Start Importing"
+                  whatsappMessage={START_IMPORTING}
+                  emailSubject="Export Enquiry — MDF"
+                  emailBody={START_IMPORTING}
+                  whatsappClassName="w-full xs:w-auto"
+                />
                 <Button
                   variant="glass"
                   size="lg"

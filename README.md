@@ -48,8 +48,8 @@ All are optional — sensible defaults are used if unset. See [`.env.example`](.
 
 Central brand configuration lives in [`src/lib/config.js`](src/lib/config.js). Theme-aware logos:
 
-- [`src/images/DarkPNG.webp`](src/images/DarkPNG.webp) — mark for dark surfaces
-- [`src/images/LightPNG.webp`](src/images/LightPNG.webp) — mark for light surfaces
+- [`src/images/DarkPNG.png`](src/images/DarkPNG.png) — dark mark for light surfaces
+- [`src/images/LightPNG.png`](src/images/LightPNG.png) — light mark for dark surfaces
 
 ## License
 

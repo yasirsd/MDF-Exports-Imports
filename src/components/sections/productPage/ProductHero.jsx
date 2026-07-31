@@ -1,10 +1,13 @@
-import { MessageCircle } from "lucide-react";
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
+import { EnquireActions } from "@/components/shared/EnquireActions";
 import { LazyImage } from "@/components/shared/LazyImage";
+import { exportDestinations } from "@/lib/constants";
 import { ProductPill } from "./ProductPill";
+import { ProductChipRow } from "./ProductChipRow";
 import { ProductStage } from "./ProductStage";
 import { useInViewMotion } from "./useInViewMotion";
+import { useProductFrameParallax } from "./useProductImageParallax";
 import { cn } from "@/lib/utils";
 
 /**
@@ -17,15 +20,26 @@ export function ProductHero({
   titleAccent,
   titleAccentClass = "text-gradient-orange",
   lead,
-  enquireHref,
+  enquireMessage,
+  emailSubject = "Export Enquiry — MDF",
   secondaryHref,
   secondaryLabel = "View specs",
   image,
   imageCaption,
   imageAlt,
   imageFallback,
+  showDestinations = true,
 }) {
   const { container, item } = useInViewMotion();
+  const { frameRef, active: parallaxOn, y: imgY, inset } = useProductFrameParallax({
+    from: "8%",
+    to: "-14%",
+    overscan: 0.14,
+  });
+  const destChips = exportDestinations.map((d) => ({
+    label: d.code,
+    title: d.name,
+  }));
 
   return (
     <ProductStage atmosphere={atmosphere} className="section-py-sm pb-12 sm:pb-16">
@@ -57,15 +71,18 @@ export function ProductHero({
             </motion.p>
           ) : null}
           <motion.div
-            className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
+            className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center"
             {...item}
           >
-            <Button asChild size="lg" className="shadow-glow">
-              <a href={enquireHref} target="_blank" rel="noopener noreferrer">
-                <MessageCircle className="h-5 w-5" />
-                Request a quote on WhatsApp
-              </a>
-            </Button>
+            <EnquireActions
+              tone="dark"
+              magnetic
+              label="Request a quote"
+              whatsappMessage={enquireMessage}
+              emailSubject={emailSubject}
+              emailBody={enquireMessage}
+              whatsappClassName="shadow-glow"
+            />
             {secondaryHref ? (
               <Button
                 asChild
@@ -77,37 +94,87 @@ export function ProductHero({
               </Button>
             ) : null}
           </motion.div>
+          {showDestinations ? (
+            <motion.div className="mt-6" {...item}>
+              <p className="mb-2.5 text-[0.55rem] font-bold uppercase tracking-[0.16em] text-white/40">
+                Active GCC programmes
+              </p>
+              <ProductChipRow items={destChips} />
+            </motion.div>
+          ) : null}
         </div>
 
-        <motion.div className="relative mx-auto w-full max-w-md lg:max-w-none" {...item}>
+        <motion.div
+          className="relative mx-auto w-full max-w-md [perspective:1400px] lg:max-w-none"
+          {...item}
+        >
           <div
-            className="absolute -inset-3 rounded-[1.5rem] opacity-60 blur-2xl"
+            className="absolute -inset-6 rounded-[2rem] opacity-70 blur-3xl"
             style={{
               background:
-                "linear-gradient(135deg, rgba(255,122,26,0.25), rgba(56,160,220,0.12), transparent)",
+                "linear-gradient(145deg, rgba(255,122,26,0.28), rgba(239,35,60,0.12), rgba(56,160,220,0.1), transparent 70%)",
             }}
             aria-hidden="true"
           />
+          <div
+            className="absolute inset-3 translate-x-2 translate-y-3 rounded-[1.65rem] bg-black/50 blur-[1px] sm:inset-4 sm:translate-x-3 sm:translate-y-4"
+            aria-hidden="true"
+          />
+
           <figure
+            ref={frameRef}
             className={cn(
-              "relative aspect-[4/5] overflow-hidden rounded-sm border border-white/15 bg-black/40",
-              "shadow-[0_28px_70px_rgba(0,0,0,0.45)]"
+              "product-hero-frame group relative aspect-[4/5] overflow-hidden rounded-[1.75rem] border border-white/20 bg-black/40",
+              "shadow-[0_8px_16px_rgba(0,0,0,0.2),0_24px_48px_rgba(0,0,0,0.35),0_40px_90px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.18)]",
+              "origin-center [transform-style:preserve-3d]",
+              "lg:[transform:rotateY(-7deg)_rotateX(3deg)_translateZ(0)]",
+              "transition-[transform,box-shadow] duration-700 ease-premium",
+              "motion-safe:lg:hover:[transform:rotateY(-3deg)_rotateX(1deg)_translateY(-6px)_translateZ(12px)]",
+              "motion-safe:lg:hover:shadow-[0_12px_24px_rgba(0,0,0,0.22),0_32px_64px_rgba(0,0,0,0.4),0_48px_110px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.22)]",
+              "motion-reduce:lg:[transform:none] motion-reduce:lg:hover:[transform:none]"
             )}
           >
-            <LazyImage
-              src={image.src}
-              srcSet={image.srcSet}
-              sizes={image.sizes || "(min-width:1024px) 38vw, 90vw"}
-              lqip={image.lqip}
-              alt={imageAlt}
-              fallbackLabel={imageFallback}
-              eager
-              className="absolute inset-0 h-full w-full"
-              imgClassName="object-cover object-center"
+            <div
+              className="pointer-events-none absolute inset-0 z-[2] rounded-[1.75rem] ring-1 ring-inset ring-white/25"
+              aria-hidden="true"
             />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+            <div
+              className="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-br from-white/20 via-transparent to-black/30 opacity-80"
+              aria-hidden="true"
+            />
+            {parallaxOn ? (
+              <motion.div
+                className="absolute will-change-transform"
+                style={{ top: `-${inset}`, bottom: `-${inset}`, left: 0, right: 0, y: imgY }}
+              >
+                <LazyImage
+                  src={image.src}
+                  srcSet={image.srcSet}
+                  sizes={image.sizes || "(min-width:1024px) 38vw, 90vw"}
+                  lqip={image.lqip}
+                  alt={imageAlt}
+                  fallbackLabel={imageFallback}
+                  eager
+                  className="absolute inset-0 h-full w-full"
+                  imgClassName="object-cover object-center"
+                />
+              </motion.div>
+            ) : (
+              <LazyImage
+                src={image.src}
+                srcSet={image.srcSet}
+                sizes={image.sizes || "(min-width:1024px) 38vw, 90vw"}
+                lqip={image.lqip}
+                alt={imageAlt}
+                fallbackLabel={imageFallback}
+                eager
+                className="absolute inset-0 h-full w-full"
+                imgClassName="object-cover object-center"
+              />
+            )}
+            <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-black/80 via-transparent to-transparent" />
             {imageCaption ? (
-              <figcaption className="absolute bottom-5 left-5 right-5">
+              <figcaption className="absolute bottom-5 left-5 right-5 z-[3]">
                 {imageCaption.kicker ? (
                   <p className="text-[0.55rem] font-bold uppercase tracking-[0.16em] text-white/50">
                     {imageCaption.kicker}

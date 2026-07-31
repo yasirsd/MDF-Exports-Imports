@@ -27,9 +27,11 @@ export const site = {
   description:
     "MDF Exports & Imports ships Andhra Banganapalli mango, Indian apples, pomegranate, and Guntur dry red chilli from Andhra Pradesh to the Gulf. Built on 40+ years of agricultural excellence.",
   socials: [
+    // LinkedIn / YouTube intentionally left as platform placeholders until brand URLs are provided
     { label: "LinkedIn", href: "https://www.linkedin.com/", icon: "Linkedin" },
-    { label: "Instagram", href: "https://www.instagram.com/", icon: "Instagram" },
-    { label: "Facebook", href: "https://www.facebook.com/", icon: "Facebook" },
+    { label: "Instagram", href: "https://www.instagram.com/mdf.exim", icon: "Instagram" },
+    // Canonical profile resolved from share/18tiq99Kzm → profile.php?id=61592829143871 (Mdf Exim)
+    { label: "Facebook", href: "https://www.facebook.com/profile.php?id=61592829143871", icon: "Facebook" },
     { label: "YouTube", href: "https://www.youtube.com/", icon: "Youtube" },
   ],
 };

@@ -123,12 +123,14 @@ export const markets = [
 /** Origin (India) coordinates. */
 export const origin = { name: "Andhra Pradesh", country: "India", lat: 15.9129, lng: 79.74 };
 
-/** Country-level export destinations (for hero flag chips). */
+/** Country-level export destinations (hero flags + footer GCC chips). */
 export const exportDestinations = [
   { flag: "🇦🇪", code: "UAE", name: "United Arab Emirates" },
   { flag: "🇸🇦", code: "KSA", name: "Saudi Arabia" },
   { flag: "🇶🇦", code: "QAT", name: "Qatar" },
   { flag: "🇴🇲", code: "OMN", name: "Oman" },
+  { flag: "🇰🇼", code: "KWT", name: "Kuwait" },
+  { flag: "🇧🇭", code: "BHR", name: "Bahrain" },
 ];
 
 /** Headline statistics (animated counters). */

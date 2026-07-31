@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { Container } from "@/components/shared/Container";
+import { EnquireActions } from "@/components/shared/EnquireActions";
 import { SectionHeading } from "@/components/shared/SectionHeading";
 import {
   Accordion,
@@ -7,12 +8,11 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { MessageCircle } from "lucide-react";
 import { faqs } from "@/lib/constants";
-import { brandHello, site } from "@/lib/config";
-import { whatsappUrl } from "@/lib/utils";
+import { brandHello } from "@/lib/config";
 import { fadeUp, viewportOnce } from "@/lib/motion";
+
+const FAQ_MESSAGE = brandHello("I have a question about exporting.");
 
 export function FAQ() {
   return (
@@ -41,16 +41,13 @@ export function FAQ() {
         <div className="mt-10 flex flex-col items-center gap-4 rounded-3xl border border-border bg-surface p-8 text-center shadow-soft">
           <p className="text-lg font-semibold">Still have questions?</p>
           <p className="text-muted-foreground">Our export team is a message away.</p>
-          <Button asChild variant="primary" size="lg">
-            <a
-              href={whatsappUrl(site.whatsapp, brandHello("I have a question about exporting."))}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <MessageCircle className="h-5 w-5" />
-              Chat on WhatsApp
-            </a>
-          </Button>
+          <EnquireActions
+            label="Ask a question"
+            whatsappMessage={FAQ_MESSAGE}
+            emailSubject="Export Question — MDF"
+            emailBody={FAQ_MESSAGE}
+            className="items-center"
+          />
         </div>
       </Container>
     </section>

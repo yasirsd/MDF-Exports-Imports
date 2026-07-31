@@ -1,23 +1,28 @@
 import { useEffect, useState } from "react";
 import { motion, useMotionValueEvent } from "motion/react";
-import { Menu, MessageCircle } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Container } from "@/components/shared/Container";
-import { Button } from "@/components/ui/button";
+import { EnquireActions } from "@/components/shared/EnquireActions";
 import { Logo } from "@/components/layout/Logo";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { navLinks } from "@/lib/constants";
-import { brandHello, site } from "@/lib/config";
+import { brandHello } from "@/lib/config";
 import { useScrollTo } from "@/providers/SmoothScrollProvider";
 import { useDocumentScroll } from "@/hooks/useDocumentScroll";
-import { whatsappUrl } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+
+const START_IMPORTING = brandHello("I'd like to start importing.");
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileNav, setMobileNav] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { scrollY } = useDocumentScroll();
   const scrollTo = useScrollTo();
+
+  // Frosted chrome always on mobile; desktop stays clear until scroll.
+  const frosted = scrolled || mobileNav;
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const next = latest > 24;
@@ -26,6 +31,14 @@ export function Navbar() {
 
   useEffect(() => {
     document.documentElement.style.scrollBehavior = "auto";
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const sync = () => setMobileNav(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
   }, []);
 
   const handleNav = (e, href) => {
@@ -46,12 +59,12 @@ export function Navbar() {
             aria-label="Primary"
             className={cn(
               "flex items-center justify-between gap-3 rounded-full px-4 py-2 transition-all duration-500 ease-premium sm:gap-4 sm:px-5 sm:py-2.5",
-              scrolled
-                ? "glass shadow-soft"
+              frosted
+                ? "glass-nav shadow-soft"
                 : "border border-transparent bg-transparent"
             )}
           >
-            <Logo size="nav" onClick={(e) => handleNav(e, "#top")} inverted={!scrolled} />
+            <Logo size="nav" onClick={(e) => handleNav(e, "#top")} inverted={!frosted} />
 
             <ul className="hidden items-center gap-1 lg:flex">
               {navLinks.map((link) => (
@@ -61,7 +74,7 @@ export function Navbar() {
                     onClick={(e) => handleNav(e, link.href)}
                     className={cn(
                       "rounded-full px-4 py-2 text-sm font-medium transition-colors",
-                      scrolled
+                      frosted
                         ? "text-muted-foreground hover:bg-surface-2 hover:text-foreground"
                         : "text-white/80 hover:bg-white/10 hover:text-white"
                     )}
@@ -76,24 +89,24 @@ export function Navbar() {
               <ThemeToggle
                 className={cn(
                   "hidden sm:grid",
-                  scrolled ? "" : "border-white/25 bg-white/10 text-white hover:bg-white/20"
+                  frosted ? "" : "border-white/25 bg-white/10 text-white hover:bg-white/20"
                 )}
               />
-              <Button
-                asChild
-                variant="primary"
-                size="md"
+              <EnquireActions
+                density="compact"
+                label="Start Importing"
+                whatsappMessage={START_IMPORTING}
+                emailSubject="Export Enquiry — MDF"
+                emailBody={START_IMPORTING}
                 className="hidden sm:inline-flex"
-              >
-                <a
-                  href={whatsappUrl(site.whatsapp, brandHello("I'd like to start importing."))}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  Start Importing
-                </a>
-              </Button>
+                tone={frosted ? "light" : "dark"}
+                whatsappClassName={
+                  frosted
+                    ? undefined
+                    : "border border-white/25 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                }
+                whatsappVariant={frosted ? "primary" : "glass"}
+              />
               <button
                 type="button"
                 onClick={() => setMenuOpen(true)}
@@ -102,8 +115,8 @@ export function Navbar() {
                 aria-controls="mobile-navigation"
                 className={cn(
                   "grid h-12 w-12 place-items-center rounded-full border transition-colors lg:hidden",
-                  scrolled
-                    ? "border-border bg-surface text-foreground hover:bg-surface-2"
+                  frosted
+                    ? "border-border bg-surface/70 text-foreground hover:bg-surface-2"
                     : "border-white/25 bg-white/10 text-white hover:bg-white/20"
                 )}
               >

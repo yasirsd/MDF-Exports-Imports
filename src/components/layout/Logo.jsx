@@ -1,38 +1,35 @@
+import logoLight from "@/images/LightPNG.png";
+import logoDark from "@/images/DarkPNG.png";
 import { site } from "@/lib/config";
 import { useTheme } from "@/providers/ThemeProvider";
 import { cn } from "@/lib/utils";
 
+/** Cropped wordmark aspect ≈ 2.5:1 (LightPNG 1039×413 / DarkPNG 935×378). */
 const SIZE = {
-  /** Fills nav row height without growing the bar (scale widens the mark). */
+  /** Fills nav row height without growing the bar. */
   nav: {
-    width: 220,
-    height: 40,
-    img: "h-10 w-auto max-w-[min(42vw,15.5rem)] origin-left scale-[1.28] sm:max-w-[17rem] sm:scale-[1.32]",
-    /** Display ~220–272 CSS px → 1x/2x density. */
-    srcSet: (tone) =>
-      `/brand/logo-${tone}-220w.webp 1x, /brand/logo-${tone}-440w.webp 2x`,
-    src: (tone) => `/brand/logo-${tone}-440w.webp`,
+    width: 250,
+    height: 100,
+    img: "h-10 w-auto max-w-[min(50vw,16rem)] origin-left sm:max-w-[18rem]",
   },
   /** Extra-large brand presence for the footer. */
   footer: {
     width: 420,
-    height: 120,
+    height: 168,
     img: "h-[4.5rem] w-auto max-w-[min(88vw,22rem)] sm:h-24 sm:max-w-[26rem] md:h-28 md:max-w-[30rem] lg:h-32 lg:max-w-[34rem]",
-    srcSet: (tone) =>
-      `/brand/logo-${tone}-440w.webp 1x, /brand/logo-${tone}-880w.webp 2x`,
-    src: (tone) => `/brand/logo-${tone}-880w.webp`,
   },
 };
 
 /**
- * MDF brand mark. Theme-aware density srcset (WebP).
+ * MDF brand mark (PNG). Theme-aware:
  * Light mark on dark surfaces; dark mark on light surfaces.
  * `inverted` forces the light mark (transparent nav over a dark hero).
  */
 export function Logo({ className, onClick, inverted = false, size = "nav" }) {
   const { theme } = useTheme();
   const onDarkSurface = inverted || theme === "dark";
-  const tone = onDarkSurface ? "light" : "dark";
+  // LightPNG = white mark for dark backgrounds; DarkPNG = dark mark for light backgrounds
+  const src = onDarkSurface ? logoLight : logoDark;
   const preset = SIZE[size] || SIZE.nav;
 
   return (
@@ -47,14 +44,14 @@ export function Logo({ className, onClick, inverted = false, size = "nav" }) {
       aria-label={`${site.name}. Home`}
     >
       <img
-        src={preset.src(tone)}
-        srcSet={preset.srcSet(tone)}
+        src={src}
         alt={site.name}
         width={preset.width}
         height={preset.height}
         decoding="async"
         className={cn(
-          "object-contain object-left transition-transform duration-500 ease-premium group-hover:brightness-110",
+          // Source is ~4× nav CSS size so browser downscale stays sharp
+          "object-contain object-left transition-[filter] duration-500 ease-premium group-hover:brightness-110",
           preset.img
         )}
       />
