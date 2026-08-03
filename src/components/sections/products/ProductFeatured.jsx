@@ -28,7 +28,6 @@ export function ProductFeatured({
   );
 
   const duration = reduced ? 0 : 0.55;
-  const guideLabel = product.featuredLandingLabel || product.landingLabel || "Export guide";
   const longCopy = product.copy || product.blurb;
 
   return (
@@ -132,17 +131,6 @@ export function ProductFeatured({
           emailBody={enquireMessage}
           whatsappClassName="h-10 border border-white/20 !bg-white/10 px-5 text-sm text-white hover:!bg-white/18 lg:h-14 lg:px-8 lg:text-base"
         />
-
-        {product.landingHref ? (
-          <a
-            href={product.landingHref}
-            tabIndex={active ? undefined : -1}
-            className="inline-flex h-10 items-center gap-1.5 px-1.5 text-[0.8125rem] font-semibold text-white/75 underline-offset-4 transition-colors hover:text-white hover:underline sm:px-2 sm:text-sm lg:h-14"
-          >
-            {guideLabel}
-            <ArrowUpRight className="h-3.5 w-3.5 opacity-70" />
-          </a>
-        ) : null}
       </div>
     </motion.div>
   );
