@@ -40,18 +40,12 @@ export function ProductDrawer({ product, open, onOpenChange }) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        // Critical: Lenis skips preventDefault on this subtree → trackpad works
+        // Lenis walks the wheel event's composedPath; the attribute on the
+        // outer SheetContent covers every child. Inner attrs would be redundant.
         data-lenis-prevent=""
-        data-lenis-prevent-wheel=""
-        data-lenis-prevent-touch=""
         className="flex h-full max-h-[100dvh] w-full max-w-md flex-col gap-0 overflow-hidden p-0 sm:max-w-lg"
       >
-        <div
-          className="min-h-0 flex-1 overflow-y-auto overscroll-contain touch-pan-y"
-          data-lenis-prevent=""
-          data-lenis-prevent-wheel=""
-          data-lenis-prevent-touch=""
-        >
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain touch-pan-y">
           <div className="relative aspect-[16/11] overflow-hidden bg-[#140e0a]">
             <LazyImage
               src={unsplash(product.image, 1000, 88)}

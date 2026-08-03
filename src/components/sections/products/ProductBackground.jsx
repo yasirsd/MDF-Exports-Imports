@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { LazyImage } from "@/components/shared/LazyImage";
 import { PRODUCT_ATMOSPHERES } from "@/components/sections/products/productAtmospheres";
@@ -19,20 +19,18 @@ function bgSrc(imageId) {
  * Below lg: full-bleed photo + bottom scrim for overlay copy.
  * lg+: right-anchored photo pane with left copy column.
  * Absolutely positioned — never affects section height.
+ *
+ * Crossfade is driven by AnimatePresence on a single keyed child. When
+ * `activeIndex` changes, the old child runs `exit` (fade to 0) while the new
+ * child runs `initial → animate` (fade to 1); both overlap for `duration`
+ * seconds giving a clean crossfade. Motion cleans up the outgoing node
+ * automatically — no manual `previousIndex` bookkeeping, no closure-staleness
+ * risk on `onAnimationComplete`.
  */
 export function ProductBackground({ products, activeIndex, reduced = false, className }) {
-  const [previousIndex, setPreviousIndex] = useState(null);
-  const lastIndexRef = useRef(activeIndex);
   const prefetchedRef = useRef(new Set());
 
-  useEffect(() => {
-    if (lastIndexRef.current === activeIndex) return;
-    setPreviousIndex(lastIndexRef.current);
-    lastIndexRef.current = activeIndex;
-  }, [activeIndex]);
-
   const active = products[activeIndex];
-  const previous = previousIndex != null ? products[previousIndex] : null;
 
   useEffect(() => {
     if (reduced || !active?.image || typeof window === "undefined") return undefined;
@@ -89,41 +87,16 @@ export function ProductBackground({ products, activeIndex, reduced = false, clas
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0806]/55 via-transparent to-[#0a0806]/30 lg:hidden" />
 
         <AnimatePresence initial={false}>
-          {previous && previousIndex !== activeIndex ? (
-            <motion.div
-              key={`prev-${previous.id}`}
-              className={photoPane}
-              initial={{ opacity: 1 }}
-              animate={{ opacity: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration, ease: easePremium }}
-              onAnimationComplete={() => {
-                setPreviousIndex((p) => (p === previousIndex ? null : p));
-              }}
-            >
-              <LazyImage
-                src={bgSrc(previous.image)}
-                srcSet={unsplashSrcSet(previous.image, [720, 960, 1280, 1600, 1920], BG_QUALITY)}
-                sizes="(min-width:1024px) 50vw, 100vw"
-                lqip={unsplashLQ(previous.image)}
-                alt=""
-                fallbackLabel={previous.name}
-                className="absolute inset-0 h-full w-full"
-                imgClassName="h-full w-full object-cover object-center"
-              />
-            </motion.div>
-          ) : null}
-
           {active ? (
             <motion.div
-              key={`active-${active.id}`}
+              key={active.id}
               className={photoPane}
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{ duration, ease: easePremium }}
             >
               <div
-                key={`kb-${active.id}-${activeIndex}`}
                 className={cn("absolute inset-0 origin-center", !reduced && "product-ken-burns")}
                 style={reduced ? undefined : { animationDuration: `${KEN_BURNS_MS}ms` }}
               >
