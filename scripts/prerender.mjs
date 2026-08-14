@@ -401,8 +401,8 @@ function assertGunturHtml(html) {
     throw new Error("[prerender] Guntur HTML missing Helmet canonical / OG tags.");
   }
   const ldCompact = html.replace(/\s/g, "");
-  if (!ldCompact.includes('"@type":"Product"')) {
-    throw new Error("[prerender] Guntur HTML missing Product JSON-LD.");
+  if (!ldCompact.includes('"@type":"Service"')) {
+    throw new Error("[prerender] Guntur HTML missing Service JSON-LD.");
   }
   if (!ldCompact.includes('"@type":"FAQPage"')) {
     throw new Error("[prerender] Guntur HTML missing FAQPage JSON-LD.");
@@ -609,7 +609,7 @@ async function waitForGunturReady(page) {
         hasHero: /Exporting\s+Freshness/i.test(bodyText),
         hasCanonical: canonical.includes(path),
         hasOg: Boolean(document.querySelector('meta[property="og:title"]')),
-        hasProductLd: ld.includes('"Product"'),
+        hasProductLd: ld.includes('"Service"'),
         hasFaqLd: ld.includes('"FAQPage"'),
       };
     }, GUNTUR_PATH);
@@ -662,8 +662,8 @@ function assertAppleHtml(html) {
     throw new Error("[prerender] Indian apple HTML missing Helmet canonical / OG tags.");
   }
   const ldCompact = html.replace(/\s/g, "");
-  if (!ldCompact.includes('"@type":"Product"')) {
-    throw new Error("[prerender] Indian apple HTML missing Product JSON-LD.");
+  if (!ldCompact.includes('"@type":"Service"')) {
+    throw new Error("[prerender] Indian apple HTML missing Service JSON-LD.");
   }
   if (!ldCompact.includes('"@type":"FAQPage"')) {
     throw new Error("[prerender] Indian apple HTML missing FAQPage JSON-LD.");
@@ -697,7 +697,7 @@ async function waitForAppleReady(page) {
         hasHero: /Exporting\s+Freshness/i.test(bodyText),
         hasCanonical: canonical.includes(path),
         hasOg: Boolean(document.querySelector('meta[property="og:title"]')),
-        hasProductLd: ld.includes('"Product"'),
+        hasProductLd: ld.includes('"Service"'),
         hasFaqLd: ld.includes('"FAQPage"'),
       };
     }, APPLE_PATH);
@@ -750,8 +750,8 @@ function assertPomegranateHtml(html) {
     throw new Error("[prerender] Indian pomegranate HTML missing Helmet canonical / OG tags.");
   }
   const ldCompact = html.replace(/\s/g, "");
-  if (!ldCompact.includes('"@type":"Product"')) {
-    throw new Error("[prerender] Indian pomegranate HTML missing Product JSON-LD.");
+  if (!ldCompact.includes('"@type":"Service"')) {
+    throw new Error("[prerender] Indian pomegranate HTML missing Service JSON-LD.");
   }
   if (!ldCompact.includes('"@type":"FAQPage"')) {
     throw new Error("[prerender] Indian pomegranate HTML missing FAQPage JSON-LD.");
@@ -785,7 +785,7 @@ async function waitForPomegranateReady(page) {
         hasHero: /Exporting\s+Freshness/i.test(bodyText),
         hasCanonical: canonical.includes(path),
         hasOg: Boolean(document.querySelector('meta[property="og:title"]')),
-        hasProductLd: ld.includes('"Product"'),
+        hasProductLd: ld.includes('"Service"'),
         hasFaqLd: ld.includes('"FAQPage"'),
       };
     }, POM_PATH);
@@ -843,8 +843,8 @@ function assertMangoHtml(html) {
     throw new Error("[prerender] Banganapalli mango HTML missing Helmet canonical / OG tags.");
   }
   const ldCompact = html.replace(/\s/g, "");
-  if (!ldCompact.includes('"@type":"Product"')) {
-    throw new Error("[prerender] Banganapalli mango HTML missing Product JSON-LD.");
+  if (!ldCompact.includes('"@type":"Service"')) {
+    throw new Error("[prerender] Banganapalli mango HTML missing Service JSON-LD.");
   }
   if (!ldCompact.includes('"@type":"FAQPage"')) {
     throw new Error("[prerender] Banganapalli mango HTML missing FAQPage JSON-LD.");
@@ -878,7 +878,7 @@ async function waitForMangoReady(page) {
         hasHero: /Exporting\s+Freshness/i.test(bodyText),
         hasCanonical: canonical.includes(path),
         hasOg: Boolean(document.querySelector('meta[property="og:title"]')),
-        hasProductLd: ld.includes('"Product"'),
+        hasProductLd: ld.includes('"Service"'),
         hasFaqLd: ld.includes('"FAQPage"'),
       };
     }, MANGO_PATH);

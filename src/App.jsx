@@ -210,14 +210,23 @@ function gunturJsonLd() {
   return [
     {
       "@context": "https://schema.org",
-      "@type": "Product",
-      name: "Guntur Red Chilli",
+      "@type": "Service",
+      serviceType: "Dried spice export sourcing",
+      name: "Guntur Red Chilli — Export Sourcing",
       description: GUNTUR_CHILLI_META.description,
-      category: "Dried spices",
-      brand: {
-        "@type": "Brand",
+      provider: {
+        "@type": "Organization",
         name: site.name,
+        url: site.url,
       },
+      areaServed: [
+        { "@type": "Country", name: "United Arab Emirates" },
+        { "@type": "Country", name: "Saudi Arabia" },
+        { "@type": "Country", name: "Qatar" },
+        { "@type": "Country", name: "Oman" },
+        { "@type": "Country", name: "Kuwait" },
+        { "@type": "Country", name: "Bahrain" },
+      ],
       url: `${site.url}${GUNTUR_CHILLI_PATH}`,
     },
     {
@@ -239,15 +248,24 @@ function indianAppleJsonLd() {
   return [
     {
       "@context": "https://schema.org",
-      "@type": "Product",
-      name: "Premium Indian Apple",
+      "@type": "Service",
+      serviceType: "Fresh fruit export sourcing",
+      name: "Premium Indian Apple — Export Sourcing",
       alternateName: "Indian Apple",
       description: INDIAN_APPLE_META.description,
-      category: "Fresh fruit",
-      brand: {
-        "@type": "Brand",
+      provider: {
+        "@type": "Organization",
         name: site.name,
+        url: site.url,
       },
+      areaServed: [
+        { "@type": "Country", name: "United Arab Emirates" },
+        { "@type": "Country", name: "Saudi Arabia" },
+        { "@type": "Country", name: "Qatar" },
+        { "@type": "Country", name: "Oman" },
+        { "@type": "Country", name: "Kuwait" },
+        { "@type": "Country", name: "Bahrain" },
+      ],
       url: `${site.url}${INDIAN_APPLE_PATH}`,
     },
     {
@@ -269,14 +287,23 @@ function indianPomegranateJsonLd() {
   return [
     {
       "@context": "https://schema.org",
-      "@type": "Product",
-      name: "Indian Pomegranate",
+      "@type": "Service",
+      serviceType: "Fresh fruit export sourcing",
+      name: "Indian Pomegranate — Export Sourcing",
       description: INDIAN_POMEGRANATE_META.description,
-      category: "Fresh fruit",
-      brand: {
-        "@type": "Brand",
+      provider: {
+        "@type": "Organization",
         name: site.name,
+        url: site.url,
       },
+      areaServed: [
+        { "@type": "Country", name: "United Arab Emirates" },
+        { "@type": "Country", name: "Saudi Arabia" },
+        { "@type": "Country", name: "Qatar" },
+        { "@type": "Country", name: "Oman" },
+        { "@type": "Country", name: "Kuwait" },
+        { "@type": "Country", name: "Bahrain" },
+      ],
       url: `${site.url}${INDIAN_POMEGRANATE_PATH}`,
     },
     {
@@ -298,15 +325,24 @@ function banganapalliMangoJsonLd() {
   return [
     {
       "@context": "https://schema.org",
-      "@type": "Product",
-      name: "Banganapalli Mango",
+      "@type": "Service",
+      serviceType: "Fresh fruit export sourcing",
+      name: "Banganapalli Mango — Export Sourcing",
       alternateName: "Andhra Banganapalli Mango",
       description: BANGANAPALLI_MANGO_META.description,
-      category: "Fresh fruit",
-      brand: {
-        "@type": "Brand",
+      provider: {
+        "@type": "Organization",
         name: site.name,
+        url: site.url,
       },
+      areaServed: [
+        { "@type": "Country", name: "United Arab Emirates" },
+        { "@type": "Country", name: "Saudi Arabia" },
+        { "@type": "Country", name: "Qatar" },
+        { "@type": "Country", name: "Oman" },
+        { "@type": "Country", name: "Kuwait" },
+        { "@type": "Country", name: "Bahrain" },
+      ],
       url: `${site.url}${BANGANAPALLI_MANGO_PATH}`,
     },
     {
