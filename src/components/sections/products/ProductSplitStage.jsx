@@ -108,7 +108,7 @@ export function ProductSplitStage({ active, onSelect, onViewSpecs }) {
         <div
           className={cn(
             "relative z-[1] grid h-full w-full",
-            "grid-rows-[auto_1fr]",
+            "grid-cols-[minmax(0,1fr)] grid-rows-[auto_1fr]",
             "lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:grid-rows-1"
           )}
         >
@@ -179,39 +179,106 @@ export function ProductSplitStage({ active, onSelect, onViewSpecs }) {
           {/* ── LIST + COPY — mobile bottom / desktop left ─────────────── */}
           <div
             className={cn(
-              "relative z-[2] flex flex-col justify-between gap-8",
+              "relative z-[2] flex min-w-0 flex-col justify-between gap-8",
               "px-5 py-8 sm:px-8 sm:py-10",
               "lg:col-start-1 lg:row-start-1 lg:h-full lg:px-12 lg:py-14 xl:px-16"
             )}
           >
-            {/* Section eyebrow — desktop only (mobile eyebrow lives on the photo). */}
-            <div className="hidden lg:block">
-              <p className="inline-flex items-center gap-2.5 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-brand-orange-bright">
-                <span className="h-px w-7 bg-brand-orange-bright" />
-                The catalogue · {total} export lines
+            {/* "Products" label — visible on both breakpoints so the block
+                immediately reads as a catalogue menu, not loose text. */}
+            <div>
+              <p className="inline-flex items-center gap-2.5 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-brand-orange-bright">
+                <span className="h-px w-8 bg-brand-orange-bright" />
+                {total} Export Products
               </p>
             </div>
 
-            {/* Product name list — all 5 visible, editorial typography. */}
+            {/* MOBILE — horizontal pill row. Compact, all 5 visible (with
+                horizontal scroll on very narrow viewports), active pill
+                bright-orange-outlined. Photo above already shows the active
+                product name, so we don't repeat the big heading here. */}
             <ul
               role="listbox"
               aria-label="Export catalogue"
-              className="flex flex-col gap-3 lg:gap-4"
+              className="-mx-1 flex flex-row items-center gap-2 overflow-x-auto px-1 py-1 no-scrollbar lg:hidden"
             >
               {products.map((p, i) => {
                 const isActive = i === active;
+                const num = String(i + 1).padStart(2, "0");
                 return (
-                  <li key={p.id}>
+                  <li key={p.id} className="shrink-0">
                     <button
                       type="button"
                       role="option"
                       aria-selected={isActive}
                       onClick={() => onSelect?.(i)}
                       className={cn(
-                        "group block w-full text-left rounded-md",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange-bright/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-[0.8rem] font-medium transition-colors duration-300 ease-premium",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange-bright/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+                        isActive
+                          ? "border-brand-orange-bright bg-brand-orange-bright/[0.14] text-white shadow-[0_0_18px_rgba(255,122,26,0.25)]"
+                          : "border-white/15 bg-white/[0.03] text-white/65 hover:text-white/90"
                       )}
                     >
+                      <span
+                        className={cn(
+                          "font-mono text-[0.62rem] font-semibold tabular-nums tracking-[0.14em]",
+                          isActive ? "text-brand-orange-bright" : "text-white/40"
+                        )}
+                        aria-hidden="true"
+                      >
+                        {num}
+                      </span>
+                      {p.name}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* DESKTOP — vertical rail with position tick + editorial names.
+                Kept from the previous iteration since desktop looked right. */}
+            <ul
+              role="listbox"
+              aria-label="Export catalogue (desktop)"
+              className="relative hidden flex-col gap-6 border-l border-white/15 py-1 lg:flex"
+            >
+              {products.map((p, i) => {
+                const isActive = i === active;
+                const num = String(i + 1).padStart(2, "0");
+                return (
+                  <li key={p.id} className="relative">
+                    {isActive ? (
+                      <motion.span
+                        layoutId="catalogue-active-tick"
+                        aria-hidden="true"
+                        className="absolute -left-px top-1/2 h-[3px] w-8 -translate-y-1/2 rounded-full bg-brand-orange-bright shadow-[0_0_12px_rgba(255,122,26,0.55)]"
+                        transition={{
+                          type: "spring",
+                          stiffness: 260,
+                          damping: 28,
+                        }}
+                      />
+                    ) : null}
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={isActive}
+                      onClick={() => onSelect?.(i)}
+                      className={cn(
+                        "group flex w-full items-baseline gap-4 pl-10 pr-2 text-left",
+                        "rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-orange-bright/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "font-mono text-[0.7rem] font-semibold tabular-nums tracking-[0.14em] transition-colors duration-500 ease-premium",
+                          isActive ? "text-brand-orange-bright" : "text-white/35"
+                        )}
+                        aria-hidden="true"
+                      >
+                        {num}
+                      </span>
                       <motion.span
                         layout
                         transition={{
@@ -221,30 +288,28 @@ export function ProductSplitStage({ active, onSelect, onViewSpecs }) {
                         className={cn(
                           "block font-semibold leading-[0.98] tracking-[-0.035em] transition-[color,font-size,opacity] duration-500 ease-premium",
                           isActive
-                            ? "text-[clamp(1.5rem,3.6vw,2.6rem)] text-white opacity-100 lg:text-[clamp(2rem,4vw,3.15rem)]"
-                            : "text-[clamp(1.1rem,1.8vw,1.35rem)] text-white/85 opacity-45 hover:opacity-80 lg:text-[clamp(1.25rem,1.7vw,1.55rem)]"
+                            ? "text-[clamp(2rem,4vw,3.15rem)] text-white opacity-100"
+                            : "text-[clamp(1.25rem,1.7vw,1.55rem)] text-white/85 opacity-45 hover:opacity-80"
                         )}
                       >
                         {p.name}
                       </motion.span>
-                      {/* Active-product blurb (one line, secondary weight) —
-                          desktop only, keeps mobile list compact. */}
-                      {isActive && p.blurb ? (
-                        <motion.span
-                          layout
-                          initial={{ opacity: 0, y: 4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{
-                            duration: reduced ? 0 : 0.45,
-                            delay: reduced ? 0 : 0.15,
-                            ease: "easeOut",
-                          }}
-                          className="mt-3 hidden max-w-[26rem] text-[0.95rem] leading-[1.55] text-white/60 lg:block"
-                        >
-                          {p.blurb}
-                        </motion.span>
-                      ) : null}
                     </button>
+                    {isActive && p.blurb ? (
+                      <motion.p
+                        layout
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: reduced ? 0 : 0.45,
+                          delay: reduced ? 0 : 0.15,
+                          ease: "easeOut",
+                        }}
+                        className="mt-2 max-w-[26rem] pl-10 text-[0.95rem] leading-[1.55] text-white/60"
+                      >
+                        {p.blurb}
+                      </motion.p>
+                    ) : null}
                   </li>
                 );
               })}
