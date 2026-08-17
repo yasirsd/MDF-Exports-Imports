@@ -4,7 +4,6 @@ import { Menu } from "lucide-react";
 import { Container } from "@/components/shared/Container";
 import { EnquireActions } from "@/components/shared/EnquireActions";
 import { Logo } from "@/components/layout/Logo";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { navLinks } from "@/lib/constants";
 import { brandHello } from "@/lib/config";
@@ -86,12 +85,6 @@ export function Navbar() {
             </ul>
 
             <div className="flex items-center gap-2">
-              <ThemeToggle
-                className={cn(
-                  "hidden sm:grid",
-                  frosted ? "" : "border-white/25 bg-white/10 text-white hover:bg-white/20"
-                )}
-              />
               <EnquireActions
                 density="compact"
                 label="Start Importing"

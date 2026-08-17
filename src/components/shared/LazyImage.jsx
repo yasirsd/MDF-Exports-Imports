@@ -74,7 +74,7 @@ export function LazyImage({
             }}
           />
           <div className="relative flex flex-col items-center gap-3 px-4 text-center">
-            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-[#111] text-xs font-extrabold tracking-tight text-white shadow-soft dark:bg-white dark:text-[#111]">
+            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-white text-xs font-extrabold tracking-tight text-[#111] shadow-soft">
               {site.logo}
             </span>
             {fallbackLabel ? (

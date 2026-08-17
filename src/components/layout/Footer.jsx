@@ -60,8 +60,8 @@ export function Footer() {
     <footer className="relative overflow-x-clip border-t border-border bg-surface">
       {/* Atmosphere — soft brand wash, no hard cards */}
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-brand-red/[0.07] blur-3xl dark:bg-brand-red/[0.12]" />
-        <div className="absolute -right-16 bottom-0 h-80 w-80 rounded-full bg-brand-gold/[0.08] blur-3xl dark:bg-brand-gold/[0.1]" />
+        <div className="absolute -left-24 top-0 h-72 w-72 rounded-full bg-brand-red/[0.12] blur-3xl" />
+        <div className="absolute -right-16 bottom-0 h-80 w-80 rounded-full bg-brand-gold/[0.1] blur-3xl" />
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-red/40 to-transparent" />
         {!reduced ? (
           <motion.div
@@ -200,15 +200,14 @@ export function Footer() {
             <div
               className={cn(
                 "absolute left-1/2 top-1/2 aspect-[2/1] w-[min(120%,52rem)] -translate-x-1/2 -translate-y-1/2 rounded-[50%]",
-                "bg-brand-red/0 blur-3xl dark:bg-brand-red/0",
+                "bg-brand-red/0 blur-3xl",
                 "motion-reduce:blur-2xl"
               )}
             />
             <div
               className={cn(
                 "absolute left-1/2 top-[45%] h-[85%] w-[95%] -translate-x-1/2 -translate-y-1/2 rounded-[50%]",
-                "bg-[radial-gradient(ellipse_at_center,rgba(239,35,60,0.1)_0%,rgba(239,35,60,0.04)_42%,transparent_72%)]",
-                "dark:bg-[radial-gradient(ellipse_at_center,rgba(239,35,60,0.14)_0%,rgba(239,35,60,0.05)_40%,transparent_72%)]"
+                "bg-[radial-gradient(ellipse_at_center,rgba(239,35,60,0.14)_0%,rgba(239,35,60,0.05)_40%,transparent_72%)]"
               )}
             />
           </div>
@@ -258,7 +257,7 @@ export function Footer() {
             >
               {!reduced ? (
                 <span
-                  className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full dark:via-white/10"
+                  className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full"
                   aria-hidden="true"
                 />
               ) : null}

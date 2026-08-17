@@ -4,9 +4,10 @@
  * 1) Homepage → dist/index.html (never privacy / product landings)
  * 2) Privacy Policy → dist/privacy/index.html
  * 3) Guntur chilli → dist/products/guntur-red-chilli/index.html
- * 4) Indian apple → dist/products/indian-apple/index.html
- * 5) Indian pomegranate → dist/products/indian-pomegranate/index.html
- * 6) Banganapalli mango → dist/products/banganapalli-mango/index.html
+ * 4) Black pepper → dist/products/black-pepper/index.html
+ * 5) Indian apple → dist/products/indian-apple/index.html
+ * 6) Indian pomegranate → dist/products/indian-pomegranate/index.html
+ * 7) Banganapalli mango → dist/products/banganapalli-mango/index.html
  *
  * Capture host is localhost; Helmet URLs use VITE_SITE_URL.
  * Real users still boot createRoot CSR on top of this HTML.
@@ -29,6 +30,9 @@ const PRIVACY_INDEX = path.join(PRIVACY_DIR, "index.html");
 const GUNTUR_DIR = path.join(DIST, "products", "guntur-red-chilli");
 const GUNTUR_INDEX = path.join(GUNTUR_DIR, "index.html");
 const GUNTUR_PATH = "/products/guntur-red-chilli";
+const PEPPER_DIR = path.join(DIST, "products", "black-pepper");
+const PEPPER_INDEX = path.join(PEPPER_DIR, "index.html");
+const PEPPER_PATH = "/products/black-pepper";
 const APPLE_DIR = path.join(DIST, "products", "indian-apple");
 const APPLE_INDEX = path.join(APPLE_DIR, "index.html");
 const APPLE_PATH = "/products/indian-apple";
@@ -75,7 +79,7 @@ const SECTION_CONTENT = {
   },
   products: {
     minChars: 200,
-    re: /(?=[\s\S]*Banganapalli\s+Mango)(?=[\s\S]*Indian\s+Apple)(?=[\s\S]*Pomegranate)(?=[\s\S]*Guntur)/i,
+    re: /(?=[\s\S]*Banganapalli\s+Mango)(?=[\s\S]*Indian\s+Apple)(?=[\s\S]*Pomegranate)(?=[\s\S]*Guntur)(?=[\s\S]*Black\s+Pepper)/i,
   },
   about: {
     minChars: 80,
@@ -263,6 +267,11 @@ function assertHomeHtml(html) {
       "[prerender] Homepage missing crawlable link to /products/guntur-red-chilli."
     );
   }
+  if (!/href=["']\/products\/black-pepper["']/i.test(html)) {
+    throw new Error(
+      "[prerender] Homepage missing crawlable link to /products/black-pepper."
+    );
+  }
   if (!/href=["']\/products\/indian-apple["']/i.test(html)) {
     throw new Error(
       "[prerender] Homepage missing crawlable link to /products/indian-apple."
@@ -411,6 +420,49 @@ function assertGunturHtml(html) {
     throw new Error("[prerender] Guntur #root still looks empty after capture.");
   }
   assertSeoUrls(html, { pathSuffix: GUNTUR_PATH });
+}
+
+function assertPepperHtml(html) {
+  if (!html || typeof html !== "string") {
+    throw new Error("[prerender] Black pepper capture returned empty HTML.");
+  }
+  const normalized = html
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&#160;/gi, " ")
+    .replace(/ /g, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ");
+
+  if (!/Black\s+Pepper/i.test(normalized)) {
+    throw new Error("[prerender] Black pepper HTML missing product heading/copy.");
+  }
+  if (!/Why\s+Malabar\s+pepper\s+stands\s+apart/i.test(normalized)) {
+    throw new Error("[prerender] Black pepper HTML missing H2 sections.");
+  }
+  if (!/piperine|packaging|import clearance/i.test(normalized)) {
+    throw new Error("[prerender] Black pepper HTML missing FAQ content.");
+  }
+  if (/Exporting\s+Freshness/i.test(normalized)) {
+    throw new Error(
+      "[prerender] Black pepper HTML still contains homepage hero — wrong view captured."
+    );
+  }
+  if (!/rel=["']canonical["']/i.test(html) || !/property=["']og:title["']/i.test(html)) {
+    throw new Error("[prerender] Black pepper HTML missing Helmet canonical / OG tags.");
+  }
+  const ldCompact = html.replace(/\s/g, "");
+  if (!ldCompact.includes('"@type":"Service"')) {
+    throw new Error("[prerender] Black pepper HTML missing Service JSON-LD.");
+  }
+  if (!ldCompact.includes('"@type":"FAQPage"')) {
+    throw new Error("[prerender] Black pepper HTML missing FAQPage JSON-LD.");
+  }
+  if (!/<div id="root"[^>]*>[\s\S]{200,}<\/div>/i.test(html)) {
+    throw new Error("[prerender] Black pepper #root still looks empty after capture.");
+  }
+  assertSeoUrls(html, { pathSuffix: PEPPER_PATH });
 }
 
 async function forceEnsureSections(page) {
@@ -629,6 +681,51 @@ async function waitForGunturReady(page) {
   }
   console.error("[prerender] Guntur ready state:", JSON.stringify(last, null, 2));
   throw new Error("[prerender] Timed out waiting for Guntur chilli page + Helmet.");
+}
+
+async function waitForPepperReady(page) {
+  const deadline = Date.now() + 60_000;
+  let last = null;
+  while (Date.now() < deadline) {
+    last = await page.evaluate((path) => {
+      const root = document.getElementById("root");
+      const bodyText = (root?.textContent || "").replace(/ /g, " ");
+      const canonical =
+        document.querySelector('link[rel="canonical"]')?.getAttribute("href") ||
+        "";
+      const ld = Array.from(
+        document.querySelectorAll('script[type="application/ld+json"]')
+      )
+        .map((s) => s.textContent || "")
+        .join("");
+      return {
+        path: location.pathname,
+        rootKids: root?.childElementCount ?? 0,
+        hasTitle: /Black\s+Pepper/i.test(bodyText),
+        hasH2: /Why\s+Malabar\s+pepper\s+stands\s+apart/i.test(bodyText),
+        hasHero: /Exporting\s+Freshness/i.test(bodyText),
+        hasCanonical: canonical.includes(path),
+        hasOg: Boolean(document.querySelector('meta[property="og:title"]')),
+        hasProductLd: ld.includes('"Service"'),
+        hasFaqLd: ld.includes('"FAQPage"'),
+      };
+    }, PEPPER_PATH);
+    if (
+      last.rootKids > 0 &&
+      last.hasTitle &&
+      last.hasH2 &&
+      !last.hasHero &&
+      last.hasCanonical &&
+      last.hasOg &&
+      last.hasProductLd &&
+      last.hasFaqLd
+    ) {
+      return;
+    }
+    await sleep(400);
+  }
+  console.error("[prerender] Black pepper ready state:", JSON.stringify(last, null, 2));
+  throw new Error("[prerender] Timed out waiting for Black pepper page + Helmet.");
 }
 
 function assertAppleHtml(html) {
@@ -1090,6 +1187,38 @@ async function main() {
     await writeFile(GUNTUR_INDEX, gunturHtml, "utf8");
     console.log(
       `[prerender] Wrote ${GUNTUR_INDEX} (${Buffer.byteLength(gunturHtml, "utf8")} bytes)`
+    );
+
+    // --- Black pepper product landing ---
+    console.log(`[prerender] Starting ${PEPPER_PATH} capture…`);
+    const pepperUrl = new URL(PEPPER_PATH, baseUrl).href;
+    await page.goto(pepperUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 90_000,
+    });
+    await page.waitForSelector("#root > *", { timeout: 60_000 });
+    await waitForPepperReady(page);
+
+    const pepperHtml = await captureHtml(page);
+    console.log(
+      "[prerender] Black pepper captured bytes:",
+      Buffer.byteLength(pepperHtml, "utf8")
+    );
+    try {
+      assertPepperHtml(pepperHtml);
+    } catch (err) {
+      await writeFile(
+        path.join(DIST, "black-pepper.prerender-failed.html"),
+        pepperHtml,
+        "utf8"
+      );
+      throw err;
+    }
+
+    await mkdir(PEPPER_DIR, { recursive: true });
+    await writeFile(PEPPER_INDEX, pepperHtml, "utf8");
+    console.log(
+      `[prerender] Wrote ${PEPPER_INDEX} (${Buffer.byteLength(pepperHtml, "utf8")} bytes)`
     );
 
     // --- Indian apple product landing ---

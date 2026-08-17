@@ -24,6 +24,15 @@ export const premiumProducts = [
     image: productImages.dryRedChilli,
   },
   {
+    id: "black-pepper",
+    path: "/products/black-pepper",
+    title: "Black Pepper",
+    blurb: "Malabar & Tellicherry grades. Garbled MG1 / TGSEB, spec-documented lots.",
+    badge: "Spice",
+    cta: "Black pepper export guide",
+    image: productImages.blackPepper,
+  },
+  {
     id: "indian-apple",
     path: "/products/indian-apple",
     title: "Indian Apple",

@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { EnquireActions } from "@/components/shared/EnquireActions";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { navLinks } from "@/lib/constants";
 import { premiumProducts } from "@/lib/premiumProducts";
 import { brandHello, site } from "@/lib/config";
@@ -128,10 +127,6 @@ export function MobileMenu({ open, onOpenChange, onNavigate }) {
         </div>
 
         <div className="flex flex-col gap-3 pt-2">
-          <div className="flex items-center justify-between rounded-2xl border border-border p-3">
-            <span className="text-sm font-medium text-muted-foreground">Appearance</span>
-            <ThemeToggle />
-          </div>
           <EnquireActions
             density="stack"
             label="Start Importing"

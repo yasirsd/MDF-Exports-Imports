@@ -9,7 +9,7 @@ const badgeVariants = cva(
       variant: {
         default: "border-border bg-surface-2 text-muted-foreground",
         red: "border-brand-red/20 bg-brand-red/10 text-brand-red",
-        gold: "border-brand-gold/30 bg-brand-gold/10 text-[#8a6d00] dark:text-brand-gold",
+        gold: "border-brand-gold/30 bg-brand-gold/10 text-brand-gold",
         success: "border-success/20 bg-success/10 text-success",
         glass: "glass text-foreground",
       },

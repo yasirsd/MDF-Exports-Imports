@@ -16,21 +16,10 @@
 
 @layer base {
   :root {
-    /* Light theme tokens (HSL channels for <alpha-value> support) */
-    --background: 60 11% 96%; /* #F8F8F6 */
-    --foreground: 0 0% 7%; /* #111111 */
-    --surface: 0 0% 100%; /* #FFFFFF */
-    --surface-2: 0 0% 97%;
-    --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 40%; /* #666666 */
-    --border: 0 0% 88%;
-    --ring: 349 86% 54%; /* brand red */
+    /* Dark-only theme tokens (HSL channels for <alpha-value> support).
+       The site is dark by design — no light-mode variant. */
+    color-scheme: dark;
 
-    --glass-border: rgba(17, 17, 17, 0.1);
-    --glass-bg: rgba(255, 255, 255, 0.62);
-  }
-
-  .dark {
     --background: 0 0% 5%; /* #0D0D0D */
     --foreground: 0 0% 98%;
     --surface: 0 0% 10%; /* #1A1A1A */
@@ -38,7 +27,7 @@
     --muted: 0 0% 16%;
     --muted-foreground: 0 0% 64%;
     --border: 0 0% 20%;
-    --ring: 349 86% 60%;
+    --ring: 349 86% 60%; /* brand red */
 
     --glass-border: rgba(255, 255, 255, 0.14);
     --glass-bg: rgba(18, 18, 18, 0.55);

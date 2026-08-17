@@ -16,6 +16,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.mdfexport.com/products/black-pepper</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.mdfexport.com/products/indian-apple</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

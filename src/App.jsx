@@ -16,6 +16,7 @@ const GunturRedChilli = named(
   () => import("@/components/sections/GunturRedChilli"),
   "GunturRedChilli"
 );
+const BlackPepper = named(() => import("@/components/sections/BlackPepper"), "BlackPepper");
 const IndianApple = named(() => import("@/components/sections/IndianApple"), "IndianApple");
 const IndianPomegranate = named(
   () => import("@/components/sections/IndianPomegranate"),
@@ -162,6 +163,11 @@ import {
   gunturFaqs,
 } from "@/lib/gunturChilliPage";
 import {
+  BLACK_PEPPER_META,
+  BLACK_PEPPER_PATH,
+  blackPepperFaqs,
+} from "@/lib/blackPepperPage";
+import {
   INDIAN_APPLE_META,
   INDIAN_APPLE_PATH,
   indianAppleFaqs,
@@ -184,6 +190,7 @@ function resolvePage() {
   if (path === "/privacy" || window.location.hash === "#privacy") return "privacy";
   if (path === BANGANAPALLI_MANGO_PATH) return "banganapalli-mango";
   if (path === GUNTUR_CHILLI_PATH) return "guntur-chilli";
+  if (path === BLACK_PEPPER_PATH) return "black-pepper";
   if (path === INDIAN_APPLE_PATH) return "indian-apple";
   if (path === INDIAN_POMEGRANATE_PATH) return "indian-pomegranate";
   return "home";
@@ -233,6 +240,45 @@ function gunturJsonLd() {
       "@context": "https://schema.org",
       "@type": "FAQPage",
       mainEntity: gunturFaqs.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: f.a,
+        },
+      })),
+    },
+  ];
+}
+
+function blackPepperJsonLd() {
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      serviceType: "Dried spice export sourcing",
+      name: "Indian Black Pepper — Export Sourcing",
+      alternateName: "Malabar Black Pepper",
+      description: BLACK_PEPPER_META.description,
+      provider: {
+        "@type": "Organization",
+        name: site.name,
+        url: site.url,
+      },
+      areaServed: [
+        { "@type": "Country", name: "United Arab Emirates" },
+        { "@type": "Country", name: "Saudi Arabia" },
+        { "@type": "Country", name: "Qatar" },
+        { "@type": "Country", name: "Oman" },
+        { "@type": "Country", name: "Kuwait" },
+        { "@type": "Country", name: "Bahrain" },
+      ],
+      url: `${site.url}${BLACK_PEPPER_PATH}`,
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: blackPepperFaqs.map((f) => ({
         "@type": "Question",
         name: f.q,
         acceptedAnswer: {
@@ -406,6 +452,22 @@ export default function App() {
         />
         <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
           <GunturRedChilli />
+        </Suspense>
+      </>
+    );
+  }
+
+  if (page === "black-pepper") {
+    return (
+      <>
+        <SEO
+          documentTitle={BLACK_PEPPER_META.documentTitle}
+          description={BLACK_PEPPER_META.description}
+          path={BLACK_PEPPER_META.path}
+          jsonLd={blackPepperJsonLd()}
+        />
+        <Suspense fallback={<div className="min-h-[60vh]" aria-hidden="true" />}>
+          <BlackPepper />
         </Suspense>
       </>
     );

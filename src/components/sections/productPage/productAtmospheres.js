@@ -113,6 +113,39 @@ export const PRODUCT_ATMOSPHERES = {
     },
   },
 
+  blackPepper: {
+    hero: {
+      base: "#0a0a0c",
+      glow: "radial-gradient(ellipse at 20% 25%, rgba(120,110,90,0.22), transparent 50%), radial-gradient(ellipse at 82% 68%, rgba(90,70,45,0.2), transparent 55%), radial-gradient(ellipse at 50% 100%, rgba(30,25,15,0.55), transparent 50%)",
+      accent: "brand-gold",
+    },
+    origin: {
+      base: "#0e0d0a",
+      glow: "radial-gradient(ellipse at 30% 32%, rgba(74,120,70,0.14), transparent 50%), radial-gradient(ellipse at 78% 72%, rgba(120,90,50,0.22), transparent 55%)",
+      accent: "brand-gold",
+    },
+    specs: {
+      base: "#0a0a0c",
+      glow: "radial-gradient(ellipse at 28% 32%, rgba(200,160,80,0.14), transparent 50%), radial-gradient(ellipse at 72% 70%, rgba(40,35,30,0.45), transparent 55%)",
+      accent: "brand-gold",
+    },
+    compliance: {
+      base: "#0e0e10",
+      glow: "radial-gradient(ellipse at 30% 35%, rgba(200,160,80,0.08), transparent 48%), radial-gradient(ellipse at 70% 80%, rgba(50,50,60,0.4), transparent 50%)",
+      accent: "white",
+    },
+    enquire: {
+      base: "#0c0906",
+      glow: "radial-gradient(ellipse at 70% 35%, rgba(255,130,30,0.2), transparent 48%), radial-gradient(ellipse at 20% 75%, rgba(180,90,20,0.22), transparent 50%)",
+      accent: "brand-orange",
+    },
+    faq: {
+      base: "#0a0a0c",
+      glow: "radial-gradient(ellipse at 50% 0%, rgba(40,40,50,0.35), transparent 55%)",
+      accent: "white",
+    },
+  },
+
   pomegranate: {
     hero: {
       base: "#1a0610",

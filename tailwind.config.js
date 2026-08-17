@@ -2,7 +2,7 @@ import tailwindcssAnimate from "tailwindcss-animate";
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: "class",
+  // Dark-only site — no `dark:` variants used; no theme toggle.
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     container: {

@@ -21,7 +21,7 @@ export function Products() {
           contained={false}
           eyebrow="The Catalogue"
           title="Export-ready produce, graded for the journey."
-          description="Four focused export lines. Guntur dry red chilli, Andhra Banganapalli mango, Indian apples, and pomegranate. Sourced at peak quality and packed for Gulf programmes."
+          description="Five focused export lines. Guntur dry red chilli, Malabar black pepper, Andhra Banganapalli mango, Indian apples, and pomegranate. Sourced at peak quality and packed for Gulf programmes."
           className="max-w-2xl"
         />
       </Container>
